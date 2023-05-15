@@ -11,30 +11,27 @@ import org.bson.types.ObjectId;
  *
  * @author magda
  */
-public class Habitat {
+public class Zona {
 
     private ObjectId id;
     private String nombre;
-    private String clima;
-    private String vegetacion;
-    private Continente continente;
+    private Integer duracion;
+    private Zona[] direcciones;
 
-    public Habitat() {
+    public Zona() {
     }
 
-    public Habitat(String nombre, String clima, String vegetacion, Continente continente) {
+    public Zona(String nombre, Integer duracion, Zona[] direcciones) {
         this.nombre = nombre;
-        this.clima = clima;
-        this.vegetacion = vegetacion;
-        this.continente = continente;
+        this.duracion = duracion;
+        this.direcciones = direcciones;
     }
 
-    public Habitat(ObjectId id, String nombre, String clima, String vegetacion, Continente continente) {
+    public Zona(ObjectId id, String nombre, Integer duracion, Zona[] direcciones) {
         this.id = id;
         this.nombre = nombre;
-        this.clima = clima;
-        this.vegetacion = vegetacion;
-        this.continente = continente;
+        this.duracion = duracion;
+        this.direcciones = direcciones;
     }
 
     public ObjectId getId() {
@@ -53,34 +50,26 @@ public class Habitat {
         this.nombre = nombre;
     }
 
-    public String getClima() {
-        return clima;
+    public Integer getDuracion() {
+        return duracion;
     }
 
-    public void setClima(String clima) {
-        this.clima = clima;
+    public void setDuracion(Integer duracion) {
+        this.duracion = duracion;
     }
 
-    public String getVegetacion() {
-        return vegetacion;
+    public Zona[] getDirecciones() {
+        return direcciones;
     }
 
-    public void setVegetacion(String vegetacion) {
-        this.vegetacion = vegetacion;
-    }
-
-    public Continente getContinente() {
-        return continente;
-    }
-
-    public void setContinente(Continente continente) {
-        this.continente = continente;
+    public void setDirecciones(Zona[] direcciones) {
+        this.direcciones = direcciones;
     }
 
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 41 * hash + Objects.hashCode(this.id);
+        hash = 59 * hash + Objects.hashCode(this.id);
         return hash;
     }
 
@@ -95,13 +84,13 @@ public class Habitat {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final Habitat other = (Habitat) obj;
+        final Zona other = (Zona) obj;
         return Objects.equals(this.id, other.id);
     }
 
     @Override
     public String toString() {
-        return nombre;
+        return "Zona{" + "id=" + id + ", nombre=" + nombre + ", duracion=" + duracion + ", direcciones=" + direcciones + '}';
     }
 
 }

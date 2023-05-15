@@ -7,6 +7,9 @@ package org.itson.GUI;
 import java.awt.Color;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.border.Border;
 
 /**
  * Clase encargada de la ventana Inicio.
@@ -15,7 +18,12 @@ import javax.swing.ImageIcon;
  */
 public class FrmInicio extends javax.swing.JFrame {
 
-    int xMouse, yMouse;
+    private int xMouse, yMouse;
+    private final Color AMARILLO = new Color(255, 255, 153);
+    private final Color GRIS = new Color(245, 245, 245);
+    private final Color CAFE = new Color(102, 0, 0);
+    private final int BORDE_GRUESO = 3;
+    private final int BORDE_ESTRECHO = 1;
 
     /**
      * Método que crea FrmInicio.
@@ -24,9 +32,52 @@ public class FrmInicio extends javax.swing.JFrame {
         initComponents();
         ImageIcon icon = new ImageIcon("src\\main\\resources\\img\\paw.png");
         this.setIconImage(icon.getImage());
-        // this.setExtendedState(JFrame.MAXIMIZED_BOTH);//Maximiza el tamaño de la ventana
-        // this.getContentPane().setBackground(Color.getHSBColor(55, 15, 195)); //Da color al fondo
+    }
 
+    /**
+     * Método que despliega FrmItinerarios.
+     */
+    public void abrirVentanaItinerarios() {
+        FrmItinerarios frmItinerarios = new FrmItinerarios();
+        frmItinerarios.setVisible(true);
+        dispose();
+    }
+
+    /**
+     * Método que termina el programa.
+     */
+    public void salirDelPrograma() {
+        System.exit(0);
+    }
+
+    /**
+     * Método que establece el color del fondo de un JPanel.
+     *
+     * @param panel JPanel cuyo color de fondo va a cambiar.
+     * @param color Color a poner de fondo.
+     */
+    public void cambiarColorPanel(JPanel panel, Color color) {
+        panel.setBackground(color);
+    }
+
+    /**
+     * Método que establece el color de letra de un JLabel.
+     *
+     * @param label JLabel cuyo color de letra va a cambiar.
+     * @param color Color a poner en la letra.
+     */
+    public void cambiarColorLetra(JLabel label, Color color) {
+        label.setForeground(color);
+    }
+
+    /**
+     * Método que esteblece el borde de un JPanel.
+     *
+     * @param panel JPanel cuyo borde va a cambiar.
+     * @param border Borde a poner en el panel.
+     */
+    public void cambiarBordePanel(JPanel panel, Border border) {
+        panel.setBorder(border);
     }
 
     @SuppressWarnings("unchecked")
@@ -187,9 +238,9 @@ public class FrmInicio extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     /**
-     * Método que al presionar el mouse permita obtener eventos.
+     * Método que permita almacenar las coordenadas del mouse.
      *
-     * @param evt objeto de evento de acción.
+     * @param evt El evento del mouse que activa el método.
      */
     private void pnlHeaderMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlHeaderMousePressed
         xMouse = evt.getX();
@@ -199,7 +250,7 @@ public class FrmInicio extends javax.swing.JFrame {
     /**
      * Método que al arrastrar el mouse permita mover la pantalla.
      *
-     * @param evt objeto de evento de acción.
+     * @param evt El evento del mouse que activa el método.
      */
     private void pnlHeaderMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlHeaderMouseDragged
         int x = evt.getXOnScreen();
@@ -209,65 +260,64 @@ public class FrmInicio extends javax.swing.JFrame {
     }//GEN-LAST:event_pnlHeaderMouseDragged
 
     /**
-     * Método que permite que al hacerle clic a pnlSalir termine el programa.
+     * Método que permite que al hacerle clic a pnlSalir ejecute el método
+     * salirDelPrograma.
      *
-     * @param evt objeto de evento de acción.
+     * @param evt El evento del mouse que activa el método.
      */
     private void pnlSalirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlSalirMouseClicked
-        System.exit(0);
+        salirDelPrograma();
     }//GEN-LAST:event_pnlSalirMouseClicked
     /**
      * Método que permite cambiar el color de fondo del pnlSalir y el color de
-     * su ícono.
+     * su letra.
      *
-     * @param evt objeto de evento de acción.
+     * @param evt El evento del mouse que activa el método.
      */
     private void pnlSalirMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlSalirMouseEntered
-        pnlSalir.setBackground(Color.red);
-        lblSalir.setForeground(Color.white);
+        cambiarColorPanel(pnlSalir, Color.RED);
+        cambiarColorLetra(lblSalir, Color.WHITE);
     }//GEN-LAST:event_pnlSalirMouseEntered
     /**
-     * Método que permite que al quitar el mouse pnlSalir, regrese al color de
-     * fondo y al color del icono originales.
+     * Método que permite que al quitar el mouse de pnlSalir, regrese al color
+     * de fondo y al color del letra originales.
      *
-     * @param evt objeto de evento de acción.
+     * @param evt El evento del mouse que activa el método.
      */
     private void pnlSalirMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlSalirMouseExited
-        pnlSalir.setBackground(new Color(255, 255, 153));
-        lblSalir.setForeground(new Color(102, 0, 0));
+        cambiarColorPanel(pnlSalir, AMARILLO);
+        cambiarColorLetra(lblSalir, CAFE);
     }//GEN-LAST:event_pnlSalirMouseExited
 
     /**
      * Método que permite cambiar el grosor del borde de
      * pnlAdministrarItinerario y el color de su fondo.
      *
-     * @param evt objeto de evento de acción.
+     * @param evt El evento del mouse que activa el método.
      */
     private void pnlAdministraritinerarioMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlAdministraritinerarioMouseEntered
-        pnlAdministraritinerario.setBackground(new Color(245, 245, 245));
-        pnlAdministraritinerario.setBorder(BorderFactory.createLineBorder(new Color(102, 0, 0), 3));
+        cambiarColorPanel(pnlAdministraritinerario, GRIS);
+        cambiarBordePanel(pnlAdministraritinerario, BorderFactory.createLineBorder(CAFE, BORDE_GRUESO));
     }//GEN-LAST:event_pnlAdministraritinerarioMouseEntered
     /**
-     * Método que permite que al quitar el mouse pnlAdministrarItinerario,
+     * Método que permite que al quitar el mouse de pnlAdministrarItinerario,
      * regrese al grosor del borde y al color de su fondo originales.
      *
-     * @param evt objeto de evento de acción.
+     * @param evt El evento del mouse que activa el método.
      */
     private void pnlAdministraritinerarioMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlAdministraritinerarioMouseExited
-        pnlAdministraritinerario.setBackground(Color.WHITE);
-        pnlAdministraritinerario.setBorder(BorderFactory.createLineBorder(new Color(102, 0, 0), 1));
+        cambiarColorPanel(pnlAdministraritinerario, Color.WHITE);
+        cambiarBordePanel(pnlAdministraritinerario, BorderFactory.createLineBorder(CAFE, BORDE_ESTRECHO));
     }//GEN-LAST:event_pnlAdministraritinerarioMouseExited
 
     /**
-     * Método que permite que al hacerle clic a pnlAdministraritinerario abra la
-     * ventana de Itinerarios.
+     * Método que permite que al hacerle clic a pnlAdministraritinerario ejecute
+     * el método abrirVentanaItinerario.
      *
-     * @param evt objeto de evento de acción.
+     * @param evt El evento del mouse que activa el método.
      */
     private void pnlAdministraritinerarioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlAdministraritinerarioMouseClicked
-        FrmItinerarios frmItinerarios = new FrmItinerarios();
-        frmItinerarios.setVisible(true);
-        dispose();
+        abrirVentanaItinerarios();
     }//GEN-LAST:event_pnlAdministraritinerarioMouseClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

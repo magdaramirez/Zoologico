@@ -11,13 +11,14 @@ import java.awt.Font;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.border.Border;
 import javax.swing.table.DefaultTableModel;
-import org.itson.dominio.Habitat;
 import org.itson.dominio.Itinerario;
 import org.itson.interfaces.IHabitatsDAO;
 import org.itson.interfaces.IItinerariosDAO;
 import org.itson.persistencia.ConexionMongoDB;
-import org.itson.persistencia.HabitatsDAO;
 import org.itson.persistencia.ItinerariosDAO;
 
 /**
@@ -26,8 +27,25 @@ import org.itson.persistencia.ItinerariosDAO;
  * @author Magda Ramírez - 233523
  */
 public class FrmItinerarios extends javax.swing.JFrame {
-    
+
     int xMouse, yMouse;
+    private int contador = 1;
+
+    private final Color AMARILLO = new Color(255, 255, 153);
+    private final Color GRIS = new Color(245, 245, 245);
+    private final Color CAFE = new Color(102, 0, 0);
+    private final Color GRIS_CLARO = new Color(204, 204, 204);
+
+    private final int BORDE_GRUESO = 3;
+    private final int BORDE_ESTRECHO = 1;
+
+    private final String FLECHA_BLANCA = "src\\main\\resources\\img\\flecha (1).png";
+    private final String FLECHA_CAFE = "src\\main\\resources\\img\\flecha.png";
+    private final String AGREGAR_CLARO = "src\\main\\resources\\img\\boton-agregar (1).png";
+    private final String AGREGAR_OSCURO = "src\\main\\resources\\img\\boton-agregar (2).png";
+    private final String VACIAR_CLARO = "src\\main\\resources\\img\\eliminar (1).png";
+    private final String VACIAR_OSCURO = "src\\main\\resources\\img\\eliminar.png";
+
     private IItinerariosDAO persistenciaItinerarios;
     private IHabitatsDAO persistenciaHabitats;
 
@@ -39,39 +57,101 @@ public class FrmItinerarios extends javax.swing.JFrame {
         initComponents();
         ImageIcon icon = new ImageIcon("src\\main\\resources\\img\\paw.png");
         this.setIconImage(icon.getImage());
-        
+
         tblitinerarios.getColumnModel().getColumn(5).setCellRenderer(new TableActionCellRender());
         tblitinerarios.getColumnModel().getColumn(5).setCellEditor(new TableActionCellEditor());
-        
+
         tblitinerarios.getTableHeader().setFont(new Font("Berlin Sans FB", Font.PLAIN, 16));
         tblitinerarios.getTableHeader().setOpaque(false);
         tblitinerarios.getTableHeader().setForeground(new Color(102, 0, 0));
         tblitinerarios.setRowHeight(40);
-        
+
         llenarTablaItinerarios();
     }
-    
+
     private void llenarTablaItinerarios() {
         //CONEXIÓN A LA BASE DE DATOS
         ConexionMongoDB conexion = new ConexionMongoDB();
         IItinerariosDAO itinerariosDAO = new ItinerariosDAO(conexion);
         //Consultar itinerarios
         List<Itinerario> itinerarios = itinerariosDAO.consultarTodos();
-        
+
         DefaultTableModel modelo = (DefaultTableModel) this.tblitinerarios.getModel();
         modelo.setRowCount(0);
         for (Itinerario itinerario : itinerarios) {
             Object[] fila = {
-                itinerario.getId(),
+                contador++,
                 itinerario.getNombre(),
-                itinerario.getDuracion(),
-                itinerario.getLongitud(),
                 itinerario.getNoVisitantes()
             };
             modelo.addRow(fila);
         }
     }
-    
+
+    /**
+     * Método que termina el programa.
+     */
+    public void salirDelPrograma() {
+        System.exit(0);
+    }
+
+    /**
+     * Método que regresa a FrmInicio.
+     */
+    private void regresarVentanaInicio() {
+        FrmInicio inicio = new FrmInicio();
+        inicio.setVisible(true);
+        dispose();
+    }
+
+    /**
+     * Método que establece el color del fondo de un JPanel.
+     *
+     * @param panel JPanel cuyo color de fondo va a cambiar.
+     * @param color Color a poner de fondo.
+     */
+    public void cambiarColorPanel(JPanel panel, Color color) {
+        panel.setBackground(color);
+    }
+
+    /**
+     * Método que establece el color de letra de un JLabel.
+     *
+     * @param label JLabel cuyo color de letra va a cambiar.
+     * @param color Color a poner en la letra.
+     */
+    public void cambiarColorLetra(JLabel label, Color color) {
+        label.setForeground(color);
+    }
+
+    /**
+     * Método que establece un ícono a un JLabel.
+     *
+     * @param label JLabel cuyo ícono será establecido.
+     * @param icono Ícono a establecer.
+     */
+    public void cambiarIcono(JLabel label, String icono) {
+        label.setIcon(new ImageIcon(icono));
+    }
+
+    /**
+     * Método que despliega FrmRegistroItinerario.
+     */
+    public void abrirVentanaRegistro() {
+        new FrmRegistroItinerario(this.persistenciaHabitats).setVisible(true);
+        dispose();
+    }
+
+    /**
+     * Método que esteblece el borde de un JPanel.
+     *
+     * @param panel JPanel cuyo borde va a cambiar.
+     * @param border Borde a poner en el panel.
+     */
+    public void cambiarBordePanel(JPanel panel, Border border) {
+        panel.setBorder(border);
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -314,83 +394,79 @@ public class FrmItinerarios extends javax.swing.JFrame {
     private void pnlHeaderMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlHeaderMouseDragged
         int x = evt.getXOnScreen();
         int y = evt.getYOnScreen();
-        
+
         this.setLocation(x - xMouse, y - yMouse);
     }//GEN-LAST:event_pnlHeaderMouseDragged
     /**
-     * Método que al presionar el mouse permita obtener eventos.
+     * Método que permita almacenar las coordenadas del mouse.
      *
-     * @param evt objeto de evento de acción.
+     * @param evt El evento del mouse que activa el método.
      */
     private void pnlHeaderMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlHeaderMousePressed
         xMouse = evt.getX();
         yMouse = evt.getY();
     }//GEN-LAST:event_pnlHeaderMousePressed
     /**
-     * Método que permite que al hacerle clic a pnlSalir termine el programa.
+     * Método que permite que al hacerle clic a pnlSalir ejecute el método
+     * salirDelPrograma.
      *
-     * @param evt objeto de evento de acción.
+     * @param evt El evento del mouse que activa el método.
      */
     private void pnlSalirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlSalirMouseClicked
-        System.exit(0);
+        salirDelPrograma();
     }//GEN-LAST:event_pnlSalirMouseClicked
     /**
      * Método que permite cambiar el color de fondo del pnlSalir y el color de
-     * su ícono.
+     * su letra.
      *
-     * @param evt objeto de evento de acción.
+     * @param evt El evento del mouse que activa el método.
      */
     private void pnlSalirMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlSalirMouseEntered
-        pnlSalir.setBackground(Color.red);
-        lblSalir.setForeground(Color.white);
+        cambiarColorPanel(pnlSalir, Color.RED);
+        cambiarColorLetra(lblSalir, Color.WHITE);
     }//GEN-LAST:event_pnlSalirMouseEntered
     /**
-     * Método que permite que al quitar el mouse pnlSalir, regrese al color de
-     * fondo y al color del icono originales.
+     * Método que permite que al quitar el mouse de pnlSalir, regrese al color
+     * de fondo y al color del letra originales.
      *
-     * @param evt objeto de evento de acción.
+     * @param evt El evento del mouse que activa el método.
      */
     private void pnlSalirMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlSalirMouseExited
-        pnlSalir.setBackground(new Color(255, 255, 153));
-        lblSalir.setForeground(new Color(102, 0, 0));
+        cambiarColorPanel(pnlSalir, AMARILLO);
+        cambiarColorLetra(lblSalir, CAFE);
     }//GEN-LAST:event_pnlSalirMouseExited
     /**
-     * Método que permite que al hacerle clic a pnlRegresar abra la ventana de
-     * Inicio.
+     * Método que al darle click a pnlRegresar ejecuta el método
+     * regresarVentanaInicio.
      *
-     * @param evt objeto de evento de acción.
+     * @param evt El evento del mouse que activa el método.
      */
     private void pnlRegresarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlRegresarMouseClicked
-        FrmInicio inicio = new FrmInicio();
-        inicio.setVisible(true);
-        dispose();
+        regresarVentanaInicio();
     }//GEN-LAST:event_pnlRegresarMouseClicked
     /**
-     * Método que permite cambiar el color de fondo del pnlRegresar y su ícono.
+     * Método que al entrar a pnlRegresar ejecuta los métodos cambiarColorPanel
+     * y cambiarIcono.
      *
-     * @param evt objeto de evento de acción.
+     * @param evt El evento del mouse que activa el método.
      */
     private void pnlRegresarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlRegresarMouseEntered
-        pnlRegresar.setBackground(Color.red);
-        ImageIcon icon = new ImageIcon("src\\main\\resources\\img\\flecha (1).png");
-        lblRegresar.setIcon(icon);
+        cambiarColorPanel(pnlRegresar, Color.RED);
+        cambiarIcono(lblRegresar, FLECHA_BLANCA);
     }//GEN-LAST:event_pnlRegresarMouseEntered
     /**
-     * Método que permite que al quitar el mouse pnlRegresar, regrese al color
-     * de fondo y su icono originales.
+     * Método que al salir de pnlRegresar ejecuta los métodos cambiarColorPanel
+     * y cambiarIcono.
      *
-     * @param evt objeto de evento de acción.
+     * @param evt El evento del mouse que activa el método.
      */
     private void pnlRegresarMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlRegresarMouseExited
-        // TODO add your handling code here:
-        pnlRegresar.setBackground(new Color(255, 255, 153));
-        ImageIcon icon = new ImageIcon("src\\main\\resources\\img\\flecha.png");
-        lblRegresar.setIcon(icon);
+        cambiarColorPanel(pnlRegresar, AMARILLO);
+        cambiarIcono(lblRegresar, FLECHA_CAFE);
     }//GEN-LAST:event_pnlRegresarMouseExited
 
     private void pnlRegistrarItinerarioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlRegistrarItinerarioMouseClicked
-        new FrmRegistroItinerario(this.persistenciaHabitats).setVisible(true);
-        dispose();
+        abrirVentanaRegistro();
     }//GEN-LAST:event_pnlRegistrarItinerarioMouseClicked
     /**
      * Método que permite cambiar el grosor del borde de pnlRegistrarItinerario
@@ -399,8 +475,8 @@ public class FrmItinerarios extends javax.swing.JFrame {
      * @param evt objeto de evento de acción.
      */
     private void pnlRegistrarItinerarioMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlRegistrarItinerarioMouseEntered
-        pnlRegistrarItinerario.setBackground(new Color(245, 245, 245));
-        pnlRegistrarItinerario.setBorder(BorderFactory.createLineBorder(new Color(102, 0, 0), 3));
+        cambiarColorPanel(pnlRegistrarItinerario, GRIS);
+        cambiarBordePanel(pnlRegistrarItinerario, BorderFactory.createLineBorder(CAFE, BORDE_GRUESO));
     }//GEN-LAST:event_pnlRegistrarItinerarioMouseEntered
     /**
      * Método que permite que al quitar el mouse pnlRegistrarItinerario, regrese
@@ -409,8 +485,8 @@ public class FrmItinerarios extends javax.swing.JFrame {
      * @param evt objeto de evento de acción.
      */
     private void pnlRegistrarItinerarioMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlRegistrarItinerarioMouseExited
-        pnlRegistrarItinerario.setBackground(Color.WHITE);
-        pnlRegistrarItinerario.setBorder(BorderFactory.createLineBorder(new Color(102, 0, 0), 1));
+        cambiarColorPanel(pnlRegistrarItinerario, Color.WHITE);
+        cambiarBordePanel(pnlRegistrarItinerario, BorderFactory.createLineBorder(CAFE, BORDE_ESTRECHO));
     }//GEN-LAST:event_pnlRegistrarItinerarioMouseExited
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

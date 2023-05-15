@@ -16,26 +16,26 @@ public class Itinerario {
 
     private ObjectId id;
     private String nombre;
-    private Integer duracion;
-    private Float longitud;
     private Integer noVisitantes;
+    private List<Horario> listaHorarios;
+    private List<Zona> listaZonas;
 
     public Itinerario() {
     }
 
-    public Itinerario(String nombre, Integer duracion, Float longitud, Integer noVisitantes) {
+    public Itinerario(String nombre, Integer noVisitantes, List<Horario> listaHorarios, List<Zona> listaZonas) {
         this.nombre = nombre;
-        this.duracion = duracion;
-        this.longitud = longitud;
         this.noVisitantes = noVisitantes;
+        this.listaHorarios = listaHorarios;
+        this.listaZonas = listaZonas;
     }
 
-    public Itinerario(ObjectId id, String nombre, Integer duracion, Float longitud, Integer noVisitantes) {
+    public Itinerario(ObjectId id, String nombre, Integer noVisitantes, List<Horario> listaHorarios, List<Zona> listaZonas) {
         this.id = id;
         this.nombre = nombre;
-        this.duracion = duracion;
-        this.longitud = longitud;
         this.noVisitantes = noVisitantes;
+        this.listaHorarios = listaHorarios;
+        this.listaZonas = listaZonas;
     }
 
     public ObjectId getId() {
@@ -54,28 +54,28 @@ public class Itinerario {
         this.nombre = nombre;
     }
 
-    public Integer getDuracion() {
-        return duracion;
-    }
-
-    public void setDuracion(Integer duracion) {
-        this.duracion = duracion;
-    }
-
-    public Float getLongitud() {
-        return longitud;
-    }
-
-    public void setLongitud(Float longitud) {
-        this.longitud = longitud;
-    }
-
     public Integer getNoVisitantes() {
         return noVisitantes;
     }
 
     public void setNoVisitantes(Integer noVisitantes) {
         this.noVisitantes = noVisitantes;
+    }
+
+    public List<Horario> getListaHorarios() {
+        return listaHorarios;
+    }
+
+    public void setListaHorarios(List<Horario> listaHorarios) {
+        this.listaHorarios = listaHorarios;
+    }
+
+    public List<Zona> getListaZonas() {
+        return listaZonas;
+    }
+
+    public void setListaZonas(List<Zona> listaZonas) {
+        this.listaZonas = listaZonas;
     }
 
     @Override
@@ -102,7 +102,7 @@ public class Itinerario {
 
     @Override
     public String toString() {
-        return "Itinerario{" + "id=" + id + ", nombre=" + nombre + ", duracion=" + duracion + ", longitud=" + longitud + ", noVisitantes=" + noVisitantes + '}';
+        return "Itinerario{" + "id=" + id + ", nombre=" + nombre + ", noVisitantes=" + noVisitantes + ", listaHorarios=" + listaHorarios + ", listaZonas=" + listaZonas + '}';
     }
 
 }

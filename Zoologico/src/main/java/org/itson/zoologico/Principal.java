@@ -17,7 +17,7 @@ import org.itson.persistencia.ItinerariosDAO;
  *
  * @author magda
  */
-public class Zoologico {
+public class Principal {
 
     /**
      * @param args the command line arguments
