@@ -4,6 +4,7 @@
  */
 package org.itson.dominio;
 
+import java.util.Date;
 import java.util.Objects;
 import org.bson.types.ObjectId;
 
@@ -15,19 +16,19 @@ public class Horario {
 
     private ObjectId id;
     private String dia;
-    private Integer horaInicio;
-    private Integer horaFin;
+    private Date horaInicio;
+    private Date horaFin;
 
     public Horario() {
     }
 
-    public Horario(String dia, Integer horaInicio, Integer horaFin) {
+    public Horario(String dia, Date horaInicio, Date horaFin) {
         this.dia = dia;
         this.horaInicio = horaInicio;
         this.horaFin = horaFin;
     }
 
-    public Horario(ObjectId id, String dia, Integer horaInicio, Integer horaFin) {
+    public Horario(ObjectId id, String dia, Date horaInicio, Date horaFin) {
         this.id = id;
         this.dia = dia;
         this.horaInicio = horaInicio;
@@ -50,19 +51,19 @@ public class Horario {
         this.dia = dia;
     }
 
-    public Integer getHoraInicio() {
+    public Date getHoraInicio() {
         return horaInicio;
     }
 
-    public void setHoraInicio(Integer horaInicio) {
+    public void setHoraInicio(Date horaInicio) {
         this.horaInicio = horaInicio;
     }
 
-    public Integer getHoraFin() {
+    public Date getHoraFin() {
         return horaFin;
     }
 
-    public void setHoraFin(Integer horaFin) {
+    public void setHoraFin(Date horaFin) {
         this.horaFin = horaFin;
     }
 

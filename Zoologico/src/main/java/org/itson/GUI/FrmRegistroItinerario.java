@@ -4,8 +4,15 @@
  */
 package org.itson.GUI;
 
+import com.github.lgooddatepicker.components.TimePicker;
 import java.awt.Color;
 import java.awt.Font;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
@@ -16,9 +23,13 @@ import javax.swing.JTextField;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableModel;
 import org.itson.dominio.Habitat;
+import org.itson.dominio.Horario;
+import org.itson.dominio.Itinerario;
+import org.itson.dominio.Zona;
 import org.itson.interfaces.IHabitatsDAO;
 import org.itson.persistencia.ConexionMongoDB;
 import org.itson.persistencia.HabitatsDAO;
+import org.itson.persistencia.ItinerariosDAO;
 
 /**
  * Clase encargada de la ventana Registro Itinerario.
@@ -29,26 +40,28 @@ public class FrmRegistroItinerario extends javax.swing.JFrame {
 
     private int xMouse, yMouse;
     private int contador = 1;
-    
+    private int cantLunes, cantMartes, cantMiercoles, cantJueves, cantViernes, cantSabado, cantDomingo;
+
     private final Color AMARILLO = new Color(255, 255, 153);
     private final Color GRIS = new Color(245, 245, 245);
     private final Color CAFE = new Color(102, 0, 0);
     private final Color GRIS_CLARO = new Color(204, 204, 204);
-    
+
     private final int BORDE_GRUESO = 3;
     private final int BORDE_ESTRECHO = 1;
-    
+
     private final String FLECHA_BLANCA = "src\\main\\resources\\img\\flecha (1).png";
     private final String FLECHA_CAFE = "src\\main\\resources\\img\\flecha.png";
     private final String AGREGAR_CLARO = "src\\main\\resources\\img\\boton-agregar (1).png";
     private final String AGREGAR_OSCURO = "src\\main\\resources\\img\\boton-agregar (2).png";
     private final String VACIAR_CLARO = "src\\main\\resources\\img\\eliminar (1).png";
     private final String VACIAR_OSCURO = "src\\main\\resources\\img\\eliminar.png";
-   
+
     private final IHabitatsDAO persistencia;
 
     /**
      * Método que crea FrmRegistroItinerario.
+     *
      * @param persistencia
      */
     public FrmRegistroItinerario(IHabitatsDAO persistencia) {
@@ -57,11 +70,514 @@ public class FrmRegistroItinerario extends javax.swing.JFrame {
         this.setIconImage(icon.getImage());
         this.persistencia = persistencia;
         this.llenarTablaHabitats();
-
+        this.cantLunes = 1;
+        this.cantMartes = 1;
+        this.cantMiercoles = 1;
+        this.cantJueves = 1;
+        this.cantViernes = 1;
+        this.cantSabado = 1;
+        this.cantDomingo = 1;
+        this.visualizarTimePicker();
+        this.btnRestaLunes.setEnabled(false);
+        this.btnRestaMartes.setEnabled(false);
+        this.btnRestaMiercoles.setEnabled(false);
+        this.btnRestaJueves.setEnabled(false);
+        this.btnRestaViernes.setEnabled(false);
+        this.btnRestaSabado.setEnabled(false);
+        this.btnRestaDomingo.setEnabled(false);
         tblHabitats.getTableHeader().setFont(new Font("Berlin Sans FB", Font.PLAIN, 16));
         tblHabitats.getTableHeader().setOpaque(false);
         tblHabitats.getTableHeader().setForeground(new Color(102, 0, 0));
         tblHabitats.setRowHeight(40);
+    }
+
+    /**
+     * Método para visualizar los time pickers para ingresar las horas
+     */
+    private void visualizarTimePicker() {
+        switch (this.cantLunes) {
+            case 1:
+                this.tpLunes1.setVisible(true);
+                this.tpLunes2.setVisible(false);
+                this.tpLunes3.setVisible(false);
+                this.tpLunes4.setVisible(false);
+                break;
+            case 2:
+                this.tpLunes1.setVisible(true);
+                this.tpLunes2.setVisible(true);
+                this.tpLunes3.setVisible(false);
+                this.tpLunes4.setVisible(false);
+                break;
+            case 3:
+                this.tpLunes1.setVisible(true);
+                this.tpLunes2.setVisible(true);
+                this.tpLunes3.setVisible(true);
+                this.tpLunes4.setVisible(false);
+                break;
+            case 4:
+                this.tpLunes1.setVisible(true);
+                this.tpLunes2.setVisible(true);
+                this.tpLunes3.setVisible(true);
+                this.tpLunes4.setVisible(true);
+                break;
+        }
+
+        switch (this.cantMartes) {
+            case 1:
+                this.tpMartes1.setVisible(true);
+                this.tpMartes2.setVisible(false);
+                this.tpMartes3.setVisible(false);
+                this.tpMartes4.setVisible(false);
+                break;
+            case 2:
+                this.tpMartes1.setVisible(true);
+                this.tpMartes2.setVisible(true);
+                this.tpMartes3.setVisible(false);
+                this.tpMartes4.setVisible(false);
+                break;
+            case 3:
+                this.tpMartes1.setVisible(true);
+                this.tpMartes2.setVisible(true);
+                this.tpMartes3.setVisible(true);
+                this.tpMartes4.setVisible(false);
+                break;
+            case 4:
+                this.tpMartes1.setVisible(true);
+                this.tpMartes2.setVisible(true);
+                this.tpMartes3.setVisible(true);
+                this.tpMartes4.setVisible(true);
+                break;
+        }
+
+        switch (this.cantMiercoles) {
+            case 1:
+                this.tpMiercoles1.setVisible(true);
+                this.tpMiercoles2.setVisible(false);
+                this.tpMiercoles3.setVisible(false);
+                this.tpMiercoles4.setVisible(false);
+                break;
+            case 2:
+                this.tpMiercoles1.setVisible(true);
+                this.tpMiercoles2.setVisible(true);
+                this.tpMiercoles3.setVisible(false);
+                this.tpMiercoles4.setVisible(false);
+                break;
+            case 3:
+                this.tpMiercoles1.setVisible(true);
+                this.tpMiercoles2.setVisible(true);
+                this.tpMiercoles3.setVisible(true);
+                this.tpMiercoles4.setVisible(false);
+                break;
+            case 4:
+                this.tpMiercoles1.setVisible(true);
+                this.tpMiercoles2.setVisible(true);
+                this.tpMiercoles3.setVisible(true);
+                this.tpMiercoles4.setVisible(true);
+                break;
+        }
+
+        switch (this.cantJueves) {
+            case 1:
+                this.tpJueves1.setVisible(true);
+                this.tpJueves2.setVisible(false);
+                this.tpJueves3.setVisible(false);
+                this.tpJueves4.setVisible(false);
+                break;
+            case 2:
+                this.tpJueves1.setVisible(true);
+                this.tpJueves2.setVisible(true);
+                this.tpJueves3.setVisible(false);
+                this.tpJueves4.setVisible(false);
+                break;
+            case 3:
+                this.tpJueves1.setVisible(true);
+                this.tpJueves2.setVisible(true);
+                this.tpJueves3.setVisible(true);
+                this.tpJueves4.setVisible(false);
+                break;
+            case 4:
+                this.tpJueves1.setVisible(true);
+                this.tpJueves2.setVisible(true);
+                this.tpJueves3.setVisible(true);
+                this.tpJueves4.setVisible(true);
+                break;
+        }
+
+        switch (this.cantViernes) {
+            case 1:
+                this.tpViernes1.setVisible(true);
+                this.tpViernes2.setVisible(false);
+                this.tpViernes3.setVisible(false);
+                this.tpViernes4.setVisible(false);
+                break;
+            case 2:
+                this.tpViernes1.setVisible(true);
+                this.tpViernes2.setVisible(true);
+                this.tpViernes3.setVisible(false);
+                this.tpViernes4.setVisible(false);
+                break;
+            case 3:
+                this.tpViernes1.setVisible(true);
+                this.tpViernes2.setVisible(true);
+                this.tpViernes3.setVisible(true);
+                this.tpViernes4.setVisible(false);
+                break;
+            case 4:
+                this.tpViernes1.setVisible(true);
+                this.tpViernes2.setVisible(true);
+                this.tpViernes3.setVisible(true);
+                this.tpViernes4.setVisible(true);
+                break;
+        }
+
+        switch (this.cantSabado) {
+            case 1:
+                this.tpSabado1.setVisible(true);
+                this.tpSabado2.setVisible(false);
+                this.tpSabado3.setVisible(false);
+                this.tpSabado4.setVisible(false);
+                break;
+            case 2:
+                this.tpSabado1.setVisible(true);
+                this.tpSabado2.setVisible(true);
+                this.tpSabado3.setVisible(false);
+                this.tpSabado4.setVisible(false);
+                break;
+            case 3:
+                this.tpSabado1.setVisible(true);
+                this.tpSabado2.setVisible(true);
+                this.tpSabado3.setVisible(true);
+                this.tpSabado4.setVisible(false);
+                break;
+            case 4:
+                this.tpSabado1.setVisible(true);
+                this.tpSabado2.setVisible(true);
+                this.tpSabado3.setVisible(true);
+                this.tpSabado4.setVisible(true);
+                break;
+        }
+
+        switch (this.cantDomingo) {
+            case 1:
+                this.tpDomingo1.setVisible(true);
+                this.tpDomingo2.setVisible(false);
+                this.tpDomingo3.setVisible(false);
+                this.tpDomingo4.setVisible(false);
+                break;
+            case 2:
+                this.tpDomingo1.setVisible(true);
+                this.tpDomingo2.setVisible(true);
+                this.tpDomingo3.setVisible(false);
+                this.tpDomingo4.setVisible(false);
+                break;
+            case 3:
+                this.tpDomingo1.setVisible(true);
+                this.tpDomingo2.setVisible(true);
+                this.tpDomingo3.setVisible(true);
+                this.tpDomingo4.setVisible(false);
+                break;
+            case 4:
+                this.tpDomingo1.setVisible(true);
+                this.tpDomingo2.setVisible(true);
+                this.tpDomingo3.setVisible(true);
+                this.tpDomingo4.setVisible(true);
+                break;
+        }
+    }
+
+    /**
+     * Método que registra el itinerario
+     */
+    private void registrarItinerario() {
+        List<Horario> listaHorarios = new LinkedList<>();
+        LocalDate currentDate = LocalDate.now();
+
+        if (this.tpLunes1.getText() != null) {
+            LocalDateTime localDateTime = this.tpLunes1.getTime().atDate(currentDate);
+            Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(horaInicio);
+            calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
+            Date horaFin = calendar.getTime();
+            Horario horario = new Horario("Lunes", horaInicio, horaFin);
+            listaHorarios.add(horario);
+        }
+        if (this.tpLunes2.getText() != null) {
+            LocalDateTime localDateTime = this.tpLunes2.getTime().atDate(currentDate);
+            Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(horaInicio);
+            calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
+            Date horaFin = calendar.getTime();
+            Horario horario = new Horario("Lunes", horaInicio, horaFin);
+            listaHorarios.add(horario);
+        }
+        if (this.tpLunes3.getText() != null) {
+            LocalDateTime localDateTime = this.tpLunes3.getTime().atDate(currentDate);
+            Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(horaInicio);
+            calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
+            Date horaFin = calendar.getTime();
+            Horario horario = new Horario("Lunes", horaInicio, horaFin);
+            listaHorarios.add(horario);
+        }
+        if (this.tpLunes4.getText() != null) {
+            LocalDateTime localDateTime = this.tpLunes4.getTime().atDate(currentDate);
+            Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(horaInicio);
+            calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
+            Date horaFin = calendar.getTime();
+            Horario horario = new Horario("Lunes", horaInicio, horaFin);
+            listaHorarios.add(horario);
+        }
+        if (this.tpMartes1.getText() != null) {
+            LocalDateTime localDateTime = this.tpMartes1.getTime().atDate(currentDate);
+            Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(horaInicio);
+            calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
+            Date horaFin = calendar.getTime();
+            Horario horario = new Horario("Lunes", horaInicio, horaFin);
+            listaHorarios.add(horario);
+        }
+        if (this.tpMartes2.getText() != null) {
+            LocalDateTime localDateTime = this.tpMartes2.getTime().atDate(currentDate);
+            Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(horaInicio);
+            calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
+            Date horaFin = calendar.getTime();
+            Horario horario = new Horario("Lunes", horaInicio, horaFin);
+            listaHorarios.add(horario);
+        }
+        if (this.tpMartes3.getText() != null) {
+            LocalDateTime localDateTime = this.tpMartes3.getTime().atDate(currentDate);
+            Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(horaInicio);
+            calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
+            Date horaFin = calendar.getTime();
+            Horario horario = new Horario("Lunes", horaInicio, horaFin);
+            listaHorarios.add(horario);
+        }
+        if (this.tpMartes4.getText() != null) {
+            LocalDateTime localDateTime = this.tpMartes4.getTime().atDate(currentDate);
+            Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(horaInicio);
+            calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
+            Date horaFin = calendar.getTime();
+            Horario horario = new Horario("Lunes", horaInicio, horaFin);
+            listaHorarios.add(horario);
+        }
+        if (this.tpMiercoles1.getText() != null) {
+            LocalDateTime localDateTime = this.tpMiercoles1.getTime().atDate(currentDate);
+            Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(horaInicio);
+            calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
+            Date horaFin = calendar.getTime();
+            Horario horario = new Horario("Lunes", horaInicio, horaFin);
+            listaHorarios.add(horario);
+        }
+        if (this.tpMiercoles2.getText() != null) {
+            LocalDateTime localDateTime = this.tpMiercoles2.getTime().atDate(currentDate);
+            Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(horaInicio);
+            calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
+            Date horaFin = calendar.getTime();
+            Horario horario = new Horario("Lunes", horaInicio, horaFin);
+            listaHorarios.add(horario);
+        }
+        if (this.tpMiercoles3.getText() != null) {
+            LocalDateTime localDateTime = this.tpMiercoles3.getTime().atDate(currentDate);
+            Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(horaInicio);
+            calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
+            Date horaFin = calendar.getTime();
+            Horario horario = new Horario("Lunes", horaInicio, horaFin);
+            listaHorarios.add(horario);
+        }
+        if (this.tpMiercoles4.getText() != null) {
+            LocalDateTime localDateTime = this.tpMiercoles4.getTime().atDate(currentDate);
+            Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(horaInicio);
+            calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
+            Date horaFin = calendar.getTime();
+            Horario horario = new Horario("Lunes", horaInicio, horaFin);
+            listaHorarios.add(horario);
+        }
+        if (this.tpJueves1.getText() != null) {
+            LocalDateTime localDateTime = this.tpJueves1.getTime().atDate(currentDate);
+            Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(horaInicio);
+            calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
+            Date horaFin = calendar.getTime();
+            Horario horario = new Horario("Lunes", horaInicio, horaFin);
+            listaHorarios.add(horario);
+        }
+        if (this.tpJueves2.getText() != null) {
+            LocalDateTime localDateTime = this.tpJueves2.getTime().atDate(currentDate);
+            Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(horaInicio);
+            calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
+            Date horaFin = calendar.getTime();
+            Horario horario = new Horario("Lunes", horaInicio, horaFin);
+            listaHorarios.add(horario);
+        }
+        if (this.tpJueves3.getText() != null) {
+            LocalDateTime localDateTime = this.tpJueves3.getTime().atDate(currentDate);
+            Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(horaInicio);
+            calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
+            Date horaFin = calendar.getTime();
+            Horario horario = new Horario("Lunes", horaInicio, horaFin);
+            listaHorarios.add(horario);
+        }
+        if (this.tpJueves4.getText() != null) {
+            LocalDateTime localDateTime = this.tpJueves4.getTime().atDate(currentDate);
+            Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(horaInicio);
+            calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
+            Date horaFin = calendar.getTime();
+            Horario horario = new Horario("Lunes", horaInicio, horaFin);
+            listaHorarios.add(horario);
+        }
+        if (this.tpViernes1.getText() != null) {
+            LocalDateTime localDateTime = this.tpViernes1.getTime().atDate(currentDate);
+            Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(horaInicio);
+            calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
+            Date horaFin = calendar.getTime();
+            Horario horario = new Horario("Lunes", horaInicio, horaFin);
+            listaHorarios.add(horario);
+        }
+        if (this.tpViernes2.getText() != null) {
+            LocalDateTime localDateTime = this.tpViernes2.getTime().atDate(currentDate);
+            Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(horaInicio);
+            calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
+            Date horaFin = calendar.getTime();
+            Horario horario = new Horario("Lunes", horaInicio, horaFin);
+            listaHorarios.add(horario);
+        }
+        if (this.tpViernes3.getText() != null) {
+            LocalDateTime localDateTime = this.tpViernes3.getTime().atDate(currentDate);
+            Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(horaInicio);
+            calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
+            Date horaFin = calendar.getTime();
+            Horario horario = new Horario("Lunes", horaInicio, horaFin);
+            listaHorarios.add(horario);
+        }
+        if (this.tpViernes4.getText() != null) {
+            LocalDateTime localDateTime = this.tpViernes4.getTime().atDate(currentDate);
+            Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(horaInicio);
+            calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
+            Date horaFin = calendar.getTime();
+            Horario horario = new Horario("Lunes", horaInicio, horaFin);
+            listaHorarios.add(horario);
+        }
+        if (this.tpSabado1.getText() != null) {
+            LocalDateTime localDateTime = this.tpSabado1.getTime().atDate(currentDate);
+            Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(horaInicio);
+            calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
+            Date horaFin = calendar.getTime();
+            Horario horario = new Horario("Lunes", horaInicio, horaFin);
+            listaHorarios.add(horario);
+        }
+        if (this.tpSabado2.getText() != null) {
+            LocalDateTime localDateTime = this.tpSabado2.getTime().atDate(currentDate);
+            Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(horaInicio);
+            calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
+            Date horaFin = calendar.getTime();
+            Horario horario = new Horario("Lunes", horaInicio, horaFin);
+            listaHorarios.add(horario);
+        }
+        if (this.tpSabado3.getText() != null) {
+            LocalDateTime localDateTime = this.tpSabado3.getTime().atDate(currentDate);
+            Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(horaInicio);
+            calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
+            Date horaFin = calendar.getTime();
+            Horario horario = new Horario("Lunes", horaInicio, horaFin);
+            listaHorarios.add(horario);
+        }
+        if (this.tpSabado4.getText() != null) {
+            LocalDateTime localDateTime = this.tpSabado4.getTime().atDate(currentDate);
+            Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(horaInicio);
+            calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
+            Date horaFin = calendar.getTime();
+            Horario horario = new Horario("Lunes", horaInicio, horaFin);
+            listaHorarios.add(horario);
+        }
+        if (this.tpDomingo1.getText() != null) {
+            LocalDateTime localDateTime = this.tpDomingo1.getTime().atDate(currentDate);
+            Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(horaInicio);
+            calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
+            Date horaFin = calendar.getTime();
+            Horario horario = new Horario("Lunes", horaInicio, horaFin);
+            listaHorarios.add(horario);
+        }
+        if (this.tpDomingo2.getText() != null) {
+            LocalDateTime localDateTime = this.tpDomingo2.getTime().atDate(currentDate);
+            Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(horaInicio);
+            calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
+            Date horaFin = calendar.getTime();
+            Horario horario = new Horario("Lunes", horaInicio, horaFin);
+            listaHorarios.add(horario);
+        }
+        if (this.tpDomingo3.getText() != null) {
+            LocalDateTime localDateTime = this.tpDomingo3.getTime().atDate(currentDate);
+            Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(horaInicio);
+            calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
+            Date horaFin = calendar.getTime();
+            Horario horario = new Horario("Lunes", horaInicio, horaFin);
+            listaHorarios.add(horario);
+        }
+        if (this.tpDomingo4.getText() != null) {
+            LocalDateTime localDateTime = this.tpDomingo4.getTime().atDate(currentDate);
+            Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(horaInicio);
+            calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
+            Date horaFin = calendar.getTime();
+            Horario horario = new Horario("Lunes", horaInicio, horaFin);
+            listaHorarios.add(horario);
+        }
+        List<Zona> listaZonas = new LinkedList<>();
+
+        Itinerario itinerario = new Itinerario(this.txtNombre.getText(), Integer.valueOf(this.txtNoVisitantes.getText()), Float.valueOf(this.txtLongitud.getText()), Integer.valueOf(this.txtDuracion.getText()), listaHorarios, listaZonas);
+
+        ItinerariosDAO itinerariosDAO = new ItinerariosDAO(conexion);
+        itinerariosDAO.agregar(itinerario);
     }
 
     /**
@@ -159,22 +675,6 @@ public class FrmRegistroItinerario extends javax.swing.JFrame {
         establecerTextField(txtLongitud, "Ingrese la longitud del itinerario", GRIS_CLARO);
         establecerTextField(txtNoVisitantes, "Ingrese el número máximo de visitantes", GRIS_CLARO);
 
-        establecerTextField(txtLunes, "Ingrese las horas de inicio", GRIS_CLARO);
-        establecerTextField(txtMartes, "Ingrese las horas de inicio", GRIS_CLARO);
-        establecerTextField(txtMiercoles, "Ingrese las horas de inicio", GRIS_CLARO);
-        establecerTextField(txtJueves, "Ingrese las horas de inicio", GRIS_CLARO);
-        establecerTextField(txtViernes, "Ingrese las horas de inicio", GRIS_CLARO);
-        establecerTextField(txtSabado, "Ingrese las horas de inicio", GRIS_CLARO);
-        establecerTextField(txtDomingo, "Ingrese las horas de inicio", GRIS_CLARO);
-
-        cbLunes.setSelected(false);
-        cbMartes.setSelected(false);
-        cbMiercoles.setSelected(false);
-        cbJueves.setSelected(false);
-        cbViernes.setSelected(false);
-        cbSabado.setSelected(false);
-        cbDomingo.setSelected(false);
-
         DefaultTableModel modelo = (DefaultTableModel) this.tblHabitats.getModel();
         modelo.setRowCount(0);
         contador = 1;
@@ -233,21 +733,7 @@ public class FrmRegistroItinerario extends javax.swing.JFrame {
         lblViernes = new javax.swing.JLabel();
         lblSabado = new javax.swing.JLabel();
         lblDomingo = new javax.swing.JLabel();
-        cbLunes = new org.itson.utils.CheckBoxCustom();
-        cbMartes = new org.itson.utils.CheckBoxCustom();
-        cbMiercoles = new org.itson.utils.CheckBoxCustom();
-        cbJueves = new org.itson.utils.CheckBoxCustom();
-        cbViernes = new org.itson.utils.CheckBoxCustom();
-        cbSabado = new org.itson.utils.CheckBoxCustom();
-        cbDomingo = new org.itson.utils.CheckBoxCustom();
         jLabel1 = new javax.swing.JLabel();
-        txtViernes = new org.itson.utils.TextFieldSuggestion();
-        txtJueves = new org.itson.utils.TextFieldSuggestion();
-        txtSabado = new org.itson.utils.TextFieldSuggestion();
-        txtDomingo = new org.itson.utils.TextFieldSuggestion();
-        txtLunes = new org.itson.utils.TextFieldSuggestion();
-        txtMartes = new org.itson.utils.TextFieldSuggestion();
-        txtMiercoles = new org.itson.utils.TextFieldSuggestion();
         pnlGuardar = new javax.swing.JPanel();
         lblGuardar = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -257,6 +743,48 @@ public class FrmRegistroItinerario extends javax.swing.JFrame {
         lblVaciarDatos = new javax.swing.JLabel();
         lblVaciar = new javax.swing.JLabel();
         lblUnderline = new javax.swing.JLabel();
+        tpMiercoles1 = new com.github.lgooddatepicker.components.TimePicker();
+        btnSumDomingo = new javax.swing.JButton();
+        btnRestaDomingo = new javax.swing.JButton();
+        btnSumMartes = new javax.swing.JButton();
+        btnSumMiercoles = new javax.swing.JButton();
+        btnSumJueves = new javax.swing.JButton();
+        btnSumViernes = new javax.swing.JButton();
+        btnSumSabado = new javax.swing.JButton();
+        tpLunes1 = new com.github.lgooddatepicker.components.TimePicker();
+        tpLunes2 = new com.github.lgooddatepicker.components.TimePicker();
+        tpLunes3 = new com.github.lgooddatepicker.components.TimePicker();
+        tpLunes4 = new com.github.lgooddatepicker.components.TimePicker();
+        tpDomingo4 = new com.github.lgooddatepicker.components.TimePicker();
+        tpDomingo1 = new com.github.lgooddatepicker.components.TimePicker();
+        tpSabado1 = new com.github.lgooddatepicker.components.TimePicker();
+        tpViernes1 = new com.github.lgooddatepicker.components.TimePicker();
+        tpJueves1 = new com.github.lgooddatepicker.components.TimePicker();
+        tpMartes1 = new com.github.lgooddatepicker.components.TimePicker();
+        tpMartes2 = new com.github.lgooddatepicker.components.TimePicker();
+        tpMartes3 = new com.github.lgooddatepicker.components.TimePicker();
+        tpMartes4 = new com.github.lgooddatepicker.components.TimePicker();
+        tpMiercoles2 = new com.github.lgooddatepicker.components.TimePicker();
+        tpMiercoles3 = new com.github.lgooddatepicker.components.TimePicker();
+        tpMiercoles4 = new com.github.lgooddatepicker.components.TimePicker();
+        tpJueves2 = new com.github.lgooddatepicker.components.TimePicker();
+        tpJueves3 = new com.github.lgooddatepicker.components.TimePicker();
+        tpJueves4 = new com.github.lgooddatepicker.components.TimePicker();
+        tpViernes2 = new com.github.lgooddatepicker.components.TimePicker();
+        tpViernes3 = new com.github.lgooddatepicker.components.TimePicker();
+        tpViernes4 = new com.github.lgooddatepicker.components.TimePicker();
+        tpSabado2 = new com.github.lgooddatepicker.components.TimePicker();
+        tpSabado3 = new com.github.lgooddatepicker.components.TimePicker();
+        tpSabado4 = new com.github.lgooddatepicker.components.TimePicker();
+        tpDomingo2 = new com.github.lgooddatepicker.components.TimePicker();
+        tpDomingo3 = new com.github.lgooddatepicker.components.TimePicker();
+        btnSumLunes = new javax.swing.JButton();
+        btnRestaLunes = new javax.swing.JButton();
+        btnRestaMartes = new javax.swing.JButton();
+        btnRestaMiercoles = new javax.swing.JButton();
+        btnRestaJueves = new javax.swing.JButton();
+        btnRestaViernes = new javax.swing.JButton();
+        btnRestaSabado = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
@@ -500,133 +1028,36 @@ public class FrmRegistroItinerario extends javax.swing.JFrame {
 
         lblLunes.setFont(new java.awt.Font("Berlin Sans FB", 0, 20)); // NOI18N
         lblLunes.setText("Lunes");
-        pnlFondo.add(lblLunes, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 580, -1, -1));
+        pnlFondo.add(lblLunes, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 580, -1, -1));
 
         lblMartes.setFont(new java.awt.Font("Berlin Sans FB", 0, 20)); // NOI18N
         lblMartes.setText("Martes");
-        pnlFondo.add(lblMartes, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 630, -1, -1));
+        pnlFondo.add(lblMartes, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 630, -1, -1));
 
         lblMiercoles.setFont(new java.awt.Font("Berlin Sans FB", 0, 20)); // NOI18N
         lblMiercoles.setText("Miércoles");
-        pnlFondo.add(lblMiercoles, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 680, -1, -1));
+        pnlFondo.add(lblMiercoles, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 680, -1, -1));
 
         lblJueves.setFont(new java.awt.Font("Berlin Sans FB", 0, 20)); // NOI18N
         lblJueves.setText("Jueves");
-        pnlFondo.add(lblJueves, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 730, -1, -1));
+        pnlFondo.add(lblJueves, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 730, -1, -1));
 
         lblViernes.setFont(new java.awt.Font("Berlin Sans FB", 0, 20)); // NOI18N
         lblViernes.setText("Viernes");
-        pnlFondo.add(lblViernes, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 600, -1, -1));
+        pnlFondo.add(lblViernes, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 780, -1, -1));
 
         lblSabado.setFont(new java.awt.Font("Berlin Sans FB", 0, 20)); // NOI18N
         lblSabado.setText("Sábado");
-        pnlFondo.add(lblSabado, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 650, -1, -1));
+        pnlFondo.add(lblSabado, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 830, -1, -1));
 
         lblDomingo.setFont(new java.awt.Font("Berlin Sans FB", 0, 20)); // NOI18N
         lblDomingo.setText("Domingo");
-        pnlFondo.add(lblDomingo, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 700, -1, -1));
-        pnlFondo.add(cbLunes, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 580, -1, -1));
-        pnlFondo.add(cbMartes, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 630, -1, -1));
-        pnlFondo.add(cbMiercoles, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 680, -1, -1));
-        pnlFondo.add(cbJueves, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 730, -1, -1));
-        pnlFondo.add(cbViernes, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 600, -1, -1));
-        pnlFondo.add(cbSabado, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 650, -1, -1));
-        pnlFondo.add(cbDomingo, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 700, -1, -1));
+        pnlFondo.add(lblDomingo, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 880, -1, -1));
 
         jLabel1.setFont(new java.awt.Font("Berlin Sans FB", 0, 30)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(102, 0, 0));
         jLabel1.setText("Seleccione días y especifique horas de inicio");
-        pnlFondo.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 510, -1, -1));
-
-        txtViernes.setForeground(new java.awt.Color(204, 204, 204));
-        txtViernes.setText("Ingrese las horas de inicio");
-        txtViernes.setToolTipText("");
-        txtViernes.setFont(new java.awt.Font("Berlin Sans FB", 0, 14)); // NOI18N
-        txtViernes.setOpaque(true);
-        txtViernes.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                txtViernesMousePressed(evt);
-            }
-        });
-        pnlFondo.add(txtViernes, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 590, 260, -1));
-
-        txtJueves.setForeground(new java.awt.Color(204, 204, 204));
-        txtJueves.setText("Ingrese las horas de inicio");
-        txtJueves.setToolTipText("");
-        txtJueves.setCaretColor(new java.awt.Color(0, 51, 51));
-        txtJueves.setFont(new java.awt.Font("Berlin Sans FB", 0, 14)); // NOI18N
-        txtJueves.setOpaque(true);
-        txtJueves.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                txtJuevesMousePressed(evt);
-            }
-        });
-        pnlFondo.add(txtJueves, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 720, 250, -1));
-
-        txtSabado.setForeground(new java.awt.Color(204, 204, 204));
-        txtSabado.setText("Ingrese las horas de inicio");
-        txtSabado.setToolTipText("");
-        txtSabado.setCaretColor(new java.awt.Color(0, 51, 51));
-        txtSabado.setFont(new java.awt.Font("Berlin Sans FB", 0, 14)); // NOI18N
-        txtSabado.setOpaque(true);
-        txtSabado.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                txtSabadoMousePressed(evt);
-            }
-        });
-        pnlFondo.add(txtSabado, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 640, 260, -1));
-
-        txtDomingo.setForeground(new java.awt.Color(204, 204, 204));
-        txtDomingo.setText("Ingrese las horas de inicio");
-        txtDomingo.setToolTipText("");
-        txtDomingo.setCaretColor(new java.awt.Color(0, 51, 51));
-        txtDomingo.setFont(new java.awt.Font("Berlin Sans FB", 0, 14)); // NOI18N
-        txtDomingo.setOpaque(true);
-        txtDomingo.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                txtDomingoMousePressed(evt);
-            }
-        });
-        pnlFondo.add(txtDomingo, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 690, 250, -1));
-
-        txtLunes.setForeground(new java.awt.Color(204, 204, 204));
-        txtLunes.setText("Ingrese las horas de inicio");
-        txtLunes.setToolTipText("");
-        txtLunes.setCaretColor(new java.awt.Color(0, 51, 51));
-        txtLunes.setFont(new java.awt.Font("Berlin Sans FB", 0, 14)); // NOI18N
-        txtLunes.setOpaque(true);
-        txtLunes.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                txtLunesMousePressed(evt);
-            }
-        });
-        pnlFondo.add(txtLunes, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 570, 250, -1));
-
-        txtMartes.setForeground(new java.awt.Color(204, 204, 204));
-        txtMartes.setText("Ingrese las horas de inicio");
-        txtMartes.setToolTipText("");
-        txtMartes.setCaretColor(new java.awt.Color(0, 51, 51));
-        txtMartes.setFont(new java.awt.Font("Berlin Sans FB", 0, 14)); // NOI18N
-        txtMartes.setOpaque(true);
-        txtMartes.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                txtMartesMousePressed(evt);
-            }
-        });
-        pnlFondo.add(txtMartes, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 620, 250, -1));
-
-        txtMiercoles.setForeground(new java.awt.Color(204, 204, 204));
-        txtMiercoles.setText("Ingrese las horas de inicio");
-        txtMiercoles.setToolTipText("");
-        txtMiercoles.setCaretColor(new java.awt.Color(0, 51, 51));
-        txtMiercoles.setFont(new java.awt.Font("Berlin Sans FB", 0, 14)); // NOI18N
-        txtMiercoles.setOpaque(true);
-        txtMiercoles.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                txtMiercolesMousePressed(evt);
-            }
-        });
-        pnlFondo.add(txtMiercoles, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 670, 250, -1));
+        pnlFondo.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 510, -1, -1));
 
         pnlGuardar.setBackground(new java.awt.Color(255, 255, 255));
         pnlGuardar.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(102, 0, 0), 1, true));
@@ -653,9 +1084,9 @@ public class FrmRegistroItinerario extends javax.swing.JFrame {
         pnlGuardarLayout.setHorizontalGroup(
             pnlGuardarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlGuardarLayout.createSequentialGroup()
-                .addGap(15, 15, 15)
+                .addGap(9, 9, 9)
                 .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(lblGuardar)
                 .addContainerGap(19, Short.MAX_VALUE))
         );
@@ -669,13 +1100,13 @@ public class FrmRegistroItinerario extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        pnlFondo.add(pnlGuardar, new org.netbeans.lib.awtextra.AbsoluteConstraints(790, 770, 130, 40));
+        pnlFondo.add(pnlGuardar, new org.netbeans.lib.awtextra.AbsoluteConstraints(840, 940, 130, 40));
 
         jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/pajaros.png"))); // NOI18N
         pnlFondo.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, -1, -1));
 
         jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/arbol2.png"))); // NOI18N
-        pnlFondo.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 640, 240, 190));
+        pnlFondo.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 720, 240, 190));
 
         pnlVaciarDatos.setBackground(new java.awt.Color(255, 255, 153));
         pnlVaciarDatos.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -703,7 +1134,147 @@ public class FrmRegistroItinerario extends javax.swing.JFrame {
         lblUnderline.setText("____________");
         pnlVaciarDatos.add(lblUnderline, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 10, 100, -1));
 
-        pnlFondo.add(pnlVaciarDatos, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 770, 140, 40));
+        pnlFondo.add(pnlVaciarDatos, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 940, 140, 40));
+        pnlFondo.add(tpMiercoles1, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 680, -1, -1));
+
+        btnSumDomingo.setText("+");
+        btnSumDomingo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSumDomingoActionPerformed(evt);
+            }
+        });
+        pnlFondo.add(btnSumDomingo, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 880, -1, -1));
+
+        btnRestaDomingo.setText("-");
+        btnRestaDomingo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRestaDomingoActionPerformed(evt);
+            }
+        });
+        pnlFondo.add(btnRestaDomingo, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 880, -1, -1));
+
+        btnSumMartes.setText("+");
+        btnSumMartes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSumMartesActionPerformed(evt);
+            }
+        });
+        pnlFondo.add(btnSumMartes, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 630, -1, -1));
+
+        btnSumMiercoles.setText("+");
+        btnSumMiercoles.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSumMiercolesActionPerformed(evt);
+            }
+        });
+        pnlFondo.add(btnSumMiercoles, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 680, -1, -1));
+
+        btnSumJueves.setText("+");
+        btnSumJueves.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSumJuevesActionPerformed(evt);
+            }
+        });
+        pnlFondo.add(btnSumJueves, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 730, -1, -1));
+
+        btnSumViernes.setText("+");
+        btnSumViernes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSumViernesActionPerformed(evt);
+            }
+        });
+        pnlFondo.add(btnSumViernes, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 780, -1, -1));
+
+        btnSumSabado.setText("+");
+        btnSumSabado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSumSabadoActionPerformed(evt);
+            }
+        });
+        pnlFondo.add(btnSumSabado, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 830, -1, -1));
+        pnlFondo.add(tpLunes1, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 580, -1, -1));
+        pnlFondo.add(tpLunes2, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 580, -1, -1));
+        pnlFondo.add(tpLunes3, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 580, -1, -1));
+        pnlFondo.add(tpLunes4, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 580, -1, -1));
+        pnlFondo.add(tpDomingo4, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 880, -1, -1));
+        pnlFondo.add(tpDomingo1, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 880, -1, -1));
+        pnlFondo.add(tpSabado1, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 830, -1, -1));
+        pnlFondo.add(tpViernes1, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 780, -1, -1));
+        pnlFondo.add(tpJueves1, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 730, -1, -1));
+        pnlFondo.add(tpMartes1, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 630, -1, -1));
+        pnlFondo.add(tpMartes2, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 630, -1, -1));
+        pnlFondo.add(tpMartes3, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 630, -1, -1));
+        pnlFondo.add(tpMartes4, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 630, -1, -1));
+        pnlFondo.add(tpMiercoles2, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 680, -1, -1));
+        pnlFondo.add(tpMiercoles3, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 680, -1, -1));
+        pnlFondo.add(tpMiercoles4, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 680, -1, -1));
+        pnlFondo.add(tpJueves2, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 730, -1, -1));
+        pnlFondo.add(tpJueves3, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 730, -1, -1));
+        pnlFondo.add(tpJueves4, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 730, -1, -1));
+        pnlFondo.add(tpViernes2, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 780, -1, -1));
+        pnlFondo.add(tpViernes3, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 780, -1, -1));
+        pnlFondo.add(tpViernes4, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 780, -1, -1));
+        pnlFondo.add(tpSabado2, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 830, -1, -1));
+        pnlFondo.add(tpSabado3, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 830, -1, -1));
+        pnlFondo.add(tpSabado4, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 830, -1, -1));
+        pnlFondo.add(tpDomingo2, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 880, -1, -1));
+        pnlFondo.add(tpDomingo3, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 880, -1, -1));
+
+        btnSumLunes.setText("+");
+        btnSumLunes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSumLunesActionPerformed(evt);
+            }
+        });
+        pnlFondo.add(btnSumLunes, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 580, -1, -1));
+
+        btnRestaLunes.setText("-");
+        btnRestaLunes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRestaLunesActionPerformed(evt);
+            }
+        });
+        pnlFondo.add(btnRestaLunes, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 580, -1, -1));
+
+        btnRestaMartes.setText("-");
+        btnRestaMartes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRestaMartesActionPerformed(evt);
+            }
+        });
+        pnlFondo.add(btnRestaMartes, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 630, -1, -1));
+
+        btnRestaMiercoles.setText("-");
+        btnRestaMiercoles.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRestaMiercolesActionPerformed(evt);
+            }
+        });
+        pnlFondo.add(btnRestaMiercoles, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 680, -1, -1));
+
+        btnRestaJueves.setText("-");
+        btnRestaJueves.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRestaJuevesActionPerformed(evt);
+            }
+        });
+        pnlFondo.add(btnRestaJueves, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 730, -1, -1));
+
+        btnRestaViernes.setText("-");
+        btnRestaViernes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRestaViernesActionPerformed(evt);
+            }
+        });
+        pnlFondo.add(btnRestaViernes, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 780, -1, -1));
+
+        btnRestaSabado.setText("-");
+        btnRestaSabado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRestaSabadoActionPerformed(evt);
+            }
+        });
+        pnlFondo.add(btnRestaSabado, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 830, -1, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -713,7 +1284,7 @@ public class FrmRegistroItinerario extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(pnlFondo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(pnlFondo, javax.swing.GroupLayout.DEFAULT_SIZE, 1000, Short.MAX_VALUE)
         );
 
         pack();
@@ -858,66 +1429,9 @@ public class FrmRegistroItinerario extends javax.swing.JFrame {
     private void txtNombreMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtNombreMousePressed
         establecerTextField(txtNombre, "", Color.BLACK);
     }//GEN-LAST:event_txtNombreMousePressed
-    /**
-     * Método que al presionar txtViernes ejecuta el método establecerTextField.
-     *
-     * @param evt El evento del mouse que activa el método.
-     */
-    private void txtViernesMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtViernesMousePressed
-        establecerTextField(txtViernes, "", Color.BLACK);
-    }//GEN-LAST:event_txtViernesMousePressed
-    /**
-     * Método que al presionar txtSabado ejecuta el método establecerTextField.
-     *
-     * @param evt El evento del mouse que activa el método.
-     */
-    private void txtSabadoMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtSabadoMousePressed
-        establecerTextField(txtSabado, "", Color.BLACK);
-    }//GEN-LAST:event_txtSabadoMousePressed
-    /**
-     * Método que al presionar txtDomingo ejecuta el método establecerTextField.
-     *
-     * @param evt El evento del mouse que activa el método.
-     */
-    private void txtDomingoMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtDomingoMousePressed
-        establecerTextField(txtDomingo, "", Color.BLACK);
-    }//GEN-LAST:event_txtDomingoMousePressed
-    /**
-     * Método que al presionar txtLunes ejecuta el método establecerTextField.
-     *
-     * @param evt El evento del mouse que activa el método.
-     */
-    private void txtLunesMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtLunesMousePressed
-        establecerTextField(txtLunes, "", Color.BLACK);
-    }//GEN-LAST:event_txtLunesMousePressed
-    /**
-     * Método que al presionar txtJueves ejecuta el método establecerTextField.
-     *
-     * @param evt El evento del mouse que activa el método.
-     */
-    private void txtJuevesMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtJuevesMousePressed
-        establecerTextField(txtJueves, "", Color.BLACK);
-    }//GEN-LAST:event_txtJuevesMousePressed
-    /**
-     * Método que al presionar txtMartes ejecuta el método establecerTextField.
-     *
-     * @param evt El evento del mouse que activa el método.
-     */
-    private void txtMartesMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtMartesMousePressed
-        establecerTextField(txtMartes, "", Color.BLACK);
-    }//GEN-LAST:event_txtMartesMousePressed
-    /**
-     * Método que al presionar txtMiercoles ejecuta el método
-     * establecerTextField.
-     *
-     * @param evt El evento del mouse que activa el método.
-     */
-    private void txtMiercolesMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtMiercolesMousePressed
-        establecerTextField(txtMiercoles, "", Color.BLACK);
-    }//GEN-LAST:event_txtMiercolesMousePressed
 
     private void pnlGuardarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlGuardarMouseClicked
-    // TODO add your handling code here:
+        registrarItinerario();
     }//GEN-LAST:event_pnlGuardarMouseClicked
     /**
      * Método que al entrar el mouse a pnlGuardar, ejecuta los métodos
@@ -969,15 +1483,204 @@ public class FrmRegistroItinerario extends javax.swing.JFrame {
         cambiarColorLetra(lblUnderline, Color.BLACK);
         cambiarIcono(lblVaciar, VACIAR_OSCURO);
     }//GEN-LAST:event_pnlVaciarDatosMouseExited
+    /**
+     * Método para agregar horas.
+     *
+     * @param evt El evento del mouse que activa el método.
+     */
+    private void btnSumLunesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSumLunesActionPerformed
+        this.btnRestaLunes.setEnabled(true);
+        this.cantLunes += 1;
+        this.visualizarTimePicker();
+        if (this.cantLunes == 4) {
+            this.btnSumLunes.setEnabled(false);
+        }
+    }//GEN-LAST:event_btnSumLunesActionPerformed
+    /**
+     * Método para disminuir horas.
+     *
+     * @param evt El evento del mouse que activa el método.
+     */
+    private void btnRestaLunesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRestaLunesActionPerformed
+        this.btnSumLunes.setEnabled(true);
+        this.cantLunes -= 1;
+        this.visualizarTimePicker();
+        if (this.cantLunes == 1) {
+            this.btnRestaLunes.setEnabled(false);
+        }
+    }//GEN-LAST:event_btnRestaLunesActionPerformed
+    /**
+     * Método para agregar horas.
+     *
+     * @param evt El evento del mouse que activa el método.
+     */
+    private void btnSumMartesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSumMartesActionPerformed
+        this.btnRestaMartes.setEnabled(true);
+        this.cantMartes += 1;
+        this.visualizarTimePicker();
+        if (this.cantMartes == 4) {
+            this.btnSumMartes.setEnabled(false);
+        }
+    }//GEN-LAST:event_btnSumMartesActionPerformed
+    /**
+     * Método para disminuir horas.
+     *
+     * @param evt El evento del mouse que activa el método.
+     */
+    private void btnRestaMartesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRestaMartesActionPerformed
+        this.btnSumMartes.setEnabled(true);
+        this.cantMartes -= 1;
+        this.visualizarTimePicker();
+        if (this.cantMartes == 1) {
+            this.btnRestaMartes.setEnabled(false);
+        }
+    }//GEN-LAST:event_btnRestaMartesActionPerformed
+    /**
+     * Método para agregar horas.
+     *
+     * @param evt El evento del mouse que activa el método.
+     */
+    private void btnSumMiercolesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSumMiercolesActionPerformed
+        this.btnRestaMiercoles.setEnabled(true);
+        this.cantMiercoles += 1;
+        this.visualizarTimePicker();
+        if (this.cantMiercoles == 4) {
+            this.btnSumMiercoles.setEnabled(false);
+        }
+    }//GEN-LAST:event_btnSumMiercolesActionPerformed
+    /**
+     * Método para disminuir horas.
+     *
+     * @param evt El evento del mouse que activa el método.
+     */
+    private void btnRestaMiercolesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRestaMiercolesActionPerformed
+        this.btnSumMiercoles.setEnabled(true);
+        this.cantMiercoles -= 1;
+        this.visualizarTimePicker();
+        if (this.cantMiercoles == 1) {
+            this.btnRestaMiercoles.setEnabled(false);
+        }
+    }//GEN-LAST:event_btnRestaMiercolesActionPerformed
+    /**
+     * Método para agregar horas.
+     *
+     * @param evt El evento del mouse que activa el método.
+     */
+    private void btnSumJuevesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSumJuevesActionPerformed
+        this.btnRestaJueves.setEnabled(true);
+        this.cantJueves += 1;
+        this.visualizarTimePicker();
+        if (this.cantJueves == 4) {
+            this.btnSumJueves.setEnabled(false);
+        }
+    }//GEN-LAST:event_btnSumJuevesActionPerformed
+    /**
+     * Método para disminuir horas.
+     *
+     * @param evt El evento del mouse que activa el método.
+     */
+    private void btnRestaJuevesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRestaJuevesActionPerformed
+        this.btnSumJueves.setEnabled(true);
+        this.cantJueves -= 1;
+        this.visualizarTimePicker();
+        if (this.cantJueves == 1) {
+            this.btnRestaJueves.setEnabled(false);
+        }
+    }//GEN-LAST:event_btnRestaJuevesActionPerformed
+    /**
+     * Método para agregar horas.
+     *
+     * @param evt El evento del mouse que activa el método.
+     */
+    private void btnSumViernesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSumViernesActionPerformed
+        this.btnRestaViernes.setEnabled(true);
+        this.cantViernes += 1;
+        this.visualizarTimePicker();
+        if (this.cantViernes == 4) {
+            this.btnSumViernes.setEnabled(false);
+        }
+    }//GEN-LAST:event_btnSumViernesActionPerformed
+    /**
+     * Método para disminuir horas.
+     *
+     * @param evt El evento del mouse que activa el método.
+     */
+    private void btnRestaViernesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRestaViernesActionPerformed
+        this.btnSumViernes.setEnabled(true);
+        this.cantViernes -= 1;
+        this.visualizarTimePicker();
+        if (this.cantViernes == 1) {
+            this.btnRestaViernes.setEnabled(false);
+        }
+    }//GEN-LAST:event_btnRestaViernesActionPerformed
+    /**
+     * Método para agregar horas.
+     *
+     * @param evt El evento del mouse que activa el método.
+     */
+    private void btnSumSabadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSumSabadoActionPerformed
+        this.btnRestaSabado.setEnabled(true);
+        this.cantSabado += 1;
+        this.visualizarTimePicker();
+        if (this.cantSabado == 4) {
+            this.btnSumSabado.setEnabled(false);
+        }
+    }//GEN-LAST:event_btnSumSabadoActionPerformed
+    /**
+     * Método para disminuir horas.
+     *
+     * @param evt El evento del mouse que activa el método.
+     */
+    private void btnRestaSabadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRestaSabadoActionPerformed
+        this.btnSumSabado.setEnabled(true);
+        this.cantSabado -= 1;
+        this.visualizarTimePicker();
+        if (this.cantSabado == 1) {
+            this.btnRestaSabado.setEnabled(false);
+        }
+    }//GEN-LAST:event_btnRestaSabadoActionPerformed
+    /**
+     * Método para agregar horas.
+     *
+     * @param evt El evento del mouse que activa el método.
+     */
+    private void btnSumDomingoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSumDomingoActionPerformed
+        this.btnRestaDomingo.setEnabled(true);
+        this.cantDomingo += 1;
+        this.visualizarTimePicker();
+        if (this.cantDomingo == 4) {
+            this.btnSumDomingo.setEnabled(false);
+        }
+    }//GEN-LAST:event_btnSumDomingoActionPerformed
+    /**
+     * Método para disminuir horas.
+     *
+     * @param evt El evento del mouse que activa el método.
+     */
+    private void btnRestaDomingoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRestaDomingoActionPerformed
+        this.btnSumDomingo.setEnabled(true);
+        this.cantDomingo -= 1;
+        this.visualizarTimePicker();
+        if (this.cantDomingo == 1) {
+            this.btnRestaDomingo.setEnabled(false);
+        }
+    }//GEN-LAST:event_btnRestaDomingoActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private org.itson.utils.CheckBoxCustom cbDomingo;
-    private org.itson.utils.CheckBoxCustom cbJueves;
-    private org.itson.utils.CheckBoxCustom cbLunes;
-    private org.itson.utils.CheckBoxCustom cbMartes;
-    private org.itson.utils.CheckBoxCustom cbMiercoles;
-    private org.itson.utils.CheckBoxCustom cbSabado;
-    private org.itson.utils.CheckBoxCustom cbViernes;
+    private javax.swing.JButton btnRestaDomingo;
+    private javax.swing.JButton btnRestaJueves;
+    private javax.swing.JButton btnRestaLunes;
+    private javax.swing.JButton btnRestaMartes;
+    private javax.swing.JButton btnRestaMiercoles;
+    private javax.swing.JButton btnRestaSabado;
+    private javax.swing.JButton btnRestaViernes;
+    private javax.swing.JButton btnSumDomingo;
+    private javax.swing.JButton btnSumJueves;
+    private javax.swing.JButton btnSumLunes;
+    private javax.swing.JButton btnSumMartes;
+    private javax.swing.JButton btnSumMiercoles;
+    private javax.swing.JButton btnSumSabado;
+    private javax.swing.JButton btnSumViernes;
     private org.itson.utils.Combobox<Habitat> cbxHabitat;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -1014,16 +1717,37 @@ public class FrmRegistroItinerario extends javax.swing.JFrame {
     private javax.swing.JPanel pnlSalir;
     private javax.swing.JPanel pnlVaciarDatos;
     private javax.swing.JTable tblHabitats;
-    private org.itson.utils.TextFieldSuggestion txtDomingo;
+    private com.github.lgooddatepicker.components.TimePicker tpDomingo1;
+    private com.github.lgooddatepicker.components.TimePicker tpDomingo2;
+    private com.github.lgooddatepicker.components.TimePicker tpDomingo3;
+    private com.github.lgooddatepicker.components.TimePicker tpDomingo4;
+    private com.github.lgooddatepicker.components.TimePicker tpJueves1;
+    private com.github.lgooddatepicker.components.TimePicker tpJueves2;
+    private com.github.lgooddatepicker.components.TimePicker tpJueves3;
+    private com.github.lgooddatepicker.components.TimePicker tpJueves4;
+    private com.github.lgooddatepicker.components.TimePicker tpLunes1;
+    private com.github.lgooddatepicker.components.TimePicker tpLunes2;
+    private com.github.lgooddatepicker.components.TimePicker tpLunes3;
+    private com.github.lgooddatepicker.components.TimePicker tpLunes4;
+    private com.github.lgooddatepicker.components.TimePicker tpMartes1;
+    private com.github.lgooddatepicker.components.TimePicker tpMartes2;
+    private com.github.lgooddatepicker.components.TimePicker tpMartes3;
+    private com.github.lgooddatepicker.components.TimePicker tpMartes4;
+    private com.github.lgooddatepicker.components.TimePicker tpMiercoles1;
+    private com.github.lgooddatepicker.components.TimePicker tpMiercoles2;
+    private com.github.lgooddatepicker.components.TimePicker tpMiercoles3;
+    private com.github.lgooddatepicker.components.TimePicker tpMiercoles4;
+    private com.github.lgooddatepicker.components.TimePicker tpSabado1;
+    private com.github.lgooddatepicker.components.TimePicker tpSabado2;
+    private com.github.lgooddatepicker.components.TimePicker tpSabado3;
+    private com.github.lgooddatepicker.components.TimePicker tpSabado4;
+    private com.github.lgooddatepicker.components.TimePicker tpViernes1;
+    private com.github.lgooddatepicker.components.TimePicker tpViernes2;
+    private com.github.lgooddatepicker.components.TimePicker tpViernes3;
+    private com.github.lgooddatepicker.components.TimePicker tpViernes4;
     private javax.swing.JTextField txtDuracion;
-    private org.itson.utils.TextFieldSuggestion txtJueves;
     private javax.swing.JTextField txtLongitud;
-    private org.itson.utils.TextFieldSuggestion txtLunes;
-    private org.itson.utils.TextFieldSuggestion txtMartes;
-    private org.itson.utils.TextFieldSuggestion txtMiercoles;
     private javax.swing.JTextField txtNoVisitantes;
     private javax.swing.JTextField txtNombre;
-    private org.itson.utils.TextFieldSuggestion txtSabado;
-    private org.itson.utils.TextFieldSuggestion txtViernes;
     // End of variables declaration//GEN-END:variables
 }
