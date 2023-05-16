@@ -7,9 +7,11 @@ import org.bson.Document;
 import org.itson.GUI.FrmInicio;
 import org.itson.dominio.Habitat;
 import org.itson.dominio.Itinerario;
+import org.itson.interfaces.IGuiaDAO;
 import org.itson.interfaces.IHabitatsDAO;
 import org.itson.interfaces.IItinerariosDAO;
 import org.itson.persistencia.ConexionMongoDB;
+import org.itson.persistencia.GuiaDAO;
 import org.itson.persistencia.HabitatsDAO;
 import org.itson.persistencia.ItinerariosDAO;
 
@@ -28,6 +30,8 @@ public class Principal {
         ConexionMongoDB conexion = new ConexionMongoDB();
         //IHabitatsDAO habitatsDAO = new HabitatsDAO(conexion);
         IItinerariosDAO itinerariosDAO = new ItinerariosDAO(conexion);
+        IGuiaDAO GuiaDAO = new GuiaDAO(conexion);
+        GuiaDAO.insertarGuia();
 
         /* //INSERCIÓN DE HABITATS
         Habitat habitat1 = new Habitat();

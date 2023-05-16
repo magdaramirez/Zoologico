@@ -4,7 +4,6 @@
  */
 package org.itson.utils;
 
-import com.sun.glass.ui.Cursor;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
