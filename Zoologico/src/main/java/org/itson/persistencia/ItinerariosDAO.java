@@ -8,6 +8,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import java.util.LinkedList;
 import java.util.List;
+import org.bson.Document;
 import org.itson.dominio.Itinerario;
 import org.itson.interfaces.IItinerariosDAO;
 
@@ -47,6 +48,20 @@ public class ItinerariosDAO implements IItinerariosDAO {
         coleccion.find().into(itinerarios);
 
         return itinerarios;
+    }
+
+    @Override
+    public boolean obtenerItinerarios() {
+        // Obtener acceso a la colección
+        MongoCollection<Document> coleccion = BASE_DATOS.getCollection(NOMBRE_COLECCION);
+
+        // Verificar si la colección existe
+        if (coleccion != null) {
+            // Verificar si la colección no está vacía
+            return coleccion.countDocuments() > 0;
+        }
+
+        return false;
     }
 
 }

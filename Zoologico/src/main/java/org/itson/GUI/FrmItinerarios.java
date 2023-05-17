@@ -12,13 +12,16 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableModel;
 import org.itson.dominio.Itinerario;
+import org.itson.interfaces.IGuiaDAO;
 import org.itson.interfaces.IHabitatsDAO;
 import org.itson.interfaces.IItinerariosDAO;
 import org.itson.persistencia.ConexionMongoDB;
+import org.itson.persistencia.GuiaDAO;
 import org.itson.persistencia.ItinerariosDAO;
 
 /**
@@ -32,6 +35,8 @@ public class FrmItinerarios extends javax.swing.JFrame {
     int xMouse, yMouse;
     private int contador = 1;
 
+    private ConexionMongoDB conexion = new ConexionMongoDB();
+
     private final Color AMARILLO = new Color(255, 255, 153);
     private final Color GRIS = new Color(245, 245, 245);
     private final Color CAFE = new Color(102, 0, 0);
@@ -43,13 +48,19 @@ public class FrmItinerarios extends javax.swing.JFrame {
     private final String FLECHA_CAFE = "src\\main\\resources\\img\\flecha.png";
 
     private IHabitatsDAO persistenciaHabitats;
+    private IGuiaDAO persistenciaGuia;
+    private IItinerariosDAO persistenciaItinerario;
 
     /**
      * Método que crea FrmItinerarios y establece las configuraciones de diseño
      * de tblitinerarios.
      */
     public FrmItinerarios() {
+        persistenciaGuia = new GuiaDAO(conexion);
+        persistenciaItinerario = new ItinerariosDAO(conexion);
+        obtenerItinerarios();
         initComponents();
+        insertarDatosGuia();
         setTitle("Itinerarios");
         ImageIcon icon = new ImageIcon("src\\main\\resources\\img\\paw.png");
         this.setIconImage(icon.getImage());
@@ -63,6 +74,21 @@ public class FrmItinerarios extends javax.swing.JFrame {
         tblitinerarios.setRowHeight(40);
 
         llenarTablaItinerarios();
+    }
+
+    private void insertarDatosGuia() {
+        lblNombre.setText(persistenciaGuia.obtenerGuia().getNombre());
+    }
+
+    private void obtenerItinerarios() {
+        if (!persistenciaItinerario.obtenerItinerarios()) {
+            // La colección no existe
+            JOptionPane.showMessageDialog(this, "No existen colecciones disponibles.", "Error", JOptionPane.ERROR_MESSAGE);
+
+            // Redirigir al usuario a la ventana FrmRegistrarItinerario
+            abrirVentanaRegistro();
+            this.dispose();
+        }
     }
 
     private void llenarTablaItinerarios() {
@@ -134,7 +160,7 @@ public class FrmItinerarios extends javax.swing.JFrame {
      * Método que despliega FrmRegistrarItinerario.
      */
     public void abrirVentanaRegistro() {
-        new FrmRegistrarItinerario(this.persistenciaHabitats).setVisible(true);
+        new FrmRegistrarItinerario().setVisible(true);
         dispose();
     }
 
@@ -153,7 +179,6 @@ public class FrmItinerarios extends javax.swing.JFrame {
     private void initComponents() {
 
         pnlFondo = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblitinerarios = new javax.swing.JTable();
         pnlHeader = new javax.swing.JPanel();
@@ -161,11 +186,13 @@ public class FrmItinerarios extends javax.swing.JFrame {
         lblSalir = new javax.swing.JLabel();
         pnlRegresar = new javax.swing.JPanel();
         lblRegresar = new javax.swing.JLabel();
+        lblNombre = new javax.swing.JLabel();
         pnlRegistrarItinerario = new javax.swing.JPanel();
         lblRegistrarItinerario = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
@@ -173,11 +200,6 @@ public class FrmItinerarios extends javax.swing.JFrame {
 
         pnlFondo.setBackground(new java.awt.Color(255, 255, 153));
         pnlFondo.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        jLabel2.setFont(new java.awt.Font("Berlin Sans FB", 0, 50)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(102, 0, 0));
-        jLabel2.setText("Itinerarios");
-        pnlFondo.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 40, -1, -1));
 
         jScrollPane1.setBackground(new java.awt.Color(255, 255, 255));
         jScrollPane1.setBorder(null);
@@ -206,7 +228,7 @@ public class FrmItinerarios extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        tblitinerarios.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        tblitinerarios.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         tblitinerarios.setFocusable(false);
         tblitinerarios.setGridColor(new java.awt.Color(153, 153, 153));
         tblitinerarios.setSelectionBackground(new java.awt.Color(221, 192, 192));
@@ -242,7 +264,7 @@ public class FrmItinerarios extends javax.swing.JFrame {
         pnlHeader.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         pnlSalir.setBackground(new java.awt.Color(255, 255, 153));
-        pnlSalir.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        pnlSalir.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         pnlSalir.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 pnlSalirMouseClicked(evt);
@@ -255,9 +277,9 @@ public class FrmItinerarios extends javax.swing.JFrame {
             }
         });
 
+        lblSalir.setText("X");
         lblSalir.setFont(new java.awt.Font("Berlin Sans FB", 0, 24)); // NOI18N
         lblSalir.setForeground(new java.awt.Color(102, 0, 0));
-        lblSalir.setText("X");
 
         javax.swing.GroupLayout pnlSalirLayout = new javax.swing.GroupLayout(pnlSalir);
         pnlSalir.setLayout(pnlSalirLayout);
@@ -279,7 +301,7 @@ public class FrmItinerarios extends javax.swing.JFrame {
         pnlHeader.add(pnlSalir, new org.netbeans.lib.awtextra.AbsoluteConstraints(1010, 0, -1, -1));
 
         pnlRegresar.setBackground(new java.awt.Color(255, 255, 153));
-        pnlRegresar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        pnlRegresar.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         pnlRegresar.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 pnlRegresarMouseClicked(evt);
@@ -313,11 +335,15 @@ public class FrmItinerarios extends javax.swing.JFrame {
 
         pnlHeader.add(pnlRegresar, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 60, -1));
 
+        lblNombre.setFont(new java.awt.Font("Berlin Sans FB", 0, 30)); // NOI18N
+        lblNombre.setForeground(new java.awt.Color(102, 0, 0));
+        pnlHeader.add(lblNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 0, -1, 40));
+
         pnlFondo.add(pnlHeader, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1060, 40));
 
         pnlRegistrarItinerario.setBackground(new java.awt.Color(255, 255, 255));
         pnlRegistrarItinerario.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(102, 0, 0), 1, true));
-        pnlRegistrarItinerario.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        pnlRegistrarItinerario.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         pnlRegistrarItinerario.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 pnlRegistrarItinerarioMouseClicked(evt);
@@ -330,8 +356,8 @@ public class FrmItinerarios extends javax.swing.JFrame {
             }
         });
 
-        lblRegistrarItinerario.setFont(new java.awt.Font("Berlin Sans FB", 0, 18)); // NOI18N
         lblRegistrarItinerario.setText("Registrar Nuevo Itinerario");
+        lblRegistrarItinerario.setFont(new java.awt.Font("Berlin Sans FB", 0, 18)); // NOI18N
 
         jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/agregar.png"))); // NOI18N
 
@@ -363,6 +389,11 @@ public class FrmItinerarios extends javax.swing.JFrame {
 
         jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/huellas (1).png"))); // NOI18N
         pnlFondo.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(920, 50, -1, -1));
+
+        jLabel5.setFont(new java.awt.Font("Berlin Sans FB", 0, 50)); // NOI18N
+        jLabel5.setForeground(new java.awt.Color(102, 0, 0));
+        jLabel5.setText("Itinerarios");
+        pnlFondo.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 40, -1, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -487,10 +518,11 @@ public class FrmItinerarios extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lblNombre;
     private javax.swing.JLabel lblRegistrarItinerario;
     private javax.swing.JLabel lblRegresar;
     private javax.swing.JLabel lblSalir;

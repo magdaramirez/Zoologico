@@ -95,4 +95,15 @@ public class GuiaDAO implements IGuiaDAO {
 
         return null;
     }
+
+    @Override
+    public Guia obtenerGuia() {
+        // OBTENCIÓN DE ACCESO A LA COLECCIÓN
+        MongoCollection<Guia> coleccionGuias = BASE_DATOS.getCollection("guias", Guia.class);
+
+        // REALIZAR LA CONSULTA PARA OBTENER LA GUÍA
+        Guia guia = coleccionGuias.find().first();
+
+        return guia;
+    }
 }

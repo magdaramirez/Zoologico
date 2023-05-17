@@ -17,4 +17,6 @@ public interface IItinerariosDAO {
     Itinerario agregar(Itinerario itinerario);
 
     List<Itinerario> consultarTodos();
+    
+    boolean obtenerItinerarios();
 }

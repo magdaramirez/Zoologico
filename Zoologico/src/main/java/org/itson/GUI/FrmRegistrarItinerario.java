@@ -60,20 +60,17 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
     private final String VACIAR_CLARO = "src\\main\\resources\\img\\eliminar (1).png";
     private final String VACIAR_OSCURO = "src\\main\\resources\\img\\eliminar.png";
 
-    private final IHabitatsDAO persistencia;
-
     /**
      *
      * Método constructor de la clase FrmRegistrarItinerario.
      *
      * @param persistencia El objeto que maneja la persistencia de los datos.
      */
-    public FrmRegistrarItinerario(IHabitatsDAO persistencia) {
+    public FrmRegistrarItinerario() {
         initComponents();
         setTitle("Registro de Itinerario");
         ImageIcon icon = new ImageIcon("src\\main\\resources\\img\\paw.png");
         this.setIconImage(icon.getImage());
-        this.persistencia = persistencia;
         this.llenarTablaHabitats();
         this.cantLunes = 1;
         this.cantMartes = 1;
