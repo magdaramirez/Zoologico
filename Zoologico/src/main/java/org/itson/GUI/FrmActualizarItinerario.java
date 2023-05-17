@@ -451,7 +451,6 @@ public class FrmActualizarItinerario extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
-        setPreferredSize(new java.awt.Dimension(1000, 980));
 
         pnlFondo.setBackground(new java.awt.Color(255, 255, 153));
         pnlFondo.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -880,7 +879,7 @@ public class FrmActualizarItinerario extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(pnlFondo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(pnlFondo, javax.swing.GroupLayout.DEFAULT_SIZE, 1009, Short.MAX_VALUE)
         );
 
         pack();

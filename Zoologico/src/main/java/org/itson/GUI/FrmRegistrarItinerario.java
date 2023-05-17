@@ -902,6 +902,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
+        setPreferredSize(new java.awt.Dimension(1000, 1004));
         setResizable(false);
 
         pnlFondo.setBackground(new java.awt.Color(255, 255, 153));
@@ -1076,11 +1077,11 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
         lblNoVisitantes.setText("No. máximo de visitantes");
         pnlFondo.add(lblNoVisitantes, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 400, -1, -1));
 
+        txtNombre.setText("Ingrese el nombre del itinerario");
         txtNombre.setBackground(new java.awt.Color(255, 255, 153));
+        txtNombre.setBorder(null);
         txtNombre.setFont(new java.awt.Font("Berlin Sans FB", 0, 14)); // NOI18N
         txtNombre.setForeground(new java.awt.Color(204, 204, 204));
-        txtNombre.setText("Ingrese el nombre del itinerario");
-        txtNombre.setBorder(null);
         txtNombre.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 txtNombreMousePressed(evt);
@@ -1100,11 +1101,11 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
         });
         pnlFondo.add(txtDuracion, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 260, 310, -1));
 
+        txtLongitud.setText("Ingrese la longitud del itinerario");
         txtLongitud.setBackground(new java.awt.Color(255, 255, 153));
+        txtLongitud.setBorder(null);
         txtLongitud.setFont(new java.awt.Font("Berlin Sans FB", 0, 14)); // NOI18N
         txtLongitud.setForeground(new java.awt.Color(204, 204, 204));
-        txtLongitud.setText("Ingrese la longitud del itinerario");
-        txtLongitud.setBorder(null);
         txtLongitud.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 txtLongitudMousePressed(evt);
@@ -1112,11 +1113,11 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
         });
         pnlFondo.add(txtLongitud, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 340, 310, -1));
 
+        txtNoVisitantes.setText("Ingrese el número máximo de visitantes");
         txtNoVisitantes.setBackground(new java.awt.Color(255, 255, 153));
+        txtNoVisitantes.setBorder(null);
         txtNoVisitantes.setFont(new java.awt.Font("Berlin Sans FB", 0, 14)); // NOI18N
         txtNoVisitantes.setForeground(new java.awt.Color(204, 204, 204));
-        txtNoVisitantes.setText("Ingrese el número máximo de visitantes");
-        txtNoVisitantes.setBorder(null);
         txtNoVisitantes.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 txtNoVisitantesMousePressed(evt);
@@ -1214,7 +1215,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        pnlFondo.add(pnlGuardar, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 690, 130, 40));
+        pnlFondo.add(pnlGuardar, new org.netbeans.lib.awtextra.AbsoluteConstraints(840, 940, 130, 40));
 
         jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/pajaros.png"))); // NOI18N
         pnlFondo.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, -1, -1));
@@ -1248,7 +1249,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
         lblUnderline.setText("____________");
         pnlVaciarDatos.add(lblUnderline, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 10, 100, -1));
 
-        pnlFondo.add(pnlVaciarDatos, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 510, 140, 40));
+        pnlFondo.add(pnlVaciarDatos, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 940, 140, 40));
         pnlFondo.add(tpMiercoles1, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 680, -1, -1));
 
         btnSumDomingo.setText("+");
@@ -1398,7 +1399,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(pnlFondo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(pnlFondo, javax.swing.GroupLayout.DEFAULT_SIZE, 1004, Short.MAX_VALUE)
         );
 
         pack();
