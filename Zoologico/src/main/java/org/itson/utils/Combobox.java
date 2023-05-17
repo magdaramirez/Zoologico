@@ -25,24 +25,30 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JList;
-import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import javax.swing.plaf.basic.BasicComboBoxUI;
-import javax.swing.plaf.basic.BasicComboPopup;
-import javax.swing.plaf.basic.ComboPopup;
 import org.jdesktop.animation.timing.Animator;
 import org.jdesktop.animation.timing.TimingTarget;
 import org.jdesktop.animation.timing.TimingTargetAdapter;
 
+/**
+ *
+ * Clase que proporciona una funcionalidad y apariencia personalizada a un
+ * JComboBox.
+ *
+ * @author Magda Ramírez - 233523, Misael Marchena - 233418, Ildefonso Lares -
+ * 233381, Esteban Duran - 233267
+ * @param <E> El tipo de elemento que contiene el JCombobox.
+ */
 public class Combobox<E> extends JComboBox<E> {
 
     public String getLabeText() {
         return labeText;
     }
 
+    
     public void setLabeText(String labeText) {
         this.labeText = labeText;
     }
@@ -59,6 +65,11 @@ public class Combobox<E> extends JComboBox<E> {
     private Color lineColor = new Color(3, 155, 216);
     private boolean mouseOver;
 
+    /**
+     *
+     * Método constructor de la clase Combobox. Configura la apariencia y
+     * comportamiento del JComboBox.
+     */
     public Combobox() {
         setBackground(Color.WHITE);
         setBorder(new EmptyBorder(15, 3, 5, 3));

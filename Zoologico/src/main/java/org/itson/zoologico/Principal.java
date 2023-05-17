@@ -16,8 +16,10 @@ import org.itson.persistencia.HabitatsDAO;
 import org.itson.persistencia.ItinerariosDAO;
 
 /**
+ * Clase principal.
  *
- * @author magda
+ * @author Magda Ramírez - 233523, Misael Marchena - 233418, Ildefonso Lares -
+ * 233381, Esteban Duran - 233267
  */
 public class Principal {
 
@@ -61,7 +63,6 @@ public class Principal {
         Habitat habitat7 = new Habitat();
         habitat7.setNombre("de Madagascar");
         habitatsDAO.agregar(habitat7);*/
-        
         //INSERCIÓN DE ITINERARIOS
         /*Itinerario itinerario1 = new Itinerario();
         itinerario1.setNombre("Prueba");
@@ -70,7 +71,7 @@ public class Principal {
         itinerario1.setNoVisitantes(24);
         itinerariosDAO.agregar(itinerario1);*/
 
-        /* Set the Nimbus look and feel */
+ /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 

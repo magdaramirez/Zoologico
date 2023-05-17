@@ -23,7 +23,7 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="aBtnEditar" min="-2" max="-2" attributes="0"/>
+              <Component id="aBtnActualizar" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="aBtnImprimir" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
@@ -36,19 +36,19 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Component id="aBtnVisualizar" min="-2" max="-2" attributes="0"/>
           <Component id="aBtnImprimir" min="-2" max="-2" attributes="0"/>
-          <Component id="aBtnEditar" min="-2" max="-2" attributes="0"/>
+          <Component id="aBtnActualizar" min="-2" max="-2" attributes="0"/>
       </Group>
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Component class="org.itson.utils.ActionButton" name="aBtnEditar">
+    <Component class="org.itson.utils.ActionButton" name="aBtnActualizar">
       <Properties>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
           <Image iconType="3" name="/img/lapiz (1).png"/>
         </Property>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="aBtnEditarActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="aBtnActualizarActionPerformed"/>
       </Events>
     </Component>
     <Component class="org.itson.utils.ActionButton" name="aBtnImprimir">

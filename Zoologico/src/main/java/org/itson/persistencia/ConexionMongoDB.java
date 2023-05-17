@@ -15,7 +15,8 @@ import org.bson.codecs.pojo.PojoCodecProvider;
 
 /**
  *
- * @author magda
+ * @author Magda Ramírez - 233523, Misael Marchena - 233418, Ildefonso Lares -
+ * 233381, Esteban Duran - 233267
  */
 public class ConexionMongoDB {
 

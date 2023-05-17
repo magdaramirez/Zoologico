@@ -24,7 +24,8 @@ import org.itson.persistencia.ItinerariosDAO;
 /**
  * Clase encargada de la ventana Itinerarios.
  *
- * @author Magda Ramírez - 233523
+ * @author Magda Ramírez - 233523, Misael Marchena - 233418, Ildefonso Lares -
+ * 233381, Esteban Duran - 233267
  */
 public class FrmItinerarios extends javax.swing.JFrame {
 
@@ -34,19 +35,13 @@ public class FrmItinerarios extends javax.swing.JFrame {
     private final Color AMARILLO = new Color(255, 255, 153);
     private final Color GRIS = new Color(245, 245, 245);
     private final Color CAFE = new Color(102, 0, 0);
-    private final Color GRIS_CLARO = new Color(204, 204, 204);
 
     private final int BORDE_GRUESO = 3;
     private final int BORDE_ESTRECHO = 1;
 
     private final String FLECHA_BLANCA = "src\\main\\resources\\img\\flecha (1).png";
     private final String FLECHA_CAFE = "src\\main\\resources\\img\\flecha.png";
-    private final String AGREGAR_CLARO = "src\\main\\resources\\img\\boton-agregar (1).png";
-    private final String AGREGAR_OSCURO = "src\\main\\resources\\img\\boton-agregar (2).png";
-    private final String VACIAR_CLARO = "src\\main\\resources\\img\\eliminar (1).png";
-    private final String VACIAR_OSCURO = "src\\main\\resources\\img\\eliminar.png";
 
-    private IItinerariosDAO persistenciaItinerarios;
     private IHabitatsDAO persistenciaHabitats;
 
     /**
@@ -55,6 +50,7 @@ public class FrmItinerarios extends javax.swing.JFrame {
      */
     public FrmItinerarios() {
         initComponents();
+        setTitle("Itinerarios");
         ImageIcon icon = new ImageIcon("src\\main\\resources\\img\\paw.png");
         this.setIconImage(icon.getImage());
 
@@ -135,10 +131,10 @@ public class FrmItinerarios extends javax.swing.JFrame {
     }
 
     /**
-     * Método que despliega FrmRegistroItinerario.
+     * Método que despliega FrmRegistrarItinerario.
      */
     public void abrirVentanaRegistro() {
-        new FrmRegistroItinerario(this.persistenciaHabitats).setVisible(true);
+        new FrmRegistrarItinerario(this.persistenciaHabitats).setVisible(true);
         dispose();
     }
 
@@ -186,7 +182,7 @@ public class FrmItinerarios extends javax.swing.JFrame {
         jScrollPane1.setBackground(new java.awt.Color(255, 255, 255));
         jScrollPane1.setBorder(null);
 
-        tblitinerarios.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255)));
+        tblitinerarios.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(102, 0, 0)));
         tblitinerarios.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -214,7 +210,7 @@ public class FrmItinerarios extends javax.swing.JFrame {
         tblitinerarios.setFocusable(false);
         tblitinerarios.setGridColor(new java.awt.Color(153, 153, 153));
         tblitinerarios.setSelectionBackground(new java.awt.Color(221, 192, 192));
-        tblitinerarios.setSelectionForeground(new java.awt.Color(255, 255, 255));
+        tblitinerarios.setSelectionForeground(new java.awt.Color(102, 0, 0));
         tblitinerarios.setShowHorizontalLines(true);
         tblitinerarios.setShowVerticalLines(true);
         tblitinerarios.getTableHeader().setResizingAllowed(false);
@@ -360,7 +356,7 @@ public class FrmItinerarios extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        pnlFondo.add(pnlRegistrarItinerario, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 560, 250, 40));
+        pnlFondo.add(pnlRegistrarItinerario, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 560, 250, 40));
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/huellas (1).png"))); // NOI18N
         pnlFondo.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 530, -1, -1));

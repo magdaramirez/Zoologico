@@ -14,14 +14,17 @@ import javax.swing.border.Border;
 /**
  * Clase encargada de la ventana Inicio.
  *
- * @author Magda Ramírez - 233523
+ * @author Magda Ramírez - 233523, Misael Marchena - 233418, Ildefonso Lares -
+ * 233381, Esteban Duran - 233267
  */
 public class FrmInicio extends javax.swing.JFrame {
 
     private int xMouse, yMouse;
+
     private final Color AMARILLO = new Color(255, 255, 153);
     private final Color GRIS = new Color(245, 245, 245);
     private final Color CAFE = new Color(102, 0, 0);
+
     private final int BORDE_GRUESO = 3;
     private final int BORDE_ESTRECHO = 1;
 
@@ -30,6 +33,7 @@ public class FrmInicio extends javax.swing.JFrame {
      */
     public FrmInicio() {
         initComponents();
+        setTitle("Inicio");
         ImageIcon icon = new ImageIcon("src\\main\\resources\\img\\paw.png");
         this.setIconImage(icon.getImage());
     }

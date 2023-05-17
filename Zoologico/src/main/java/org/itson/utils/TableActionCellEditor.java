@@ -12,7 +12,8 @@ import org.itson.GUI.PnlBotones;
 
 /**
  *
- * @author magda
+ * @author Magda Ramírez - 233523, Misael Marchena - 233418, Ildefonso Lares -
+ * 233381, Esteban Duran - 233267
  */
 public class TableActionCellEditor extends DefaultCellEditor {
 
