@@ -162,7 +162,7 @@ public class FrmItinerarios extends javax.swing.JFrame {
      * Método que despliega FrmRegistrarItinerario.
      */
     public void abrirVentanaRegistro() {
-        new FrmRegistrarItinerario().setVisible(true);
+        new FrmRegistrarItinerario(false).setVisible(true);
         dispose();
     }
 

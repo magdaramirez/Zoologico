@@ -52,6 +52,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
 
     private final int BORDE_GRUESO = 3;
     private final int BORDE_ESTRECHO = 1;
+    private boolean vacio;
 
     private final String FLECHA_BLANCA = "src\\main\\resources\\img\\flecha (1).png";
     private final String FLECHA_CAFE = "src\\main\\resources\\img\\flecha.png";
@@ -66,7 +67,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
      *
      * @param persistencia El objeto que maneja la persistencia de los datos.
      */
-    public FrmRegistrarItinerario() {
+    public FrmRegistrarItinerario(boolean vacio) {
         initComponents();
         setTitle("Registro de Itinerario");
         ImageIcon icon = new ImageIcon("src\\main\\resources\\img\\paw.png");
@@ -79,6 +80,8 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
         this.cantViernes = 1;
         this.cantSabado = 1;
         this.cantDomingo = 1;
+        this.vacio = vacio;
+        this.validarVacio();
         this.visualizarTimePicker();
         this.btnRestaLunes.setEnabled(false);
         this.btnRestaMartes.setEnabled(false);
@@ -367,7 +370,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
             List<Horario> listaHorarios = new LinkedList<>();
             LocalDate currentDate = LocalDate.now();
 
-            if (this.tpLunes1.getText() != null) {
+            if (!this.tpLunes1.getText().isBlank()) {
                 LocalDateTime localDateTime = this.tpLunes1.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
@@ -376,7 +379,8 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
                 Date horaFin = calendar.getTime();
                 Horario horario = new Horario("Lunes", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            } else if (this.tpLunes2.getText() != null) {
+            }
+            if (!this.tpLunes2.getText().isBlank()) {
                 LocalDateTime localDateTime = this.tpLunes2.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
@@ -385,7 +389,8 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
                 Date horaFin = calendar.getTime();
                 Horario horario = new Horario("Lunes", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            } else if (this.tpLunes3.getText() != null) {
+            }
+            if (!this.tpLunes3.getText().isBlank()) {
                 LocalDateTime localDateTime = this.tpLunes3.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
@@ -394,7 +399,8 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
                 Date horaFin = calendar.getTime();
                 Horario horario = new Horario("Lunes", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            } else if (this.tpLunes4.getText() != null) {
+            }
+            if (!this.tpLunes4.getText().isBlank()) {
                 LocalDateTime localDateTime = this.tpLunes4.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
@@ -403,221 +409,243 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
                 Date horaFin = calendar.getTime();
                 Horario horario = new Horario("Lunes", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            } else if (this.tpMartes1.getText() != null) {
+            } 
+            if (!this.tpMartes1.getText().isBlank()) {
                 LocalDateTime localDateTime = this.tpMartes1.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(horaInicio);
                 calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
                 Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Lunes", horaInicio, horaFin);
+                Horario horario = new Horario("Martes", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            } else if (this.tpMartes2.getText() != null) {
+            } 
+            if (!this.tpMartes2.getText().isBlank()) {
                 LocalDateTime localDateTime = this.tpMartes2.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(horaInicio);
                 calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
                 Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Lunes", horaInicio, horaFin);
+                Horario horario = new Horario("Martes", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            } else if (this.tpMartes3.getText() != null) {
+            }
+            if (!this.tpMartes3.getText().isBlank()) {
                 LocalDateTime localDateTime = this.tpMartes3.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(horaInicio);
                 calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
                 Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Lunes", horaInicio, horaFin);
+                Horario horario = new Horario("Martes", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            } else if (this.tpMartes4.getText() != null) {
+            }
+            if (!this.tpMartes4.getText().isBlank()) {
                 LocalDateTime localDateTime = this.tpMartes4.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(horaInicio);
                 calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
                 Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Lunes", horaInicio, horaFin);
+                Horario horario = new Horario("Martes", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            } else if (this.tpMiercoles1.getText() != null) {
+            }
+            if (!this.tpMiercoles1.getText().isBlank()) {
                 LocalDateTime localDateTime = this.tpMiercoles1.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(horaInicio);
                 calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
                 Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Lunes", horaInicio, horaFin);
+                Horario horario = new Horario("Miércoles", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            } else if (this.tpMiercoles2.getText() != null) {
+            }
+            if (!this.tpMiercoles2.getText().isBlank()) {
                 LocalDateTime localDateTime = this.tpMiercoles2.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(horaInicio);
                 calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
                 Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Lunes", horaInicio, horaFin);
+                Horario horario = new Horario("Miércoles", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            } else if (this.tpMiercoles3.getText() != null) {
+            } 
+            if (!this.tpMiercoles3.getText().isBlank()) {
                 LocalDateTime localDateTime = this.tpMiercoles3.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(horaInicio);
                 calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
                 Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Lunes", horaInicio, horaFin);
+                Horario horario = new Horario("Miércoles", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            } else if (this.tpMiercoles4.getText() != null) {
+            }
+            if (!this.tpMiercoles4.getText().isBlank()) {
                 LocalDateTime localDateTime = this.tpMiercoles4.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(horaInicio);
                 calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
                 Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Lunes", horaInicio, horaFin);
+                Horario horario = new Horario("Miércoles", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            } else if (this.tpJueves1.getText() != null) {
+            } else if (!this.tpJueves1.getText().isBlank()) {
                 LocalDateTime localDateTime = this.tpJueves1.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(horaInicio);
                 calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
                 Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Lunes", horaInicio, horaFin);
+                Horario horario = new Horario("Jueves", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            } else if (this.tpJueves2.getText() != null) {
+            } else if (!this.tpJueves2.getText().isBlank()) {
                 LocalDateTime localDateTime = this.tpJueves2.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(horaInicio);
                 calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
                 Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Lunes", horaInicio, horaFin);
+                Horario horario = new Horario("Jueves", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            } else if (this.tpJueves3.getText() != null) {
+            }
+            if (!this.tpJueves3.getText().isBlank()) {
                 LocalDateTime localDateTime = this.tpJueves3.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(horaInicio);
                 calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
                 Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Lunes", horaInicio, horaFin);
+                Horario horario = new Horario("Jueves", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            } else if (this.tpJueves4.getText() != null) {
+            }
+            if (!this.tpJueves4.getText().isBlank()) {
                 LocalDateTime localDateTime = this.tpJueves4.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(horaInicio);
                 calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
                 Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Lunes", horaInicio, horaFin);
+                Horario horario = new Horario("Jueves", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            } else if (this.tpViernes1.getText() != null) {
+            }
+            if (!this.tpViernes1.getText().isBlank()) {
                 LocalDateTime localDateTime = this.tpViernes1.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(horaInicio);
                 calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
                 Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Lunes", horaInicio, horaFin);
+                Horario horario = new Horario("Viernes", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            } else if (this.tpViernes2.getText() != null) {
+            }
+            if (!this.tpViernes2.getText().isBlank()) {
                 LocalDateTime localDateTime = this.tpViernes2.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(horaInicio);
                 calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
                 Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Lunes", horaInicio, horaFin);
+                Horario horario = new Horario("Viernes", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            } else if (this.tpViernes3.getText() != null) {
+            }
+            if (!this.tpViernes3.getText().isBlank()) {
                 LocalDateTime localDateTime = this.tpViernes3.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(horaInicio);
                 calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
                 Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Lunes", horaInicio, horaFin);
+                Horario horario = new Horario("Viernes", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            } else if (this.tpViernes4.getText() != null) {
+            }
+            if (!this.tpViernes4.getText().isBlank()) {
                 LocalDateTime localDateTime = this.tpViernes4.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(horaInicio);
                 calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
                 Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Lunes", horaInicio, horaFin);
+                Horario horario = new Horario("Viernes", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            } else if (this.tpSabado1.getText() != null) {
+            }
+            if (!this.tpSabado1.getText().isBlank()) {
                 LocalDateTime localDateTime = this.tpSabado1.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(horaInicio);
                 calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
                 Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Lunes", horaInicio, horaFin);
+                Horario horario = new Horario("Sábado", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            } else if (this.tpSabado2.getText() != null) {
+            }
+            if (!this.tpSabado2.getText().isBlank()) {
                 LocalDateTime localDateTime = this.tpSabado2.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(horaInicio);
                 calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
                 Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Lunes", horaInicio, horaFin);
+                Horario horario = new Horario("Sábado", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            } else if (this.tpSabado3.getText() != null) {
+            }
+            if (!this.tpSabado3.getText().isBlank()) {
                 LocalDateTime localDateTime = this.tpSabado3.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(horaInicio);
                 calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
                 Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Lunes", horaInicio, horaFin);
+                Horario horario = new Horario("Sábado", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            } else if (this.tpSabado4.getText() != null) {
+            }
+            if (!this.tpSabado4.getText().isBlank()) {
                 LocalDateTime localDateTime = this.tpSabado4.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(horaInicio);
                 calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
                 Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Lunes", horaInicio, horaFin);
+                Horario horario = new Horario("Sábado", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            } else if (this.tpDomingo1.getText() != null) {
+            }
+            if (!this.tpDomingo1.getText().isBlank()) {
                 LocalDateTime localDateTime = this.tpDomingo1.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(horaInicio);
                 calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
                 Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Lunes", horaInicio, horaFin);
+                Horario horario = new Horario("Domingo", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            } else if (this.tpDomingo2.getText() != null) {
+            }
+            if (!this.tpDomingo2.getText().isBlank()) {
                 LocalDateTime localDateTime = this.tpDomingo2.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(horaInicio);
                 calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
                 Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Lunes", horaInicio, horaFin);
+                Horario horario = new Horario("Domingo", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            } else if (this.tpDomingo3.getText() != null) {
+            }
+            if (!this.tpDomingo3.getText().isBlank()) {
                 LocalDateTime localDateTime = this.tpDomingo3.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(horaInicio);
                 calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
                 Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Lunes", horaInicio, horaFin);
+                Horario horario = new Horario("Domingo", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            } else if (this.tpDomingo4.getText() != null) {
+            }
+            if (!this.tpDomingo4.getText().isBlank()) {
                 LocalDateTime localDateTime = this.tpDomingo4.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(horaInicio);
                 calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
                 Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Lunes", horaInicio, horaFin);
+                Horario horario = new Horario("Domingo", horaInicio, horaFin);
                 listaHorarios.add(horario);
             }
             List<Zona> listaZonas = new LinkedList<>();
@@ -775,6 +803,12 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
         dispose();
     }
 
+    public void validarVacio() {
+        if (vacio) {
+            pnlRegresar.setVisible(false);
+        }
+    }
+
     /**
      * Método que establece un ícono a un JLabel.
      *
@@ -787,6 +821,11 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
 
     private void salirDelPrograma() {
         System.exit(0);
+    }
+
+    private void restaurarHabitats() {
+        llenarTablaHabitats();
+        lblAgregar.setVisible(true);
     }
 
     @SuppressWarnings("unchecked")
@@ -1551,6 +1590,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
      */
     private void pnlVaciarDatosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlVaciarDatosMouseClicked
         vaciarDatos();
+        restaurarHabitats();
     }//GEN-LAST:event_pnlVaciarDatosMouseClicked
     /**
      * Método que al entrar el mouse a pnlVaciarDatos ejecuta los métodos

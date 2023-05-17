@@ -97,8 +97,8 @@ public class FrmInicio extends javax.swing.JFrame {
         panel.setBorder(border);
     }
 
-    public void abrirVentanaRegistro() {
-        new FrmRegistrarItinerario().setVisible(true);
+    public void abrirVentanaRegistro(boolean vacio) {
+        new FrmRegistrarItinerario(vacio).setVisible(true);
         dispose();
     }
 
@@ -345,7 +345,7 @@ public class FrmInicio extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "No existen colecciones disponibles.", "Error", JOptionPane.ERROR_MESSAGE);
 
             // Redirigir al usuario a la ventana FrmRegistrarItinerario
-            abrirVentanaRegistro();
+            abrirVentanaRegistro(true);
             this.dispose();
         } else {
             abrirVentanaItinerarios();
