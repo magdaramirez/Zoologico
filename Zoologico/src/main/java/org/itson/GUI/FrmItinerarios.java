@@ -35,7 +35,7 @@ public class FrmItinerarios extends javax.swing.JFrame {
     int xMouse, yMouse;
     private int contador = 1;
 
-    private ConexionMongoDB conexion = new ConexionMongoDB();
+    private final ConexionMongoDB conexion = new ConexionMongoDB();
 
     private final Color AMARILLO = new Color(255, 255, 153);
     private final Color GRIS = new Color(245, 245, 245);
@@ -48,8 +48,8 @@ public class FrmItinerarios extends javax.swing.JFrame {
     private final String FLECHA_CAFE = "src\\main\\resources\\img\\flecha.png";
 
     private IHabitatsDAO persistenciaHabitats;
-    private IGuiaDAO persistenciaGuia;
-    private IItinerariosDAO persistenciaItinerario;
+    private final IGuiaDAO persistenciaGuia;
+    private final IItinerariosDAO persistenciaItinerario;
 
     /**
      * Método que crea FrmItinerarios y establece las configuraciones de diseño
@@ -60,7 +60,7 @@ public class FrmItinerarios extends javax.swing.JFrame {
         persistenciaItinerario = new ItinerariosDAO(conexion);
         obtenerItinerarios();
         initComponents();
-        insertarDatosGuia();
+        insertarDatosFormularioGuia();
         setTitle("Itinerarios");
         ImageIcon icon = new ImageIcon("src\\main\\resources\\img\\paw.png");
         this.setIconImage(icon.getImage());
@@ -76,7 +76,7 @@ public class FrmItinerarios extends javax.swing.JFrame {
         llenarTablaItinerarios();
     }
 
-    private void insertarDatosGuia() {
+    private void insertarDatosFormularioGuia() {
         lblNombre.setText(persistenciaGuia.obtenerGuia().getNombre());
     }
 
@@ -104,7 +104,9 @@ public class FrmItinerarios extends javax.swing.JFrame {
             Object[] fila = {
                 contador++,
                 itinerario.getNombre(),
-                itinerario.getNoVisitantes()
+                itinerario.getDuracion(),
+                itinerario.getNoVisitantes(),
+                itinerario.getListaHorarios()
             };
             modelo.addRow(fila);
         }

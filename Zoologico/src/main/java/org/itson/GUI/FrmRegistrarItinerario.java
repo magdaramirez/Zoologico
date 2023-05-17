@@ -333,7 +333,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
             erroresValidacion.add("La duración NO es número entero");
         }
         if (Validadores.excedeNoVisitantes(noVisitantes)) {
-            erroresValidacion.add("El número de visitantes es 25 máximo");
+            erroresValidacion.add("El número de visitantes es 30 máximo");
         }
 
         return erroresValidacion;
@@ -376,8 +376,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
                 Date horaFin = calendar.getTime();
                 Horario horario = new Horario("Lunes", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            }
-            if (this.tpLunes2.getText() != null) {
+            } else if (this.tpLunes2.getText() != null) {
                 LocalDateTime localDateTime = this.tpLunes2.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
@@ -386,8 +385,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
                 Date horaFin = calendar.getTime();
                 Horario horario = new Horario("Lunes", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            }
-            if (this.tpLunes3.getText() != null) {
+            } else if (this.tpLunes3.getText() != null) {
                 LocalDateTime localDateTime = this.tpLunes3.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
@@ -396,8 +394,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
                 Date horaFin = calendar.getTime();
                 Horario horario = new Horario("Lunes", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            }
-            if (this.tpLunes4.getText() != null) {
+            } else if (this.tpLunes4.getText() != null) {
                 LocalDateTime localDateTime = this.tpLunes4.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
@@ -406,8 +403,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
                 Date horaFin = calendar.getTime();
                 Horario horario = new Horario("Lunes", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            }
-            if (this.tpMartes1.getText() != null) {
+            } else if (this.tpMartes1.getText() != null) {
                 LocalDateTime localDateTime = this.tpMartes1.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
@@ -416,8 +412,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
                 Date horaFin = calendar.getTime();
                 Horario horario = new Horario("Lunes", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            }
-            if (this.tpMartes2.getText() != null) {
+            } else if (this.tpMartes2.getText() != null) {
                 LocalDateTime localDateTime = this.tpMartes2.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
@@ -426,8 +421,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
                 Date horaFin = calendar.getTime();
                 Horario horario = new Horario("Lunes", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            }
-            if (this.tpMartes3.getText() != null) {
+            } else if (this.tpMartes3.getText() != null) {
                 LocalDateTime localDateTime = this.tpMartes3.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
@@ -436,8 +430,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
                 Date horaFin = calendar.getTime();
                 Horario horario = new Horario("Lunes", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            }
-            if (this.tpMartes4.getText() != null) {
+            } else if (this.tpMartes4.getText() != null) {
                 LocalDateTime localDateTime = this.tpMartes4.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
@@ -446,8 +439,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
                 Date horaFin = calendar.getTime();
                 Horario horario = new Horario("Lunes", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            }
-            if (this.tpMiercoles1.getText() != null) {
+            } else if (this.tpMiercoles1.getText() != null) {
                 LocalDateTime localDateTime = this.tpMiercoles1.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
@@ -456,8 +448,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
                 Date horaFin = calendar.getTime();
                 Horario horario = new Horario("Lunes", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            }
-            if (this.tpMiercoles2.getText() != null) {
+            } else if (this.tpMiercoles2.getText() != null) {
                 LocalDateTime localDateTime = this.tpMiercoles2.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
@@ -466,8 +457,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
                 Date horaFin = calendar.getTime();
                 Horario horario = new Horario("Lunes", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            }
-            if (this.tpMiercoles3.getText() != null) {
+            } else if (this.tpMiercoles3.getText() != null) {
                 LocalDateTime localDateTime = this.tpMiercoles3.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
@@ -476,8 +466,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
                 Date horaFin = calendar.getTime();
                 Horario horario = new Horario("Lunes", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            }
-            if (this.tpMiercoles4.getText() != null) {
+            } else if (this.tpMiercoles4.getText() != null) {
                 LocalDateTime localDateTime = this.tpMiercoles4.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
@@ -486,8 +475,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
                 Date horaFin = calendar.getTime();
                 Horario horario = new Horario("Lunes", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            }
-            if (this.tpJueves1.getText() != null) {
+            } else if (this.tpJueves1.getText() != null) {
                 LocalDateTime localDateTime = this.tpJueves1.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
@@ -496,8 +484,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
                 Date horaFin = calendar.getTime();
                 Horario horario = new Horario("Lunes", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            }
-            if (this.tpJueves2.getText() != null) {
+            } else if (this.tpJueves2.getText() != null) {
                 LocalDateTime localDateTime = this.tpJueves2.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
@@ -506,8 +493,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
                 Date horaFin = calendar.getTime();
                 Horario horario = new Horario("Lunes", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            }
-            if (this.tpJueves3.getText() != null) {
+            } else if (this.tpJueves3.getText() != null) {
                 LocalDateTime localDateTime = this.tpJueves3.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
@@ -516,8 +502,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
                 Date horaFin = calendar.getTime();
                 Horario horario = new Horario("Lunes", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            }
-            if (this.tpJueves4.getText() != null) {
+            } else if (this.tpJueves4.getText() != null) {
                 LocalDateTime localDateTime = this.tpJueves4.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
@@ -526,8 +511,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
                 Date horaFin = calendar.getTime();
                 Horario horario = new Horario("Lunes", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            }
-            if (this.tpViernes1.getText() != null) {
+            } else if (this.tpViernes1.getText() != null) {
                 LocalDateTime localDateTime = this.tpViernes1.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
@@ -536,8 +520,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
                 Date horaFin = calendar.getTime();
                 Horario horario = new Horario("Lunes", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            }
-            if (this.tpViernes2.getText() != null) {
+            } else if (this.tpViernes2.getText() != null) {
                 LocalDateTime localDateTime = this.tpViernes2.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
@@ -546,8 +529,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
                 Date horaFin = calendar.getTime();
                 Horario horario = new Horario("Lunes", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            }
-            if (this.tpViernes3.getText() != null) {
+            } else if (this.tpViernes3.getText() != null) {
                 LocalDateTime localDateTime = this.tpViernes3.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
@@ -556,8 +538,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
                 Date horaFin = calendar.getTime();
                 Horario horario = new Horario("Lunes", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            }
-            if (this.tpViernes4.getText() != null) {
+            } else if (this.tpViernes4.getText() != null) {
                 LocalDateTime localDateTime = this.tpViernes4.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
@@ -566,8 +547,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
                 Date horaFin = calendar.getTime();
                 Horario horario = new Horario("Lunes", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            }
-            if (this.tpSabado1.getText() != null) {
+            } else if (this.tpSabado1.getText() != null) {
                 LocalDateTime localDateTime = this.tpSabado1.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
@@ -576,8 +556,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
                 Date horaFin = calendar.getTime();
                 Horario horario = new Horario("Lunes", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            }
-            if (this.tpSabado2.getText() != null) {
+            } else if (this.tpSabado2.getText() != null) {
                 LocalDateTime localDateTime = this.tpSabado2.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
@@ -586,8 +565,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
                 Date horaFin = calendar.getTime();
                 Horario horario = new Horario("Lunes", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            }
-            if (this.tpSabado3.getText() != null) {
+            } else if (this.tpSabado3.getText() != null) {
                 LocalDateTime localDateTime = this.tpSabado3.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
@@ -596,8 +574,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
                 Date horaFin = calendar.getTime();
                 Horario horario = new Horario("Lunes", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            }
-            if (this.tpSabado4.getText() != null) {
+            } else if (this.tpSabado4.getText() != null) {
                 LocalDateTime localDateTime = this.tpSabado4.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
@@ -606,8 +583,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
                 Date horaFin = calendar.getTime();
                 Horario horario = new Horario("Lunes", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            }
-            if (this.tpDomingo1.getText() != null) {
+            } else if (this.tpDomingo1.getText() != null) {
                 LocalDateTime localDateTime = this.tpDomingo1.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
@@ -616,8 +592,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
                 Date horaFin = calendar.getTime();
                 Horario horario = new Horario("Lunes", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            }
-            if (this.tpDomingo2.getText() != null) {
+            } else if (this.tpDomingo2.getText() != null) {
                 LocalDateTime localDateTime = this.tpDomingo2.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
@@ -626,8 +601,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
                 Date horaFin = calendar.getTime();
                 Horario horario = new Horario("Lunes", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            }
-            if (this.tpDomingo3.getText() != null) {
+            } else if (this.tpDomingo3.getText() != null) {
                 LocalDateTime localDateTime = this.tpDomingo3.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
@@ -636,8 +610,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
                 Date horaFin = calendar.getTime();
                 Horario horario = new Horario("Lunes", horaInicio, horaFin);
                 listaHorarios.add(horario);
-            }
-            if (this.tpDomingo4.getText() != null) {
+            } else if (this.tpDomingo4.getText() != null) {
                 LocalDateTime localDateTime = this.tpDomingo4.getTime().atDate(currentDate);
                 Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                 Calendar calendar = Calendar.getInstance();
@@ -653,6 +626,8 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
 
             ItinerariosDAO itinerariosDAO = new ItinerariosDAO(conexion);
             itinerariosDAO.agregar(itinerario);
+            JOptionPane.showMessageDialog(null, "Se ha guardado el itinerario " + datos.get("nombre"), "Mensaje", JOptionPane.INFORMATION_MESSAGE);
+            regresarVentanaItinerarios();
         }
     }
 
@@ -679,25 +654,25 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
      * hábitats.
      */
     private void agregarHabitat() {
-        //Obtener habitat seleccionado del combobox
+        // Obtener habitat seleccionado del combobox
         Habitat habitat = (Habitat) cbxHabitat.getSelectedItem();
 
-        //Agregar el número y el nombre del hábitat
+        // Agregar el número y el nombre del hábitat
         Object[] fila = {
             contador++,
             habitat.getNombre()
         };
-        //Agregar la fila con el hábitat en la tabla 
+
+        // Agregar la fila con el hábitat en la tabla
         DefaultTableModel modelo = (DefaultTableModel) this.tblHabitats.getModel();
         modelo.addRow(fila);
 
-    }
+        // Eliminar la selección del ComboBox
+        cbxHabitat.removeItemAt(cbxHabitat.getSelectedIndex());
 
-    /**
-     * Método que termina el programa.
-     */
-    public void salirDelPrograma() {
-        System.exit(0);
+        if (cbxHabitat.getSelectedItem() == null) {
+            lblAgregar.setVisible(false);
+        }
     }
 
     /**
@@ -808,6 +783,10 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
      */
     public void cambiarIcono(JLabel label, String icono) {
         label.setIcon(new ImageIcon(icono));
+    }
+
+    private void salirDelPrograma() {
+        System.exit(0);
     }
 
     @SuppressWarnings("unchecked")
@@ -1862,4 +1841,5 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
     private javax.swing.JTextField txtNoVisitantes;
     private javax.swing.JTextField txtNombre;
     // End of variables declaration//GEN-END:variables
+
 }

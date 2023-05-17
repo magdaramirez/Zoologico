@@ -117,7 +117,7 @@ public class Validadores {
         try {
             if (!esTextoVacio(texto)) {
                 int numero = Integer.parseInt(texto);
-                if (numero > 0 && numero <= 25) {
+                if (numero > 0 && numero <= 30) {
                     return false; // Cambiado a false para indicar que no excede el límite
                 } else {
                     return true; // Cambiado a true para indicar que excede el límite

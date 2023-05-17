@@ -8,8 +8,14 @@ import java.awt.Color;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
+import org.itson.interfaces.IGuiaDAO;
+import org.itson.interfaces.IItinerariosDAO;
+import org.itson.persistencia.ConexionMongoDB;
+import org.itson.persistencia.GuiaDAO;
+import org.itson.persistencia.ItinerariosDAO;
 
 /**
  * Clase encargada de la ventana Inicio.
@@ -21,6 +27,8 @@ public class FrmInicio extends javax.swing.JFrame {
 
     private int xMouse, yMouse;
 
+    private final ConexionMongoDB conexion = new ConexionMongoDB();
+
     private final Color AMARILLO = new Color(255, 255, 153);
     private final Color GRIS = new Color(245, 245, 245);
     private final Color CAFE = new Color(102, 0, 0);
@@ -28,10 +36,15 @@ public class FrmInicio extends javax.swing.JFrame {
     private final int BORDE_GRUESO = 3;
     private final int BORDE_ESTRECHO = 1;
 
+    private final IGuiaDAO persistenciaGuia;
+    private final IItinerariosDAO persistenciaItinerario;
+
     /**
      * Método que crea FrmInicio.
      */
     public FrmInicio() {
+        persistenciaGuia = new GuiaDAO(conexion);
+        persistenciaItinerario = new ItinerariosDAO(conexion);
         initComponents();
         setTitle("Inicio");
         ImageIcon icon = new ImageIcon("src\\main\\resources\\img\\paw.png");
@@ -82,6 +95,11 @@ public class FrmInicio extends javax.swing.JFrame {
      */
     public void cambiarBordePanel(JPanel panel, Border border) {
         panel.setBorder(border);
+    }
+
+    public void abrirVentanaRegistro() {
+        new FrmRegistrarItinerario().setVisible(true);
+        dispose();
     }
 
     @SuppressWarnings("unchecked")
@@ -321,7 +339,19 @@ public class FrmInicio extends javax.swing.JFrame {
      * @param evt El evento del mouse que activa el método.
      */
     private void pnlAdministraritinerarioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlAdministraritinerarioMouseClicked
-        abrirVentanaItinerarios();
+
+        if (!persistenciaItinerario.obtenerItinerarios()) {
+            // La colección no existe
+            JOptionPane.showMessageDialog(this, "No existen colecciones disponibles.", "Error", JOptionPane.ERROR_MESSAGE);
+
+            // Redirigir al usuario a la ventana FrmRegistrarItinerario
+            abrirVentanaRegistro();
+            this.dispose();
+        } else {
+            abrirVentanaItinerarios();
+        }
+
+
     }//GEN-LAST:event_pnlAdministraritinerarioMouseClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

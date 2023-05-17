@@ -92,7 +92,7 @@ public class Horario {
 
     @Override
     public String toString() {
-        return "Horario{" + "id=" + id + ", dia=" + dia + ", horaInicio=" + horaInicio + ", horaFin=" + horaFin + '}';
+        return dia;
     }
 
 }
