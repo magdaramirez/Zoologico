@@ -17,14 +17,14 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableModel;
+import org.itson.dominio.Horario;
+import org.itson.dominio.Itinerario;
 import org.itson.interfaces.IGuiaDAO;
 import org.itson.interfaces.IHabitatsDAO;
 import org.itson.interfaces.IItinerariosDAO;
-import org.itson.objetosnegocio.Horario;
-import org.itson.objetosnegocio.Itinerario;
-import org.itson.objetosnegociodao.ConexionMongoDB;
-import org.itson.objetosnegociodao.GuiaDAO;
-import org.itson.objetosnegociodao.ItinerariosDAO;
+import org.itson.persistencia.ConexionMongoDB;
+import org.itson.persistencia.GuiaDAO;
+import org.itson.persistencia.ItinerariosDAO;
 import org.itson.utils.ModoVentana;
 
 /**

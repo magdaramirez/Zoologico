@@ -4,8 +4,7 @@
  */
 package fachadaSistemaImpresion;
 
-import org.itson.objetosnegocio.Itinerario;
-
+import org.itson.dominio.Itinerario;
 
 /**
  * Clase interfaz que define el método para mostrar la pantalla de impresión del

@@ -61,22 +61,7 @@
             <artifactId>jasperreports</artifactId>
             <version>6.20.1</version>
         </dependency>
-        <dependency>
-            <groupId>com.example</groupId>
-            <artifactId>objetosNegocioDAO</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.example</groupId>
-            <artifactId>objetosNegocio</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.example</groupId>
-            <artifactId>fachadaAdministrarItinerario</artifactId>
-            <version>1.0</version>
-        </dependency>
-    </dependencies> 
+    </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
