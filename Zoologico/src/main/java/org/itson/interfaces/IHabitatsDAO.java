@@ -14,9 +14,26 @@ import org.itson.dominio.Habitat;
  */
 public interface IHabitatsDAO {
 
+    /**
+     * Método que agrega un habitat.
+     *
+     * @param habitat Habitat a agregar.
+     * @return El habitat agegado.
+     */
     Habitat agregar(Habitat habitat);
 
+    /**
+     * Método que consulta todos los habitats registrados.
+     *
+     * @return Lista de los habitats registrados.
+     */
     List<Habitat> consultarTodos();
-    
+
+    /**
+     * Método que obtiene un habitat por su nombre.
+     *
+     * @param nombre Nombre del habitat que se desea obtener.
+     * @return Habitat con el nombre ingresado.
+     */
     public Habitat obtenerHabitat(String nombre);
 }

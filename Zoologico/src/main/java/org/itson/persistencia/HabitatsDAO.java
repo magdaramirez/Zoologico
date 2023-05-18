@@ -27,11 +27,22 @@ public class HabitatsDAO implements IHabitatsDAO {
     private final MongoDatabase BASE_DATOS;
     private final String NOMBRE_COLECCION = "habitats";
 
+    /**
+     * Método constructor que inicializa la conexión y la base de datos.
+     *
+     * @param conexion Conexión a la base de datos.
+     */
     public HabitatsDAO(ConexionMongoDB conexion) {
         this.CONEXION = conexion;
         this.BASE_DATOS = conexion.getBaseDatos();
     }
 
+    /**
+     * Método que agrega un habitat.
+     *
+     * @param habitat Habitat a agregar.
+     * @return Habitat agregada.
+     */
     @Override
     public Habitat agregar(Habitat habitat) {
         //OBTENCIÓN DE ACCESO A LA COLECCIÓN
@@ -43,6 +54,11 @@ public class HabitatsDAO implements IHabitatsDAO {
         return habitat;
     }
 
+    /**
+     * Consulta una lista de todos los habitats registrados.
+     *
+     * @return Lista con todos los habitats registrados.
+     */
     @Override
     public List<Habitat> consultarTodos() {
         // OBTENCIÓN DE ACCESO A LA COLECCIÓN
@@ -60,6 +76,12 @@ public class HabitatsDAO implements IHabitatsDAO {
         return habitats;
     }
 
+    /**
+     * Método que obtiene un habitat con un nombre especifico.
+     *
+     * @param nombre Nombre del habitat que se desea obtener.
+     * @return Habitat con el nombre ingresado.
+     */
     @Override
     public Habitat obtenerHabitat(String nombre) {
         // Obtención de acceso a la colección

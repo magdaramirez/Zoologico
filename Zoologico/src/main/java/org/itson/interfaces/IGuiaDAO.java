@@ -13,6 +13,15 @@ import org.itson.dominio.Guia;
  */
 public interface IGuiaDAO {
 
+    /**
+     * Método que inserta un guía.
+     */
     void insertarGuia();
+
+    /**
+     * Método que obtiene un guía.
+     *
+     * @return Guía.
+     */
     Guia obtenerGuia();
 }

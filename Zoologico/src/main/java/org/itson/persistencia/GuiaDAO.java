@@ -27,6 +27,11 @@ public class GuiaDAO implements IGuiaDAO {
     private final MongoDatabase BASE_DATOS;
     private final String NOMBRE_COLECCION = "guias";
 
+    /**
+     * Método constructor que inicializa la conexión y la base de datos.
+     *
+     * @param conexion Conexión a la base de datos.
+     */
     public GuiaDAO(ConexionMongoDB conexion) {
         this.CONEXION = conexion;
         this.BASE_DATOS = conexion.getBaseDatos();
@@ -96,6 +101,11 @@ public class GuiaDAO implements IGuiaDAO {
         return null;
     }
 
+    /**
+     * Método que obtiene el guía.
+     *
+     * @return Guia.
+     */
     @Override
     public Guia obtenerGuia() {
         // OBTENCIÓN DE ACCESO A LA COLECCIÓN

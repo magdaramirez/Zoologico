@@ -22,7 +22,9 @@ import javax.swing.border.EmptyBorder;
 public class ActionButton extends JButton {
 
     private boolean mousePress;
-
+    /**
+     * Método que expresa el momento en el que se hace una acción hacía un botón.
+     */
     public ActionButton() {
         setContentAreaFilled(false);
         setBorder(new EmptyBorder(3, 3, 3, 3));
@@ -39,7 +41,10 @@ public class ActionButton extends JButton {
 
         });
     }
-
+    /**
+     * Método que muestra lo visual del botón.
+     * @param g Graphics.
+     */
     @Override
     protected void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g.create();

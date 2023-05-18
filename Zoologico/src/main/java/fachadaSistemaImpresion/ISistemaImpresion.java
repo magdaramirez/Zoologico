@@ -11,5 +11,9 @@ import org.itson.dominio.Itinerario;
  * @author march
  */
 public interface ISistemaImpresion {
+    /**
+     * Método para mostrar la pantalla de impresión del itinerario seleccionado.
+     * @param itinerarioObtenido Itinerario que se mostrará.
+     */
     public void imprimir(Itinerario itinerarioObtenido);
 }

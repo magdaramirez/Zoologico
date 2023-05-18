@@ -20,7 +20,10 @@ import org.itson.utils.JasperByCollectionBeanData;
  * @author march
  */
 public class FachadaSistemaImpresion implements ISistemaImpresion {
-
+    /**
+     * Método para mostrar la pantalla de impresión del itinerario seleccionado.
+     * @param itinerarioObtenido Itinerario que se mostrará.
+     */
     @Override
     public void imprimir(Itinerario itinerarioObtenido) {
         List<Itinerario> listaItinerarios = new ArrayList<>();

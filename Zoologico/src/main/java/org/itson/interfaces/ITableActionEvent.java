@@ -11,9 +11,24 @@ package org.itson.interfaces;
  */
 public interface ITableActionEvent {
 
+    /**
+     * Método que coloca el botón editar.
+     *
+     * @param row Fila donde se encontrará.
+     */
     public void editar(int row);
 
+    /**
+     * Método que coloca el botón imprimir.
+     *
+     * @param row Fila donde se encontrará.
+     */
     public void imprimir(int row);
 
+    /**
+     * Método que coloca el botón visualizar.
+     *
+     * @param row Fila donde se encontrará.
+     */
     public void visualizar(int row);
 }

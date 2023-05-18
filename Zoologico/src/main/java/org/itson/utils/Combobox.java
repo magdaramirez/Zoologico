@@ -45,19 +45,38 @@ import org.jdesktop.animation.timing.TimingTargetAdapter;
  */
 public class Combobox<E> extends JComboBox<E> {
 
+    /**
+     * Método que regresa el texto del label.
+     *
+     * @return Texto del label.
+     */
     public String getLabeText() {
         return labeText;
     }
 
-    
+    /**
+     * Método que establece el texto del label.
+     *
+     * @param labeText Texto del label a establecer.
+     */
     public void setLabeText(String labeText) {
         this.labeText = labeText;
     }
 
+    /**
+     * Método que obtiene la linea de color.
+     *
+     * @return Linea de color.
+     */
     public Color getLineColor() {
         return lineColor;
     }
 
+    /**
+     * Método que establece la linea de color.
+     *
+     * @param lineColor Linea de color a establecer.
+     */
     public void setLineColor(Color lineColor) {
         this.lineColor = lineColor;
     }

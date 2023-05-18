@@ -19,6 +19,16 @@ public class TableActionCellRender extends DefaultTableCellRenderer{
 
     JFrame frame;
     
+    /**
+     * Método que obtiene el componente de la acción del botón seleccionado.
+     * @param table Tabla donde se encuentra el botón.
+     * @param value Valor del objeto.
+     * @param isSelected Booleano que indica si fue seleccionado.
+     * @param hasFocus Booleano que ifentifica si tiene focus.
+     * @param row Fila donde se encuentra el botón.
+     * @param column Columna donde se encuentra el botón.
+     * @return Componente de acción de botón seleccionado.
+     */
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         Component comp=  super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody

@@ -21,7 +21,10 @@ import org.bson.codecs.pojo.PojoCodecProvider;
 public class ConexionMongoDB {
 
     private final String BASE_DATOS = "zoologico";
-
+    /**
+     * Método que obtiene la base de datos.
+     * @return La base de datos.
+     */
     public MongoDatabase getBaseDatos() {
         //CONVIERTE CLASES POJO A DOCUMENTOS EN MONGODB
         CodecRegistry pojoCodecRegistry = fromRegistries(MongoClientSettings.getDefaultCodecRegistry(),

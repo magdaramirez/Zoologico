@@ -37,11 +37,22 @@ public class ZonasDAO implements IZonasDAO {
     private final MongoDatabase BASE_DATOS;
     private final String NOMBRE_COLECCION = "zonas";
 
+    /**
+     * Método constructor que inicializa la conexión y la base de datos.
+     *
+     * @param conexion Conexión a la base de datos.
+     */
     public ZonasDAO(ConexionMongoDB conexion) {
         this.CONEXION = conexion;
         this.BASE_DATOS = conexion.getBaseDatos();
     }
 
+    /**
+     * Método que agrega una zona.
+     *
+     * @param zona Zona a agregar.
+     * @return Zona agregada.
+     */
     @Override
     public Zona agregar(Zona zona) {
         //OBTENCIÓN DE ACCESO A LA COLECCIÓN
@@ -53,6 +64,12 @@ public class ZonasDAO implements IZonasDAO {
         return zona;
     }
 
+    /**
+     * Método que actualiza una zona ingresada.
+     *
+     * @param zona Zona a actualizar.
+     * @return Zona actualizada.
+     */
     @Override
     public Zona actualizar(Zona zona) {
         //OBTENCIÓN DE ACCESO A LA COLECCIÓN
@@ -71,6 +88,11 @@ public class ZonasDAO implements IZonasDAO {
         return zona;
     }
 
+    /**
+     * Método que obtiene una lista de las zonas registradas.
+     *
+     * @return Lista de todas las zonas registradas.
+     */
     @Override
     public List<Zona> consultarTodos() {
         //OBTENCIÓN DE ACCESO A LA COLECCIÓN
@@ -82,6 +104,12 @@ public class ZonasDAO implements IZonasDAO {
         return zonas;
     }
 
+    /**
+     * Método que consulta las zonas con ciertos habitats.
+     *
+     * @param habitats Habitats de las zonas que se quieren consultar.
+     * @return Lista de zonas con los habitats ingresados.
+     */
     @Override
     public List<Zona> consultarZonasConHabitats(List<Habitat> habitats) {
         // Obtención de acceso a la colección de zonas
@@ -106,8 +134,15 @@ public class ZonasDAO implements IZonasDAO {
         return zonasConHabitats;
     }
 
-// Obtener los ObjectId de los hábitats en la lista
-    private List<ObjectId> obtenerIdsHabitats(List<Habitat> habitats) {
+    /**
+     * Método que otiene los ObjectId de los habitats en una lista ingresada.
+     *
+     * @param habitats Lista de habitats de los que se desea obtener los
+     * ObjectId
+     * @return Lista de ObjectId de los habitats ingresados.
+     */
+    @Override
+    public List<ObjectId> obtenerIdsHabitats(List<Habitat> habitats) {
         List<ObjectId> idsHabitats = new ArrayList<>();
         for (Habitat habitat : habitats) {
             idsHabitats.add(habitat.getId());
