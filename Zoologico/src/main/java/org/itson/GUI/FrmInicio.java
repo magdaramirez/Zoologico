@@ -343,7 +343,7 @@ public class FrmInicio extends javax.swing.JFrame {
 
         if (!persistenciaItinerario.obtenerItinerarios()) {
             // La colección no existe
-            JOptionPane.showMessageDialog(this, "No existen colecciones disponibles.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "No existen itinerarios disponibles.", "Error", JOptionPane.ERROR_MESSAGE);
 
             // Redirigir al usuario a la ventana FrmRegistrarItinerario
             abrirVentanaRegistro(ModoVentana.REGISTRAR_VACIOS);

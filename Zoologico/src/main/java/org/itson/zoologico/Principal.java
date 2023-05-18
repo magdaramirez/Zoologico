@@ -6,13 +6,14 @@ package org.itson.zoologico;
 //import java.util.ArrayList;
 //import java.util.Arrays;
 import org.itson.GUI.FrmInicio;
+//import org.itson.dominio.Continente;
 //import org.itson.dominio.Habitat;
 //import org.itson.dominio.Zona;
 //import org.itson.interfaces.IGuiaDAO;
 //import org.itson.interfaces.IHabitatsDAO;
 //import org.itson.interfaces.IItinerariosDAO;
 //import org.itson.interfaces.IZonasDAO;
-import org.itson.persistencia.ConexionMongoDB;
+//import org.itson.persistencia.ConexionMongoDB;
 //import org.itson.persistencia.GuiaDAO;
 //import org.itson.persistencia.HabitatsDAO;
 //import org.itson.persistencia.ItinerariosDAO;
@@ -31,57 +32,46 @@ public class Principal {
      */
     public static void main(String args[]) {
 
-        //CONEXIÓN A LA BASE DE DATOS
+//        //CONEXIÓN A LA BASE DE DATOS
 //        ConexionMongoDB conexion = new ConexionMongoDB();
 //        IHabitatsDAO habitatsDAO = new HabitatsDAO(conexion);
 //        IZonasDAO zonasDAO = new ZonasDAO(conexion);
-//        IItinerariosDAO itinerariosDAO = new ItinerariosDAO(conexion);
+////        IItinerariosDAO itinerariosDAO = new ItinerariosDAO(conexion);
 //        IGuiaDAO GuiaDAO = new GuiaDAO(conexion);
 //        GuiaDAO.insertarGuia();
 //
 //        //INSERCIÓN DE HABITATS
-//        Habitat habitat1 = new Habitat();
-//        habitat1.setNombre("Aviario");
+//        Habitat habitat1 = new Habitat("Aviario", "Templado", "Variada", Continente.AMERICA);
 //        habitatsDAO.agregar(habitat1);
 //
-//        Habitat habitat2 = new Habitat();
-//        habitat2.setNombre("Acuario");
+//        Habitat habitat2 = new Habitat("Acuario", "Acuático", "Algas", Continente.OCEANIA);
 //        habitatsDAO.agregar(habitat2);
 //
-//        Habitat habitat3 = new Habitat();
-//        habitat3.setNombre("Terrario");
+//        Habitat habitat3 = new Habitat("Terrario", "Tropical", "Plantas exóticas", Continente.AMERICA);
 //        habitatsDAO.agregar(habitat3);
 //
-//        Habitat habitat4 = new Habitat();
-//        habitat4.setNombre("Granja");
+//        Habitat habitat4 = new Habitat("Granja", "Variado", "Cultivos y pastizales", Continente.EUROPA);
 //        habitatsDAO.agregar(habitat4);
 //
-//        Habitat habitat5 = new Habitat();
-//        habitat5.setNombre("Africano");
+//        Habitat habitat5 = new Habitat("Africano", "Caluroso", "Savannah", Continente.AFRICA);
 //        habitatsDAO.agregar(habitat5);
 //
-//        Habitat habitat6 = new Habitat();
-//        habitat6.setNombre("del Amazonas");
+//        Habitat habitat6 = new Habitat("del Amazonas", "Húmedo", "Selva tropical", Continente.AMERICA);
 //        habitatsDAO.agregar(habitat6);
 //
-//        Habitat habitat7 = new Habitat();
-//        habitat7.setNombre("de Madagascar");
+//        Habitat habitat7 = new Habitat("de Madagascar", "Subtropical", "Bosque tropical", Continente.AFRICA);
 //        habitatsDAO.agregar(habitat7);
 //
-//        Habitat habitat8 = new Habitat();
-//        habitat8.setNombre("Reptilia");
+//        Habitat habitat8 = new Habitat("Reptilia", "Seco", "Desierto", Continente.ASIA);
 //        habitatsDAO.agregar(habitat8);
 //
-//        Habitat habitat9 = new Habitat();
-//        habitat9.setNombre("Desertico");
+//        Habitat habitat9 = new Habitat("Desértico", "Árido", "Cactus y matorrales", Continente.AMERICA);
 //        habitatsDAO.agregar(habitat9);
 //
-//        Habitat habitat10 = new Habitat();
-//        habitat10.setNombre("Bosque");
+//        Habitat habitat10 = new Habitat("Bosque", "Templado", "Bosque caducifolio", Continente.EUROPA);
 //        habitatsDAO.agregar(habitat10);
 //
-//        Habitat habitat11 = new Habitat();
-//        habitat11.setNombre("Polar");
+//        Habitat habitat11 = new Habitat("Polar", "Frío", "Tundra y hielo", Continente.EUROPA);
 //        habitatsDAO.agregar(habitat11);
 //
 //        //Insercción de zonas
@@ -132,14 +122,14 @@ public class Principal {
 //        zonasDAO.actualizar(zona7);
 //        zonasDAO.actualizar(zona8);
 //        zonasDAO.actualizar(zona9);
-
-        //INSERCIÓN DE ITINERARIOS
-        /*Itinerario itinerario1 = new Itinerario();
-        itinerario1.setNombre("Prueba");
-        itinerario1.setDuracion(40);
-        itinerario1.setLongitud(35.6f);
-        itinerario1.setNoVisitantes(24);
-        itinerariosDAO.agregar(itinerario1);*/
+//
+//        //INSERCIÓN DE ITINERARIOS
+//        /*Itinerario itinerario1 = new Itinerario();
+//        itinerario1.setNombre("Prueba");
+//        itinerario1.setDuracion(40);
+//        itinerario1.setLongitud(35.6f);
+//        itinerario1.setNoVisitantes(24);
+//        itinerariosDAO.agregar(itinerario1);*/
 
  /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
