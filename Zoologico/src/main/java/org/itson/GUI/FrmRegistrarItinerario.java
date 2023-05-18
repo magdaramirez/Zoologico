@@ -10,13 +10,16 @@ import java.awt.Color;
 import java.awt.Font;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
@@ -51,8 +54,8 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
     private int contador = 1;
     private int cantLunes, cantMartes, cantMiercoles, cantJueves, cantViernes, cantSabado, cantDomingo;
 
-    private ModoVentana modo;
-    private Itinerario itinerario;
+    private final ModoVentana modo;
+    private final Itinerario itinerario;
 
     private final Color AMARILLO = new Color(255, 255, 153);
     private final Color GRIS = new Color(245, 245, 245);
@@ -73,7 +76,8 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
      *
      * Método constructor de la clase FrmRegistrarItinerario.
      *
-     * @param persistencia El objeto que maneja la persistencia de los datos.
+     * @param modo
+     * @param itinerario
      */
     public FrmRegistrarItinerario(ModoVentana modo, Itinerario itinerario) {
         initComponents();
@@ -162,6 +166,43 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
         this.txtDuracion.setText(itinerario.getDuracion().toString());
         this.txtLongitud.setText(itinerario.getLongitud().toString());
         this.txtNoVisitantes.setText(itinerario.getNoVisitantes().toString());
+        this.insertarHabitatsEnTablaActualizar(itinerario);
+
+        // Inicializar los contadores de días iguales
+        int maxCantidad = 0;
+        HashMap<String, Integer> diasIguales = new HashMap<>();
+        List<Horario> listaHorarios = itinerario.getListaHorarios();
+        for (Horario horario : listaHorarios) {
+            String dia = horario.getDia();
+            int contador = diasIguales.getOrDefault(dia, 0) + 1;
+            diasIguales.put(dia, contador);
+            maxCantidad = Math.max(maxCantidad, contador);
+        }
+
+        // Asignar las horas a los TimePicker correspondientes
+        for (String dia : diasIguales.keySet()) {
+            int contador = diasIguales.get(dia);
+            List<Horario> horariosDia = listaHorarios.stream().filter(h -> h.getDia().equals(dia)).collect(Collectors.toList());
+            for (int i = 1; i <= contador; i++) {
+                TimePicker timePicker = getTimePicker(dia, i);
+                if (timePicker != null && i <= horariosDia.size()) {
+                    Horario horario = horariosDia.get(i - 1);
+                    Date horaInicio = horario.getHoraInicio();
+                    LocalDateTime localDateTime = LocalDateTime.ofInstant(horaInicio.toInstant(), ZoneOffset.UTC);
+                    LocalTime horaInicioLocal = localDateTime.toLocalTime();
+                    timePicker.setTime(horaInicioLocal);
+                }
+            }
+        }
+
+        // Asignar los días iguales a las variables correspondientes
+        this.cantLunes = diasIguales.getOrDefault("Lunes", 0);
+        this.cantMartes = diasIguales.getOrDefault("Martes", 0);
+        this.cantMiercoles = diasIguales.getOrDefault("Miércoles", 0);
+        this.cantJueves = diasIguales.getOrDefault("Jueves", 0);
+        this.cantViernes = diasIguales.getOrDefault("Viernes", 0);
+        this.cantSabado = diasIguales.getOrDefault("Sábado", 0);
+        this.cantDomingo = diasIguales.getOrDefault("Domingo", 0);
     }
 
     public void configurarTimePicker() {
@@ -306,31 +347,33 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
                         Date horaFin = calendar.getTime();
                         Horario horario = new Horario(dia, horaInicio, horaFin);
                         listaHorarios.add(horario);
-
-                        List<Zona> listaZonas = new LinkedList<>();
-                        ConexionMongoDB conexion = new ConexionMongoDB();
-
-                        Itinerario itinerario = new Itinerario(this.txtNombre.getText(), Integer.valueOf(this.txtNoVisitantes.getText()), Float.valueOf(this.txtLongitud.getText()), Integer.valueOf(this.txtDuracion.getText()), listaHorarios, listaZonas);
-
-                        ItinerariosDAO itinerariosDAO = new ItinerariosDAO(conexion);
-                        FachadaAdministrarItinerario fachadaItinerario = new FachadaAdministrarItinerario();
-                        String validacion = "nombre";
-                        if (!fachadaItinerario.validacion(itinerario, validacion, conexion)) {
-                            JOptionPane.showMessageDialog(null, "Nombre repetido", "ERROR", JOptionPane.ERROR_MESSAGE);
-                        }
-                        validacion = "visitantes";
-                        if (!fachadaItinerario.validacion(itinerario, validacion, conexion)) {
-                            JOptionPane.showMessageDialog(null, "Visitantes", "ERROR", JOptionPane.ERROR_MESSAGE);
-                        }
-                        validacion = "horarios";
-                        if (!fachadaItinerario.validacion(itinerario, validacion, conexion)) {
-                            JOptionPane.showMessageDialog(null, "Hora inico de horario repetido en el mismo día", "ERROR", JOptionPane.ERROR_MESSAGE);
-                        } else {
-                            itinerariosDAO.agregar(itinerario);
-                            JOptionPane.showMessageDialog(null, "Se ha guardado el itinerario " + datos.get("nombre"), "Mensaje", JOptionPane.INFORMATION_MESSAGE);
-                            regresarVentanaItinerarios();
-                        }
                     }
+                }
+            }
+
+            if (!listaHorarios.isEmpty()) {
+                List<Zona> listaZonas = new LinkedList<>();
+                ConexionMongoDB conexion = new ConexionMongoDB();
+
+                Itinerario itinerario = new Itinerario(this.txtNombre.getText(), Integer.valueOf(this.txtNoVisitantes.getText()), Float.valueOf(this.txtLongitud.getText()), Integer.valueOf(this.txtDuracion.getText()), listaHorarios, listaZonas, this.obtenerHabitatsDeTabla());
+
+                ItinerariosDAO itinerariosDAO = new ItinerariosDAO(conexion);
+                FachadaAdministrarItinerario fachadaItinerario = new FachadaAdministrarItinerario();
+                String validacion = "nombre";
+                if (!fachadaItinerario.validacion(itinerario, validacion, conexion)) {
+                    JOptionPane.showMessageDialog(null, "Nombre repetido", "ERROR", JOptionPane.ERROR_MESSAGE);
+                }
+                validacion = "visitantes";
+                if (!fachadaItinerario.validacion(itinerario, validacion, conexion)) {
+                    JOptionPane.showMessageDialog(null, "Visitantes", "ERROR", JOptionPane.ERROR_MESSAGE);
+                }
+                validacion = "horarios";
+                if (!fachadaItinerario.validacion(itinerario, validacion, conexion)) {
+                    JOptionPane.showMessageDialog(null, "Hora inicio de horario repetido en el mismo día", "ERROR", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    itinerariosDAO.agregar(itinerario);
+                    JOptionPane.showMessageDialog(null, "Se ha guardado el itinerario " + datos.get("nombre"), "Mensaje", JOptionPane.INFORMATION_MESSAGE);
+                    regresarVentanaItinerarios();
                 }
             }
         }
@@ -426,6 +469,20 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
         return null;
     }
 
+    private List<Habitat> obtenerHabitatsDeTabla() {
+        List<Habitat> habitatsT = new ArrayList<>();
+
+        DefaultTableModel modelo = (DefaultTableModel) tblHabitats.getModel();
+        int rowCount = modelo.getRowCount();
+        for (int i = 0; i < rowCount; i++) {
+            String nombreHabitat = modelo.getValueAt(i, 1).toString();
+            Habitat habitat = new Habitat(nombreHabitat);
+            habitatsT.add(habitat);
+        }
+
+        return habitatsT;
+    }
+
     /**
      * Método que llena la tabla de hábitats.
      */
@@ -468,6 +525,21 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
         if (cbxHabitat.getSelectedItem() == null) {
             lblAgregar.setVisible(false);
         }
+    }
+
+    private void insertarHabitatsEnTablaActualizar(Itinerario itinerario) {
+        DefaultTableModel modelo = (DefaultTableModel) tblHabitats.getModel();
+
+        List<Habitat> habitats = itinerario.getListaHabitats();
+        for (Habitat habitat : habitats) {
+            Object[] fila = {
+                contador++,
+                habitat.getNombre()
+            };
+            modelo.addRow(fila);
+        }
+
+        tblHabitats.setModel(modelo);
     }
 
     /**
@@ -1338,7 +1410,11 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
     }//GEN-LAST:event_txtNombreMousePressed
 
     private void pnlGuardarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlGuardarMouseClicked
-        registrarItinerario();
+        if (modo == ModoVentana.ACTUALIZAR) {
+
+        } else {
+            registrarItinerario();
+        }
     }//GEN-LAST:event_pnlGuardarMouseClicked
     /**
      * Método que al entrar el mouse a pnlGuardar, ejecuta los métodos

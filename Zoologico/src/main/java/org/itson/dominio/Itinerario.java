@@ -22,20 +22,22 @@ public class Itinerario {
     private Integer duracion;
     private List<Horario> listaHorarios;
     private List<Zona> listaZonas;
+    private List<Habitat> listaHabitats;
 
     public Itinerario() {
     }
 
-    public Itinerario(String nombre, Integer noVisitantes, Float longitud, Integer duracion, List<Horario> listaHorarios, List<Zona> listaZonas) {
+    public Itinerario(String nombre, Integer noVisitantes, Float longitud, Integer duracion, List<Horario> listaHorarios, List<Zona> listaZonas, List<Habitat> listaHabitats) {
         this.nombre = nombre;
         this.noVisitantes = noVisitantes;
         this.longitud = longitud;
         this.duracion = duracion;
         this.listaHorarios = listaHorarios;
         this.listaZonas = listaZonas;
+        this.listaHabitats = listaHabitats;
     }
 
-    public Itinerario(ObjectId id, String nombre, Integer noVisitantes, Float longitud, Integer duracion, List<Horario> listaHorarios, List<Zona> listaZonas) {
+    public Itinerario(ObjectId id, String nombre, Integer noVisitantes, Float longitud, Integer duracion, List<Horario> listaHorarios, List<Zona> listaZonas, List<Habitat> listaHabitats) {
         this.id = id;
         this.nombre = nombre;
         this.noVisitantes = noVisitantes;
@@ -43,6 +45,7 @@ public class Itinerario {
         this.duracion = duracion;
         this.listaHorarios = listaHorarios;
         this.listaZonas = listaZonas;
+        this.listaHabitats = listaHabitats;
     }
 
     public ObjectId getId() {
@@ -101,6 +104,14 @@ public class Itinerario {
         this.listaZonas = listaZonas;
     }
 
+    public List<Habitat> getListaHabitats() {
+        return listaHabitats;
+    }
+
+    public void setListaHabitats(List<Habitat> listaHabitats) {
+        this.listaHabitats = listaHabitats;
+    }
+
     @Override
     public int hashCode() {
         int hash = 7;
@@ -125,7 +136,7 @@ public class Itinerario {
 
     @Override
     public String toString() {
-        return "Itinerario{" + "id=" + id + ", nombre=" + nombre + ", noVisitantes=" + noVisitantes + ", listaHorarios=" + listaHorarios + ", listaZonas=" + listaZonas + '}';
+        return "Itinerario{" + "id=" + id + ", nombre=" + nombre + ", noVisitantes=" + noVisitantes + ", longitud=" + longitud + ", duracion=" + duracion + ", listaHorarios=" + listaHorarios + ", listaZonas=" + listaZonas + ", listaHabitats=" + listaHabitats + '}';
     }
 
 }

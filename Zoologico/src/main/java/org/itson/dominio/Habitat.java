@@ -23,6 +23,10 @@ public class Habitat {
     public Habitat() {
     }
 
+    public Habitat(String nombre) {
+        this.nombre = nombre;
+    }
+
     public Habitat(String nombre, String clima, String vegetacion, Continente continente) {
         this.nombre = nombre;
         this.clima = clima;
