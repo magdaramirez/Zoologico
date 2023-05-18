@@ -378,27 +378,10 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
             }
 
             if (!listaHorarios.isEmpty()) {
-                List<Zona> listaZonas = new LinkedList<>();
                 ConexionMongoDB conexion = new ConexionMongoDB();
-
-                Itinerario itinerario = new Itinerario(this.txtNombre.getText(), Integer.valueOf(this.txtNoVisitantes.getText()), Float.valueOf(this.txtLongitud.getText()), Integer.valueOf(this.txtDuracion.getText()), listaHorarios, listaZonas, this.obtenerHabitatsDeTabla());
-
-                ItinerariosDAO itinerariosDAO = new ItinerariosDAO(conexion);
                 FachadaAdministrarItinerario fachadaItinerario = new FachadaAdministrarItinerario();
-                String validacion = "nombre";
-                if (!fachadaItinerario.validacion(itinerario, validacion, conexion)) {
-                    JOptionPane.showMessageDialog(null, "Nombre repetido", "ERROR", JOptionPane.ERROR_MESSAGE);
-                }
-                validacion = "visitantes";
-                if (!fachadaItinerario.validacion(itinerario, validacion, conexion)) {
-                    JOptionPane.showMessageDialog(null, "Visitantes", "ERROR", JOptionPane.ERROR_MESSAGE);
-                }
-                validacion = "horarios";
-                if (!fachadaItinerario.validacion(itinerario, validacion, conexion)) {
-                    JOptionPane.showMessageDialog(null, "Hora inicio de horario repetido en el mismo día", "ERROR", JOptionPane.ERROR_MESSAGE);
-                } else {
-                    itinerariosDAO.agregar(itinerario);
-                    JOptionPane.showMessageDialog(null, "Se ha guardado el itinerario " + datos.get("nombre"), "Mensaje", JOptionPane.INFORMATION_MESSAGE);
+                Itinerario itinerario = new Itinerario(this.txtNombre.getText(), Integer.valueOf(this.txtNoVisitantes.getText()), listaHorarios, this.obtenerHabitatsDeTabla());
+                if (fachadaItinerario.registrarItinerario(itinerario, conexion)) {
                     regresarVentanaItinerarios();
                 }
             }
@@ -502,8 +485,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
         int rowCount = modelo.getRowCount();
         for (int i = 0; i < rowCount; i++) {
             String nombreHabitat = modelo.getValueAt(i, 1).toString();
-            Habitat habitat = new Habitat(nombreHabitat);
-            habitatsT.add(habitat);
+            habitatsT.add(persistenciaHabitats.obtenerHabitat(nombreHabitat));
         }
 
         return habitatsT;

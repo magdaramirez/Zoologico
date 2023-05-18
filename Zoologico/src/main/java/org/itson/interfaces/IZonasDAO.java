@@ -5,6 +5,7 @@
 package org.itson.interfaces;
 
 import java.util.List;
+import org.itson.dominio.Habitat;
 import org.itson.dominio.Zona;
 
 /**
@@ -15,8 +16,10 @@ import org.itson.dominio.Zona;
 public interface IZonasDAO {
 
     Zona agregar(Zona zona);
-    
+
     Zona actualizar(Zona zona);
 
     List<Zona> consultarTodos();
+
+    List<Zona> consultarZonasConHabitats(List<Habitat> habitats);
 }

@@ -62,10 +62,13 @@ public class Itinerario {
         this.duracion = duracion;
         this.listaHorarios = listaHorarios;
     }
-    
-    
-    
-    
+
+    public Itinerario(String nombre, Integer noVisitantes, List<Horario> listaHorarios, List<Habitat> listaHabitats) {
+        this.nombre = nombre;
+        this.noVisitantes = noVisitantes;
+        this.listaHorarios = listaHorarios;
+        this.listaHabitats = listaHabitats;
+    }
 
     public ObjectId getId() {
         return id;

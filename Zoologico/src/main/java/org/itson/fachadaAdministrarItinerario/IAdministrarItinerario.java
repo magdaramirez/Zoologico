@@ -15,5 +15,5 @@ public interface IAdministrarItinerario {
 
     public boolean registrarItinerario(Itinerario itinerario, ConexionMongoDB conexion);
     public boolean validacion(Itinerario itinerario, String campo, ConexionMongoDB conexion);
-    public void generarRecorrido();
+    public void generarRecorrido(Itinerario itinerario);
 }

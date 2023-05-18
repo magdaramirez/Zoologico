@@ -6,10 +6,14 @@ package org.itson.fachadaAdministrarItinerario;
 
 import java.util.Date;
 import java.util.List;
+import javax.swing.JOptionPane;
 import org.itson.dominio.Horario;
 import org.itson.dominio.Itinerario;
+import org.itson.dominio.Zona;
+import org.itson.interfaces.IZonasDAO;
 import org.itson.persistencia.ConexionMongoDB;
 import org.itson.persistencia.ItinerariosDAO;
+import org.itson.persistencia.ZonasDAO;
 import org.itson.utils.Validadores;
 
 /**
@@ -21,9 +25,24 @@ public class FachadaAdministrarItinerario implements IAdministrarItinerario {
     @Override
     public boolean registrarItinerario(Itinerario itinerario, ConexionMongoDB conexion) {
         ItinerariosDAO itinerariosDAO = new ItinerariosDAO(conexion);
-        this.generarRecorrido();
-        Itinerario itinerarioRegistrado = itinerariosDAO.agregar(itinerario);
-        return itinerarioRegistrado != null;
+        this.generarRecorrido(itinerario);
+        String validacion = "nombre";
+        if (!validacion(itinerario, validacion, conexion)) {
+            JOptionPane.showMessageDialog(null, "Nombre repetido", "ERROR", JOptionPane.ERROR_MESSAGE);
+        }
+        validacion = "visitantes";
+        if (!validacion(itinerario, validacion, conexion)) {
+            JOptionPane.showMessageDialog(null, "Visitantes", "ERROR", JOptionPane.ERROR_MESSAGE);
+        }
+        validacion = "horarios";
+        if (!validacion(itinerario, validacion, conexion)) {
+            JOptionPane.showMessageDialog(null, "Hora inicio de horario repetido en el mismo día", "ERROR", JOptionPane.ERROR_MESSAGE);
+        } else {
+            itinerariosDAO.agregar(itinerario);
+            JOptionPane.showMessageDialog(null, "Se ha guardado el itinerario " + itinerario.getNombre(), "Mensaje", JOptionPane.INFORMATION_MESSAGE);
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -59,7 +78,10 @@ public class FachadaAdministrarItinerario implements IAdministrarItinerario {
     }
 
     @Override
-    public void generarRecorrido() {
-
+    public void generarRecorrido(Itinerario itinerario) {
+        ConexionMongoDB conexion = new ConexionMongoDB();
+        IZonasDAO persistenciaZona = new ZonasDAO(conexion);
+        List<Zona> zonasConHabitats = persistenciaZona.consultarZonasConHabitats(itinerario.getListaHabitats());
+        itinerario.setListaZonas(zonasConHabitats);
     }
 }

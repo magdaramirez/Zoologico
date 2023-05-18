@@ -17,4 +17,6 @@ public interface IHabitatsDAO {
     Habitat agregar(Habitat habitat);
 
     List<Habitat> consultarTodos();
+    
+    public Habitat obtenerHabitat(String nombre);
 }
