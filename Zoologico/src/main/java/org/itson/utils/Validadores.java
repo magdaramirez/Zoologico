@@ -105,12 +105,12 @@ public class Validadores {
     }
 
     /**
+     * Verifica si el número de visitantes especificado excede el límite
+     * establecido.
      *
-     * Método que comprueba si el número de visitantes excede el límite
-     * permitido.
-     *
-     * @return true si el número de visitantes excede el límite, false en caso
-     * contrario.
+     * @param numVisitantes El número de visitantes a verificar.
+     * @return true si el número de visitantes no excede el límite, false en
+     * caso contrario.
      */
     public static boolean excedeNumVisitantes(Integer numVisitantes) {
         if (numVisitantes > 0 && numVisitantes <= 30) {

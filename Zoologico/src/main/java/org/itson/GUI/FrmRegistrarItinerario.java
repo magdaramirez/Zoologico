@@ -77,11 +77,11 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
     private final String VACIAR_OSCURO = "src\\main\\resources\\img\\eliminar.png";
 
     /**
+     * Constructor de la clase FrmRegistrarItinerario.
      *
-     * Método constructor de la clase FrmRegistrarItinerario.
-     *
-     * @param modo
-     * @param itinerario
+     * @param modo El modo de la ventana, especificado mediante el enum
+     * ModoVentana.
+     * @param itinerario El objeto Itinerario asociado a la ventana.
      */
     public FrmRegistrarItinerario(ModoVentana modo, Itinerario itinerario) {
         persistenciaHabitats = new HabitatsDAO(conexion);

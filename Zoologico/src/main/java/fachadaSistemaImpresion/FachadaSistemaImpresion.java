@@ -16,12 +16,17 @@ import org.itson.persistencia.ItinerariosDAO;
 import org.itson.utils.JasperByCollectionBeanData;
 
 /**
+ * Clase que implementa la interfaz ISistemaImpresion que proporciona métodos
+ * para mostrar la pantalla de impresión del itinerario seleccionado.
  *
- * @author march
+ * @author Magda Ramírez - 233523, Misael Marchena - 233418, Ildefonso Lares -
+ * 233381, Esteban Duran - 233267
  */
 public class FachadaSistemaImpresion implements ISistemaImpresion {
+
     /**
      * Método para mostrar la pantalla de impresión del itinerario seleccionado.
+     *
      * @param itinerarioObtenido Itinerario que se mostrará.
      */
     @Override

@@ -17,8 +17,11 @@ import org.itson.persistencia.ZonasDAO;
 import org.itson.utils.Validadores;
 
 /**
+ ** Clase que implementa la interfaz IAdministrarItinerario que proporciona
+ * métodos para administrar el itinerario.
  *
- * @author march
+ * @author Magda Ramírez - 233523, Misael Marchena - 233418, Ildefonso Lares -
+ * 233381, Esteban Duran - 233267
  */
 public class FachadaAdministrarItinerario implements IAdministrarItinerario {
 

@@ -22,6 +22,8 @@ import org.itson.utils.JasperByCollectionBeanData;
 import org.itson.utils.ModoVentana;
 
 /**
+ * Clase que representa un panel con botones en una interfaz de usuario.
+ * Extiende de javax.swing.JPanel.
  *
  * @author Magda Ramírez - 233523, Misael Marchena - 233418, Ildefonso Lares -
  * 233381, Esteban Duran - 233267
@@ -33,7 +35,10 @@ public class PnlBotones extends javax.swing.JPanel {
     private JFrame frame;
 
     /**
-     * Creates new form PanelAction
+     * Constructor de la clase PnlBotones.
+     *
+     * @param frame El objeto JFrame asociado al panel.
+     * @param tabla El objeto JTable asociado al panel.
      */
     public PnlBotones(JFrame frame, JTable tabla) {
         initComponents();
@@ -63,7 +68,12 @@ public class PnlBotones extends javax.swing.JPanel {
     }
 
     /**
-     * Método que despliega FrmActualizarItinerario.
+     * Abre una nueva instancia de la ventana FrmRegistrarItinerario con el modo
+     * y el itinerario obtenido a partir de la fila seleccionada en la tabla.
+     * Cierra el marco actual después de abrir la nueva ventana.
+     *
+     * @param modo El modo de la ventana, especificado mediante el enum
+     * ModoVentana.
      */
     public void abrirVentana(ModoVentana modo) {
         int fila = tabla.convertRowIndexToModel(tabla.getEditingRow());

@@ -10,6 +10,7 @@ import java.util.Objects;
 import org.bson.types.ObjectId;
 
 /**
+ * Clase que representa una zona del zoológico.
  *
  * @author Magda Ramírez - 233523, Misael Marchena - 233418, Ildefonso Lares -
  * 233381, Esteban Duran - 233267
@@ -37,7 +38,7 @@ public class Zona {
         this.direcciones = direcciones;
         this.habitat = habitat;
     }
-    
+
     public Zona(ObjectId id, String nombre, ArrayList habitat) {
         this.id = id;
         this.nombre = nombre;
@@ -47,8 +48,8 @@ public class Zona {
     public Zona(String nombre, ArrayList habitat) {
         this.nombre = nombre;
         this.habitat = habitat;
-    }    
-    
+    }
+
     public ObjectId getId() {
         return id;
     }
@@ -88,7 +89,7 @@ public class Zona {
     public void setHabitat(ArrayList habitat) {
         this.habitat = habitat;
     }
-    
+
     @Override
     public int hashCode() {
         int hash = 7;
