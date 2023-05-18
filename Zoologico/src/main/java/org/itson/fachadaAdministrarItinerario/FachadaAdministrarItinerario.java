@@ -22,6 +22,13 @@ import org.itson.utils.Validadores;
  */
 public class FachadaAdministrarItinerario implements IAdministrarItinerario {
 
+    /**
+     * Método que registra un itinerario haciendo validaciones simples.
+     *
+     * @param itinerario Itinerario a registrar.
+     * @param conexion Conexion a la base de datos.
+     * @return True o false.
+     */
     @Override
     public boolean registrarItinerario(Itinerario itinerario, ConexionMongoDB conexion) {
         int rechazado = 0;
@@ -55,6 +62,14 @@ public class FachadaAdministrarItinerario implements IAdministrarItinerario {
         return false;
     }
 
+    /**
+     * Método que hace validaciones del itinerario.
+     *
+     * @param itinerario Itinerario que se validará.
+     * @param campo Campo que se desea validar.
+     * @param conexion Conexion a la base de datos.
+     * @return True o false.
+     */
     @Override
     public boolean validacion(Itinerario itinerario, String campo, ConexionMongoDB conexion) {
         ItinerariosDAO itinerariosDAO = new ItinerariosDAO(conexion);
@@ -89,6 +104,11 @@ public class FachadaAdministrarItinerario implements IAdministrarItinerario {
         }
     }
 
+    /**
+     * Método que genera el recorrido del itinerario.
+     *
+     * @param itinerario Itinerario donde se sacará el recorrido.
+     */
     @Override
     public void generarRecorrido(Itinerario itinerario) {
         ConexionMongoDB conexion = new ConexionMongoDB();
