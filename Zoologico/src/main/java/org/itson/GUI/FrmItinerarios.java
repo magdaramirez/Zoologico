@@ -9,6 +9,7 @@ import org.itson.utils.TableActionCellEditor;
 import java.awt.Color;
 import java.awt.Font;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -16,6 +17,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableModel;
+import org.itson.dominio.Horario;
 import org.itson.dominio.Itinerario;
 import org.itson.interfaces.IGuiaDAO;
 import org.itson.interfaces.IHabitatsDAO;
@@ -93,21 +95,30 @@ public class FrmItinerarios extends javax.swing.JFrame {
     }
 
     private void llenarTablaItinerarios() {
-        //CONEXIÓN A LA BASE DE DATOS
+        // CONEXIÓN A LA BASE DE DATOS
         ConexionMongoDB conexion = new ConexionMongoDB();
         IItinerariosDAO itinerariosDAO = new ItinerariosDAO(conexion);
-        //Consultar itinerarios
+        // Consultar itinerarios
         List<Itinerario> itinerarios = itinerariosDAO.consultarTodos();
 
         DefaultTableModel modelo = (DefaultTableModel) this.tblitinerarios.getModel();
         modelo.setRowCount(0);
         for (Itinerario itinerario : itinerarios) {
+            // Obtener la lista de días únicos del itinerario
+            List<String> diasUnicos = itinerario.getListaHorarios().stream()
+                    .map(Horario::getDia)
+                    .distinct()
+                    .collect(Collectors.toList());
+
+            // Convertir la lista de días en una cadena separada por comas
+            String dias = String.join(", ", diasUnicos);
+
             Object[] fila = {
                 contador++,
                 itinerario.getNombre(),
                 itinerario.getDuracion(),
                 itinerario.getNoVisitantes(),
-                itinerario.getListaHorarios()
+                dias
             };
             modelo.addRow(fila);
         }

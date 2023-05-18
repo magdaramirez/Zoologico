@@ -5,6 +5,7 @@
 package org.itson.GUI;
 
 import com.github.lgooddatepicker.components.TimePicker;
+import com.github.lgooddatepicker.components.TimePickerSettings;
 import java.awt.Component;
 import java.awt.Color;
 import java.awt.Font;
@@ -54,6 +55,9 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
     private int contador = 1;
     private int cantLunes, cantMartes, cantMiercoles, cantJueves, cantViernes, cantSabado, cantDomingo;
 
+    private final IHabitatsDAO persistenciaHabitats;
+    private final ConexionMongoDB conexion = new ConexionMongoDB();
+
     private final ModoVentana modo;
     private final Itinerario itinerario;
 
@@ -80,6 +84,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
      * @param itinerario
      */
     public FrmRegistrarItinerario(ModoVentana modo, Itinerario itinerario) {
+        persistenciaHabitats = new HabitatsDAO(conexion);
         initComponents();
         setTitle("Registro de Itinerario");
         ImageIcon icon = new ImageIcon("src\\main\\resources\\img\\paw.png");
@@ -87,6 +92,19 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
         this.modo = modo;
         this.itinerario = itinerario;
         this.configurarVentana(this.modo);
+
+    }
+
+    public static List<LocalTime> generarHorasConIntervalo(LocalTime inicio, LocalTime fin, int hours, int minutes) {
+        List<LocalTime> horas = new ArrayList<>();
+        LocalTime tiempo = inicio;
+
+        while (tiempo.isBefore(fin)) {
+            horas.add(tiempo);
+            tiempo = tiempo.plusHours(hours).plusMinutes(minutes);
+        }
+
+        return horas;
     }
 
     public void configurarVentana(ModoVentana modo) {
@@ -119,6 +137,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
 
             case ACTUALIZAR:
                 cargarItinerario();
+                txtNombre.setEditable(false);
                 this.lblTitulo.setText("Actualización de Itinerario");
                 this.pnlVaciarDatos.setVisible(false);
                 this.lblGuardar.setText("Actualizar");
@@ -137,7 +156,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
                 this.pnlVaciarDatos.setVisible(false);
                 this.cbxHabitat.setVisible(false);
                 this.lblAgregar.setVisible(false);
-                this.lblGuardar.setText("Ver mapa");
+                this.pnlGuardar.setVisible(false);
                 this.lblGuardarIMG.setVisible(false);
                 this.txtNombre.setEnabled(false);
                 this.txtDuracion.setEnabled(false);
@@ -206,6 +225,12 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
     }
 
     public void configurarTimePicker() {
+        LocalTime inicio = LocalTime.of(9, 0);
+        LocalTime fin = LocalTime.of(21, 0);
+        int hours = 1;
+        int minutes = 30;
+
+        List<LocalTime> horas = generarHorasConIntervalo(inicio, fin, hours, minutes);
         for (Component componente : this.pnlFondo.getComponents()) {
             if (componente instanceof TimePicker) {
                 TimePicker datePicker = (TimePicker) componente;
@@ -213,6 +238,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
                     datePicker.setEnabled(false);
                 } else {
                     datePicker.getComponentTimeTextField().setEditable(false);
+                    datePicker.getSettings().generatePotentialMenuTimes((ArrayList<LocalTime>) horas);
                 }
             }
         }
@@ -483,6 +509,77 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
         return habitatsT;
     }
 
+    private void actualizarItinerario() {
+        HashMap<String, String> datos = this.extraerDatos();
+        List<String> errores = this.validarDatos(datos);
+
+        if (!errores.isEmpty()) {
+            mostrarErroresValidacion(errores);
+            return; // Se detiene la ejecución si hay errores de validación
+        }
+
+        List<Horario> listaHorarios = new LinkedList<>();
+        LocalDate currentDate = LocalDate.now();
+
+        String[] dias = {"Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"};
+
+        for (String dia : dias) {
+            for (int i = 1; i <= 4; i++) {
+                TimePicker timePicker = getTimePicker(dia, i);
+                if (!timePicker.getText().isEmpty()) {
+                    LocalDateTime localDateTime = timePicker.getTime().atDate(currentDate);
+                    ZoneOffset zoneOffset = ZoneOffset.ofHours(0);
+                    OffsetDateTime offsetDateTime = OffsetDateTime.of(localDateTime, zoneOffset);
+                    Date horaInicio = Date.from(offsetDateTime.toInstant());
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(horaInicio);
+                    calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
+                    Date horaFin = calendar.getTime();
+                    Horario horario = new Horario(dia, horaInicio, horaFin);
+                    listaHorarios.add(horario);
+                }
+            }
+        }
+
+        if (listaHorarios.isEmpty()) {
+            return; // No se realizan más acciones si no hay horarios seleccionados
+        }
+
+        List<Zona> listaZonas = new LinkedList<>();
+        ConexionMongoDB conexion = new ConexionMongoDB();
+
+        Itinerario itinerario = new Itinerario(this.txtNombre.getText(), Integer.valueOf(this.txtNoVisitantes.getText()), Float.valueOf(this.txtLongitud.getText()), Integer.valueOf(this.txtDuracion.getText()), listaHorarios, listaZonas, this.obtenerHabitatsDeTabla());
+
+        ItinerariosDAO itinerariosDAO = new ItinerariosDAO(conexion);
+        Itinerario itinerarioExistente = itinerariosDAO.obtener(itinerario.getNombre());
+
+        if (itinerarioExistente == null) {
+            JOptionPane.showMessageDialog(null, "El itinerario no existe en la base de datos", "ERROR", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Verificar si el itinerario existente tiene exactamente los mismos datos
+        if (itinerarioExistente.equals(itinerario)) {
+            JOptionPane.showMessageDialog(null, "No se realizaron cambios en el itinerario", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            regresarVentanaItinerarios();
+            return;
+        }
+
+        // Actualizar el itinerario existente con los nuevos datos
+        itinerarioExistente.setNoVisitantes(itinerario.getNoVisitantes());
+        itinerarioExistente.setLongitud(itinerario.getLongitud());
+        itinerarioExistente.setDuracion(itinerario.getDuracion());
+        itinerarioExistente.setListaHorarios(itinerario.getListaHorarios());
+        itinerarioExistente.setListaZonas(itinerario.getListaZonas());
+        itinerarioExistente.setListaHabitats(itinerario.getListaHabitats());
+
+        // Actualizar el itinerario en la base de datos
+        itinerariosDAO.actualizar(itinerarioExistente);
+
+        JOptionPane.showMessageDialog(null, "Se ha actualizado el itinerario " + datos.get("nombre"), "Mensaje", JOptionPane.INFORMATION_MESSAGE);
+        regresarVentanaItinerarios();
+    }
+
     /**
      * Método que llena la tabla de hábitats.
      */
@@ -529,8 +626,8 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
 
     private void insertarHabitatsEnTablaActualizar(Itinerario itinerario) {
         DefaultTableModel modelo = (DefaultTableModel) tblHabitats.getModel();
-
         List<Habitat> habitats = itinerario.getListaHabitats();
+
         for (Habitat habitat : habitats) {
             Object[] fila = {
                 contador++,
@@ -1410,8 +1507,8 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
     }//GEN-LAST:event_txtNombreMousePressed
 
     private void pnlGuardarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlGuardarMouseClicked
-        if (modo == ModoVentana.ACTUALIZAR) {
-
+        if (modo.equals(ModoVentana.ACTUALIZAR)) {
+            this.actualizarItinerario();
         } else {
             registrarItinerario();
         }

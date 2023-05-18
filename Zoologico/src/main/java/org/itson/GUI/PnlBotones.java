@@ -130,8 +130,14 @@ public class PnlBotones extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void aBtnImprimirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aBtnImprimirActionPerformed
+        int fila = tabla.convertRowIndexToModel(tabla.getEditingRow());
+        TableModel model = tabla.getModel();
+        String nombre = model.getValueAt(fila, 1).toString();
+        ConexionMongoDB conexion = new ConexionMongoDB();
+        ItinerariosDAO itinerarios = new ItinerariosDAO(conexion);
+        Itinerario itinerarioObtenido = itinerarios.obtener(nombre);
         FachadaSistemaImpresion sistemaImpresion = new FachadaSistemaImpresion();
-        sistemaImpresion.imprimir();
+        sistemaImpresion.imprimir(itinerarioObtenido);
     }//GEN-LAST:event_aBtnImprimirActionPerformed
 
     private void aBtnVisualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aBtnVisualizarActionPerformed

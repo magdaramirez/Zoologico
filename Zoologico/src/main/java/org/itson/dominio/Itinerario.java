@@ -48,6 +48,25 @@ public class Itinerario {
         this.listaHabitats = listaHabitats;
     }
 
+    public Itinerario(String nombre, Integer noVisitantes, Float longitud, Integer duracion, List<Horario> listaHorarios) {
+        this.nombre = nombre;
+        this.noVisitantes = noVisitantes;
+        this.longitud = longitud;
+        this.duracion = duracion;
+        this.listaHorarios = listaHorarios;
+    }
+
+    public Itinerario(String nombre, Integer noVisitantes, Integer duracion, List<Horario> listaHorarios) {
+        this.nombre = nombre;
+        this.noVisitantes = noVisitantes;
+        this.duracion = duracion;
+        this.listaHorarios = listaHorarios;
+    }
+    
+    
+    
+    
+
     public ObjectId getId() {
         return id;
     }

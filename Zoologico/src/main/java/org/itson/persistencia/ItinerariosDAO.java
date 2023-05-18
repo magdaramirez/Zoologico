@@ -41,7 +41,6 @@ public class ItinerariosDAO implements IItinerariosDAO {
 
         return itinerario;
     }
-    
 
     @Override
     public List<Itinerario> consultarTodos() {
@@ -68,6 +67,17 @@ public class ItinerariosDAO implements IItinerariosDAO {
         return itinerario;
     }
 
+    public void actualizar(Itinerario itinerario) {
+        // Obtención de acceso a la colección
+        MongoCollection<Itinerario> coleccion = BASE_DATOS.getCollection(NOMBRE_COLECCION, Itinerario.class);
+
+        // Crear el filtro de búsqueda por nombre
+        Bson filtro = Filters.eq("nombre", itinerario.getNombre());
+
+        // Realizar la actualización del itinerario
+        coleccion.replaceOne(filtro, itinerario);
+    }
+
     @Override
     public boolean obtenerItinerarios() {
         // Obtener acceso a la colección
@@ -81,7 +91,7 @@ public class ItinerariosDAO implements IItinerariosDAO {
 
         return false;
     }
-    
+
     @Override
     public List<Itinerario> consultarPorHoraInicio(String dia, Date horaInicio) {
         // OBTENCIÓN DE ACCESO A LA COLECCIÓN

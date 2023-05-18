@@ -4,10 +4,12 @@
  */
 package fachadaSistemaImpresion;
 
+import org.itson.dominio.Itinerario;
+
 /**
  *
  * @author march
  */
 public interface ISistemaImpresion {
-    public void imprimir();
+    public void imprimir(Itinerario itinerarioObtenido);
 }

@@ -4,7 +4,7 @@
 	<property name="template.engine" value="tabular_template"/>
 	<style name="Title" forecolor="#FFFFFF" fontName="Arial" fontSize="50" isBold="false"/>
 	<style name="SubTitle" forecolor="#CCCCCC" fontName="Arial" fontSize="18" isBold="false"/>
-	<style name="Column header" forecolor="#666666" fontName="Arial" fontSize="14" isBold="true"/>
+	<style name="Column header" forecolor="#666666" fontName="Times New Roman" fontSize="14" isBold="true"/>
 	<style name="Row" mode="Transparent" fontName="Arial" pdfFontName="Arial">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
@@ -153,7 +153,7 @@
 							</staticText>
 						</jr:columnHeader>
 						<jr:detailCell style="Table_TD" height="30">
-							<textField>
+							<textField textAdjust="StretchHeight">
 								<reportElement x="0" y="0" width="210" height="30" uuid="cfbe373e-cead-4b64-99f2-7915a952ba50"/>
 								<box>
 									<pen lineColor="#660000"/>
@@ -180,7 +180,7 @@
 							</staticText>
 						</jr:columnHeader>
 						<jr:detailCell style="Table_TD" height="30">
-							<textField>
+							<textField textAdjust="StretchHeight">
 								<reportElement x="0" y="0" width="70" height="30" uuid="fe3bfb4e-97da-4346-88f6-82d8a1e69663"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="12"/>
@@ -204,7 +204,7 @@
 							</staticText>
 						</jr:columnHeader>
 						<jr:detailCell style="Table_TD" height="30">
-							<textField>
+							<textField textAdjust="StretchHeight">
 								<reportElement x="0" y="0" width="70" height="30" uuid="071abf61-cadc-4077-a6e0-a53c13be2e2c"/>
 								<box>
 									<pen lineColor="#660000"/>
@@ -231,7 +231,7 @@
 							</staticText>
 						</jr:columnHeader>
 						<jr:detailCell style="Table_TD" height="30">
-							<textField>
+							<textField textAdjust="StretchHeight">
 								<reportElement x="0" y="0" width="203" height="30" uuid="5592f25b-593c-4fb8-ae59-c69d0a429647"/>
 								<box>
 									<pen lineColor="#660000"/>

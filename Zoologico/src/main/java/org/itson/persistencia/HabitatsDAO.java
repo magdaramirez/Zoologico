@@ -6,7 +6,9 @@ package org.itson.persistencia;
 
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import org.itson.dominio.Habitat;
@@ -41,11 +43,17 @@ public class HabitatsDAO implements IHabitatsDAO {
 
     @Override
     public List<Habitat> consultarTodos() {
-        //OBTENCIÓN DE ACCESO A LA COLECCIÓN
+        // OBTENCIÓN DE ACCESO A LA COLECCIÓN
         MongoCollection<Habitat> coleccion = BASE_DATOS.getCollection(NOMBRE_COLECCION, Habitat.class);
-        List<Habitat> habitats = new LinkedList<>();
-        FindIterable resultadosConsultar = coleccion.find();
-        resultadosConsultar.into(habitats);
+        List<Habitat> habitats = new ArrayList<>();  // Usar ArrayList en lugar de LinkedList
+
+        // Consultar y almacenar los resultados en la lista de hábitats
+        FindIterable<Habitat> resultadosConsultar = coleccion.find();
+        MongoCursor<Habitat> cursor = resultadosConsultar.iterator();
+        while (cursor.hasNext()) {
+            Habitat habitat = cursor.next();
+            habitats.add(habitat);
+        }
 
         return habitats;
     }

@@ -20,6 +20,7 @@ import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -85,6 +86,10 @@ public class Combobox<E> extends JComboBox<E> {
                 return com;
             }
         });
+    }
+
+    public void setModel(DefaultComboBoxModel<String> modeloComboBox) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     private class ComboUI extends BasicComboBoxUI {
