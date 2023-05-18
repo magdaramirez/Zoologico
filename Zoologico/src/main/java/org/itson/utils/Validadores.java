@@ -109,24 +109,14 @@ public class Validadores {
      * Método que comprueba si el número de visitantes excede el límite
      * permitido.
      *
-     * @param texto El número de visitantes como cadena de texto.
      * @return true si el número de visitantes excede el límite, false en caso
      * contrario.
      */
-    public static boolean excedeNoVisitantes(String texto) {
-        try {
-            if (!esTextoVacio(texto)) {
-                int numero = Integer.parseInt(texto);
-                if (numero > 0 && numero <= 30) {
-                    return false; // Cambiado a false para indicar que no excede el límite
-                } else {
-                    return true; // Cambiado a true para indicar que excede el límite
-                }
-            } else {
-                return false; // Agregado un return false para manejar el caso de texto vacío
-            }
-        } catch (NumberFormatException e) {
-            return false; // Si el texto no puede ser convertido a número, retorna falso
+    public static boolean excedeNumVisitantes(Integer numVisitantes) {
+        if (numVisitantes > 0 && numVisitantes <= 30) {
+            return true; // Cambiado a true para indicar que no excede el límite
+        } else {
+            return false; // Cambiado a false para indicar que excede el límite
         }
     }
 
