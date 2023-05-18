@@ -14,10 +14,10 @@ import javax.swing.JFrame;
 import javax.swing.JTable;
 import javax.swing.table.TableModel;
 import net.sf.jasperreports.engine.JRException;
-import org.itson.dominio.Itinerario;
 import org.itson.interfaces.IHabitatsDAO;
-import org.itson.persistencia.ConexionMongoDB;
-import org.itson.persistencia.ItinerariosDAO;
+import org.itson.objetosnegocio.Itinerario;
+import org.itson.objetosnegociodao.ConexionMongoDB;
+import org.itson.objetosnegociodao.ItinerariosDAO;
 import org.itson.utils.JasperByCollectionBeanData;
 import org.itson.utils.ModoVentana;
 

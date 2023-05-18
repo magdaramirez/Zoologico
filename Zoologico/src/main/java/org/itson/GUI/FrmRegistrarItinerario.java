@@ -31,15 +31,15 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableModel;
-import org.itson.dominio.Habitat;
-import org.itson.dominio.Horario;
-import org.itson.dominio.Itinerario;
-import org.itson.dominio.Zona;
-import org.itson.fachadaAdministrarItinerario.FachadaAdministrarItinerario;
+import org.itson.fachadaAdministracionItinerario.FachadaAdministrarItinerario;
 import org.itson.interfaces.IHabitatsDAO;
-import org.itson.persistencia.ConexionMongoDB;
-import org.itson.persistencia.HabitatsDAO;
-import org.itson.persistencia.ItinerariosDAO;
+import org.itson.objetosnegocio.Habitat;
+import org.itson.objetosnegocio.Horario;
+import org.itson.objetosnegocio.Itinerario;
+import org.itson.objetosnegocio.Zona;
+import org.itson.objetosnegociodao.ConexionMongoDB;
+import org.itson.objetosnegociodao.HabitatsDAO;
+import org.itson.objetosnegociodao.ItinerariosDAO;
 import org.itson.utils.ModoVentana;
 import org.itson.utils.Validadores;
 
@@ -732,7 +732,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
             // Eliminar la última fila de la tabla
             modeloTabla.removeRow(ultimoIndice);
             contador--;
-            lblGuardar.setVisible(true);
+            lblAgregar.setVisible(true);
         }
     }
 

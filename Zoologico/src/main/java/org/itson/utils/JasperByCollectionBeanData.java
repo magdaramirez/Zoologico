@@ -26,8 +26,9 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import net.sf.jasperreports.view.JasperViewer;
-import org.itson.dominio.Horario;
-import org.itson.dominio.Itinerario;
+import org.itson.objetosnegocio.Horario;
+import org.itson.objetosnegocio.Itinerario;
+
 
 /**
  *

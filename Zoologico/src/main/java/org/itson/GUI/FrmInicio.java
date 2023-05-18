@@ -13,9 +13,9 @@ import javax.swing.JPanel;
 import javax.swing.border.Border;
 import org.itson.interfaces.IGuiaDAO;
 import org.itson.interfaces.IItinerariosDAO;
-import org.itson.persistencia.ConexionMongoDB;
-import org.itson.persistencia.GuiaDAO;
-import org.itson.persistencia.ItinerariosDAO;
+import org.itson.objetosnegociodao.ConexionMongoDB;
+import org.itson.objetosnegociodao.GuiaDAO;
+import org.itson.objetosnegociodao.ItinerariosDAO;
 import org.itson.utils.ModoVentana;
 
 /**
