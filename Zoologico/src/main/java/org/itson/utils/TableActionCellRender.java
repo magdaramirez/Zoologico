@@ -5,6 +5,7 @@
 package org.itson.utils;
 
 import java.awt.Component;
+import javax.swing.JFrame;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import org.itson.GUI.PnlBotones;
@@ -16,11 +17,13 @@ import org.itson.GUI.PnlBotones;
  */
 public class TableActionCellRender extends DefaultTableCellRenderer{
 
+    JFrame frame;
+    
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         Component comp=  super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
         
-        PnlBotones action = new PnlBotones();
+        PnlBotones action = new PnlBotones(frame, table);
         action.setBackground(comp.getBackground());
         return action;
     }

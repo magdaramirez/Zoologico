@@ -4,6 +4,7 @@
  */
 package org.itson.interfaces;
 
+import java.util.Date;
 import java.util.List;
 import org.itson.dominio.Itinerario;
 
@@ -18,5 +19,9 @@ public interface IItinerariosDAO {
 
     List<Itinerario> consultarTodos();
     
+    Itinerario obtener(String nombre);
+    
     boolean obtenerItinerarios();
+    
+    List<Itinerario> consultarPorHoraInicio(String dia, Date horaInicio);
 }

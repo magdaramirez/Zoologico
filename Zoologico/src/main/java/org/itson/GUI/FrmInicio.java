@@ -16,6 +16,7 @@ import org.itson.interfaces.IItinerariosDAO;
 import org.itson.persistencia.ConexionMongoDB;
 import org.itson.persistencia.GuiaDAO;
 import org.itson.persistencia.ItinerariosDAO;
+import org.itson.utils.ModoVentana;
 
 /**
  * Clase encargada de la ventana Inicio.
@@ -97,8 +98,8 @@ public class FrmInicio extends javax.swing.JFrame {
         panel.setBorder(border);
     }
 
-    public void abrirVentanaRegistro(boolean vacio) {
-        new FrmRegistrarItinerario(vacio).setVisible(true);
+    public void abrirVentanaRegistro(ModoVentana modo) {
+        new FrmRegistrarItinerario(modo, null).setVisible(true);
         dispose();
     }
 
@@ -345,7 +346,7 @@ public class FrmInicio extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "No existen colecciones disponibles.", "Error", JOptionPane.ERROR_MESSAGE);
 
             // Redirigir al usuario a la ventana FrmRegistrarItinerario
-            abrirVentanaRegistro(true);
+            abrirVentanaRegistro(ModoVentana.REGISTRAR_VACIOS);
             this.dispose();
         } else {
             abrirVentanaItinerarios();

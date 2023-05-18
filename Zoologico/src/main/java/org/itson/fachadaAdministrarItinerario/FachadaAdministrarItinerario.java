@@ -4,8 +4,8 @@
  */
 package org.itson.fachadaAdministrarItinerario;
 
+import java.util.Date;
 import java.util.List;
-import javax.swing.JOptionPane;
 import org.itson.dominio.Horario;
 import org.itson.dominio.Itinerario;
 import org.itson.persistencia.ConexionMongoDB;
@@ -40,8 +40,17 @@ public class FachadaAdministrarItinerario {
                 return Validadores.excedeNumVisitantes(itinerario.getNoVisitantes());
             case "horarios":
                 List<Horario> listaHorarios = itinerario.getListaHorarios();
-                
-                break;
+                for (Horario horario : listaHorarios) {
+                    String dia = horario.getDia();
+                    Date horaInicio = horario.getHoraInicio();
+
+                    // Verificar si existe otro itinerario con la misma hora de inicio para el mismo día
+                    List<Itinerario> itinerariosMismoHorario = itinerariosDAO.consultarPorHoraInicio(dia, horaInicio);
+                    if (itinerariosMismoHorario.size() >= 1) {
+                        return false;
+                    }
+                }
+                return true;
             default:
                 throw new AssertionError();
         }

@@ -23,6 +23,7 @@ import org.itson.interfaces.IItinerariosDAO;
 import org.itson.persistencia.ConexionMongoDB;
 import org.itson.persistencia.GuiaDAO;
 import org.itson.persistencia.ItinerariosDAO;
+import org.itson.utils.ModoVentana;
 
 /**
  * Clase encargada de la ventana Itinerarios.
@@ -66,7 +67,7 @@ public class FrmItinerarios extends javax.swing.JFrame {
         this.setIconImage(icon.getImage());
 
         tblitinerarios.getColumnModel().getColumn(5).setCellRenderer(new TableActionCellRender());
-        tblitinerarios.getColumnModel().getColumn(5).setCellEditor(new TableActionCellEditor());
+        tblitinerarios.getColumnModel().getColumn(5).setCellEditor(new TableActionCellEditor(this));
 
         tblitinerarios.getTableHeader().setFont(new Font("Berlin Sans FB", Font.PLAIN, 16));
         tblitinerarios.getTableHeader().setOpaque(false);
@@ -162,7 +163,7 @@ public class FrmItinerarios extends javax.swing.JFrame {
      * Método que despliega FrmRegistrarItinerario.
      */
     public void abrirVentanaRegistro() {
-        new FrmRegistrarItinerario(false).setVisible(true);
+        new FrmRegistrarItinerario(ModoVentana.REGISTRAR, null).setVisible(true);
         dispose();
     }
 

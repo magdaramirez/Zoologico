@@ -10,7 +10,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -19,6 +20,7 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -29,10 +31,12 @@ import org.itson.dominio.Habitat;
 import org.itson.dominio.Horario;
 import org.itson.dominio.Itinerario;
 import org.itson.dominio.Zona;
+import org.itson.fachadaAdministrarItinerario.FachadaAdministrarItinerario;
 import org.itson.interfaces.IHabitatsDAO;
 import org.itson.persistencia.ConexionMongoDB;
 import org.itson.persistencia.HabitatsDAO;
 import org.itson.persistencia.ItinerariosDAO;
+import org.itson.utils.ModoVentana;
 import org.itson.utils.Validadores;
 
 /**
@@ -47,6 +51,9 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
     private int contador = 1;
     private int cantLunes, cantMartes, cantMiercoles, cantJueves, cantViernes, cantSabado, cantDomingo;
 
+    private ModoVentana modo;
+    private Itinerario itinerario;
+
     private final Color AMARILLO = new Color(255, 255, 153);
     private final Color GRIS = new Color(245, 245, 245);
     private final Color CAFE = new Color(102, 0, 0);
@@ -54,7 +61,6 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
 
     private final int BORDE_GRUESO = 3;
     private final int BORDE_ESTRECHO = 1;
-    private boolean vacio;
 
     private final String FLECHA_BLANCA = "src\\main\\resources\\img\\flecha (1).png";
     private final String FLECHA_CAFE = "src\\main\\resources\\img\\flecha.png";
@@ -69,23 +75,19 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
      *
      * @param persistencia El objeto que maneja la persistencia de los datos.
      */
-    public FrmRegistrarItinerario(boolean vacio) {
+    public FrmRegistrarItinerario(ModoVentana modo, Itinerario itinerario) {
         initComponents();
         setTitle("Registro de Itinerario");
         ImageIcon icon = new ImageIcon("src\\main\\resources\\img\\paw.png");
         this.setIconImage(icon.getImage());
-        this.llenarTablaHabitats();
-        this.cantLunes = 1;
-        this.cantMartes = 1;
-        this.cantMiercoles = 1;
-        this.cantJueves = 1;
-        this.cantViernes = 1;
-        this.cantSabado = 1;
-        this.cantDomingo = 1;
-        this.vacio = vacio;
-        this.validarVacio();
+        this.modo = modo;
+        this.itinerario = itinerario;
+        this.configurarVentana(this.modo);
+    }
 
-        this.visualizarTimePicker();
+    public void configurarVentana(ModoVentana modo) {
+        this.configurarTimePicker();
+
         this.btnRestaLunes.setEnabled(false);
         this.btnRestaMartes.setEnabled(false);
         this.btnRestaMiercoles.setEnabled(false);
@@ -93,14 +95,84 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
         this.btnRestaViernes.setEnabled(false);
         this.btnRestaSabado.setEnabled(false);
         this.btnRestaDomingo.setEnabled(false);
+
+        switch (modo) {
+
+            case REGISTRAR:
+            case REGISTRAR_VACIOS:
+                this.cantLunes = 1;
+                this.cantMartes = 1;
+                this.cantMiercoles = 1;
+                this.cantJueves = 1;
+                this.cantViernes = 1;
+                this.cantSabado = 1;
+                this.cantDomingo = 1;
+
+                if (modo == ModoVentana.REGISTRAR_VACIOS) {
+                    pnlRegresar.setVisible(false);
+                }
+                break;
+
+            case ACTUALIZAR:
+                cargarItinerario();
+                this.lblTitulo.setText("Actualización de Itinerario");
+                this.pnlVaciarDatos.setVisible(false);
+                this.lblGuardar.setText("Actualizar");
+                break;
+
+            case PREVISUALIZAR:
+                cargarItinerario();
+                for (Component componente : this.pnlFondo.getComponents()) {
+                    if (componente instanceof JButton) {
+                        JButton boton = (JButton) componente;
+                        boton.setVisible(false);
+                    }
+                }
+
+                this.lblTitulo.setText("Previsualización de Itinerario");
+                this.pnlVaciarDatos.setVisible(false);
+                this.cbxHabitat.setVisible(false);
+                this.lblAgregar.setVisible(false);
+                this.lblGuardar.setText("Ver mapa");
+                this.lblGuardarIMG.setVisible(false);
+                this.txtNombre.setEnabled(false);
+                this.txtDuracion.setEnabled(false);
+                this.txtLongitud.setEnabled(false);
+                this.txtNoVisitantes.setEnabled(false);
+                break;
+
+            default:
+                // Acción por defecto en caso de un modo no reconocido
+                break;
+        }
+        this.visualizarTimePicker();
+        this.configurarTabla();
+    }
+
+    public void configurarTabla() {
+        this.llenarTablaHabitats();
         tblHabitats.getTableHeader().setFont(new Font("Berlin Sans FB", Font.PLAIN, 16));
         tblHabitats.getTableHeader().setOpaque(false);
         tblHabitats.getTableHeader().setForeground(new Color(102, 0, 0));
         tblHabitats.setRowHeight(40);
+    }
+
+    public void cargarItinerario() {
+        this.txtNombre.setText(itinerario.getNombre());
+        this.txtDuracion.setText(itinerario.getDuracion().toString());
+        this.txtLongitud.setText(itinerario.getLongitud().toString());
+        this.txtNoVisitantes.setText(itinerario.getNoVisitantes().toString());
+    }
+
+    public void configurarTimePicker() {
         for (Component componente : this.pnlFondo.getComponents()) {
             if (componente instanceof TimePicker) {
                 TimePicker datePicker = (TimePicker) componente;
-                datePicker.getComponentTimeTextField().setEditable(false);
+                if (modo == ModoVentana.PREVISUALIZAR) {
+                    datePicker.setEnabled(false);
+                } else {
+                    datePicker.getComponentTimeTextField().setEditable(false);
+                }
             }
         }
     }
@@ -109,193 +181,35 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
      * Método para visualizar los time pickers para ingresar las horas.
      */
     private void visualizarTimePicker() {
-        switch (this.cantLunes) {
-            case 1:
-                this.tpLunes1.setVisible(true);
-                this.tpLunes2.setVisible(false);
-                this.tpLunes3.setVisible(false);
-                this.tpLunes4.setVisible(false);
-                break;
-            case 2:
-                this.tpLunes1.setVisible(true);
-                this.tpLunes2.setVisible(true);
-                this.tpLunes3.setVisible(false);
-                this.tpLunes4.setVisible(false);
-                break;
-            case 3:
-                this.tpLunes1.setVisible(true);
-                this.tpLunes2.setVisible(true);
-                this.tpLunes3.setVisible(true);
-                this.tpLunes4.setVisible(false);
-                break;
-            case 4:
-                this.tpLunes1.setVisible(true);
-                this.tpLunes2.setVisible(true);
-                this.tpLunes3.setVisible(true);
-                this.tpLunes4.setVisible(true);
-                break;
-        }
+        String[] dias = {"Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"};
 
-        switch (this.cantMartes) {
-            case 1:
-                this.tpMartes1.setVisible(true);
-                this.tpMartes2.setVisible(false);
-                this.tpMartes3.setVisible(false);
-                this.tpMartes4.setVisible(false);
-                break;
-            case 2:
-                this.tpMartes1.setVisible(true);
-                this.tpMartes2.setVisible(true);
-                this.tpMartes3.setVisible(false);
-                this.tpMartes4.setVisible(false);
-                break;
-            case 3:
-                this.tpMartes1.setVisible(true);
-                this.tpMartes2.setVisible(true);
-                this.tpMartes3.setVisible(true);
-                this.tpMartes4.setVisible(false);
-                break;
-            case 4:
-                this.tpMartes1.setVisible(true);
-                this.tpMartes2.setVisible(true);
-                this.tpMartes3.setVisible(true);
-                this.tpMartes4.setVisible(true);
-                break;
+        for (String dia : dias) {
+            int cantidad = obtenerCantidad(dia);
+            for (int i = 1; i <= 4; i++) {
+                TimePicker timePicker = getTimePicker(dia, i);
+                timePicker.setVisible(i <= cantidad);
+            }
         }
+    }
 
-        switch (this.cantMiercoles) {
-            case 1:
-                this.tpMiercoles1.setVisible(true);
-                this.tpMiercoles2.setVisible(false);
-                this.tpMiercoles3.setVisible(false);
-                this.tpMiercoles4.setVisible(false);
-                break;
-            case 2:
-                this.tpMiercoles1.setVisible(true);
-                this.tpMiercoles2.setVisible(true);
-                this.tpMiercoles3.setVisible(false);
-                this.tpMiercoles4.setVisible(false);
-                break;
-            case 3:
-                this.tpMiercoles1.setVisible(true);
-                this.tpMiercoles2.setVisible(true);
-                this.tpMiercoles3.setVisible(true);
-                this.tpMiercoles4.setVisible(false);
-                break;
-            case 4:
-                this.tpMiercoles1.setVisible(true);
-                this.tpMiercoles2.setVisible(true);
-                this.tpMiercoles3.setVisible(true);
-                this.tpMiercoles4.setVisible(true);
-                break;
-        }
-
-        switch (this.cantJueves) {
-            case 1:
-                this.tpJueves1.setVisible(true);
-                this.tpJueves2.setVisible(false);
-                this.tpJueves3.setVisible(false);
-                this.tpJueves4.setVisible(false);
-                break;
-            case 2:
-                this.tpJueves1.setVisible(true);
-                this.tpJueves2.setVisible(true);
-                this.tpJueves3.setVisible(false);
-                this.tpJueves4.setVisible(false);
-                break;
-            case 3:
-                this.tpJueves1.setVisible(true);
-                this.tpJueves2.setVisible(true);
-                this.tpJueves3.setVisible(true);
-                this.tpJueves4.setVisible(false);
-                break;
-            case 4:
-                this.tpJueves1.setVisible(true);
-                this.tpJueves2.setVisible(true);
-                this.tpJueves3.setVisible(true);
-                this.tpJueves4.setVisible(true);
-                break;
-        }
-
-        switch (this.cantViernes) {
-            case 1:
-                this.tpViernes1.setVisible(true);
-                this.tpViernes2.setVisible(false);
-                this.tpViernes3.setVisible(false);
-                this.tpViernes4.setVisible(false);
-                break;
-            case 2:
-                this.tpViernes1.setVisible(true);
-                this.tpViernes2.setVisible(true);
-                this.tpViernes3.setVisible(false);
-                this.tpViernes4.setVisible(false);
-                break;
-            case 3:
-                this.tpViernes1.setVisible(true);
-                this.tpViernes2.setVisible(true);
-                this.tpViernes3.setVisible(true);
-                this.tpViernes4.setVisible(false);
-                break;
-            case 4:
-                this.tpViernes1.setVisible(true);
-                this.tpViernes2.setVisible(true);
-                this.tpViernes3.setVisible(true);
-                this.tpViernes4.setVisible(true);
-                break;
-        }
-
-        switch (this.cantSabado) {
-            case 1:
-                this.tpSabado1.setVisible(true);
-                this.tpSabado2.setVisible(false);
-                this.tpSabado3.setVisible(false);
-                this.tpSabado4.setVisible(false);
-                break;
-            case 2:
-                this.tpSabado1.setVisible(true);
-                this.tpSabado2.setVisible(true);
-                this.tpSabado3.setVisible(false);
-                this.tpSabado4.setVisible(false);
-                break;
-            case 3:
-                this.tpSabado1.setVisible(true);
-                this.tpSabado2.setVisible(true);
-                this.tpSabado3.setVisible(true);
-                this.tpSabado4.setVisible(false);
-                break;
-            case 4:
-                this.tpSabado1.setVisible(true);
-                this.tpSabado2.setVisible(true);
-                this.tpSabado3.setVisible(true);
-                this.tpSabado4.setVisible(true);
-                break;
-        }
-
-        switch (this.cantDomingo) {
-            case 1:
-                this.tpDomingo1.setVisible(true);
-                this.tpDomingo2.setVisible(false);
-                this.tpDomingo3.setVisible(false);
-                this.tpDomingo4.setVisible(false);
-                break;
-            case 2:
-                this.tpDomingo1.setVisible(true);
-                this.tpDomingo2.setVisible(true);
-                this.tpDomingo3.setVisible(false);
-                this.tpDomingo4.setVisible(false);
-                break;
-            case 3:
-                this.tpDomingo1.setVisible(true);
-                this.tpDomingo2.setVisible(true);
-                this.tpDomingo3.setVisible(true);
-                this.tpDomingo4.setVisible(false);
-                break;
-            case 4:
-                this.tpDomingo1.setVisible(true);
-                this.tpDomingo2.setVisible(true);
-                this.tpDomingo3.setVisible(true);
-                this.tpDomingo4.setVisible(true);
-                break;
+    private int obtenerCantidad(String dia) {
+        switch (dia) {
+            case "Lunes":
+                return this.cantLunes;
+            case "Martes":
+                return this.cantMartes;
+            case "Miércoles":
+                return this.cantMiercoles;
+            case "Jueves":
+                return this.cantJueves;
+            case "Viernes":
+                return this.cantViernes;
+            case "Sábado":
+                return this.cantSabado;
+            case "Domingo":
+                return this.cantDomingo;
+            default:
+                return 0;
         }
     }
 
@@ -376,296 +290,140 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
             List<Horario> listaHorarios = new LinkedList<>();
             LocalDate currentDate = LocalDate.now();
 
-            if (!this.tpLunes1.getText().isEmpty()) {
-                LocalDateTime localDateTime = this.tpLunes1.getTime().atDate(currentDate);
-                Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(horaInicio);
-                calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
-                Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Lunes", horaInicio, horaFin);
-                listaHorarios.add(horario);
-            }
-            if (!this.tpLunes2.getText().isEmpty()) {
-                LocalDateTime localDateTime = this.tpLunes2.getTime().atDate(currentDate);
-                Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(horaInicio);
-                calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
-                Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Lunes", horaInicio, horaFin);
-                listaHorarios.add(horario);
-            }
-            if (!this.tpLunes3.getText().isEmpty()) {
-                LocalDateTime localDateTime = this.tpLunes3.getTime().atDate(currentDate);
-                Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(horaInicio);
-                calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
-                Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Lunes", horaInicio, horaFin);
-                listaHorarios.add(horario);
-            }
-            if (!this.tpLunes4.getText().isEmpty()) {
-                LocalDateTime localDateTime = this.tpLunes4.getTime().atDate(currentDate);
-                Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(horaInicio);
-                calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
-                Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Lunes", horaInicio, horaFin);
-                listaHorarios.add(horario);
-            }
-            if (!this.tpMartes1.getText().isEmpty()) {
-                LocalDateTime localDateTime = this.tpMartes1.getTime().atDate(currentDate);
-                Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(horaInicio);
-                calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
-                Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Martes", horaInicio, horaFin);
-                listaHorarios.add(horario);
-            }
-            if (!this.tpMartes2.getText().isEmpty()) {
-                LocalDateTime localDateTime = this.tpMartes2.getTime().atDate(currentDate);
-                Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(horaInicio);
-                calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
-                Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Martes", horaInicio, horaFin);
-                listaHorarios.add(horario);
-            }
-            if (!this.tpMartes3.getText().isEmpty()) {
-                LocalDateTime localDateTime = this.tpMartes3.getTime().atDate(currentDate);
-                Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(horaInicio);
-                calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
-                Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Martes", horaInicio, horaFin);
-                listaHorarios.add(horario);
-            }
-            if (!this.tpMartes4.getText().isEmpty()) {
-                LocalDateTime localDateTime = this.tpMartes4.getTime().atDate(currentDate);
-                Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(horaInicio);
-                calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
-                Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Martes", horaInicio, horaFin);
-                listaHorarios.add(horario);
-            }
-            if (!this.tpMiercoles1.getText().isEmpty()) {
-                LocalDateTime localDateTime = this.tpMiercoles1.getTime().atDate(currentDate);
-                Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(horaInicio);
-                calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
-                Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Miércoles", horaInicio, horaFin);
-                listaHorarios.add(horario);
-            }
-            if (!this.tpMiercoles2.getText().isEmpty()) {
-                LocalDateTime localDateTime = this.tpMiercoles2.getTime().atDate(currentDate);
-                Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(horaInicio);
-                calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
-                Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Miércoles", horaInicio, horaFin);
-                listaHorarios.add(horario);
-            }
-            if (!this.tpMiercoles3.getText().isEmpty()) {
-                LocalDateTime localDateTime = this.tpMiercoles3.getTime().atDate(currentDate);
-                Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(horaInicio);
-                calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
-                Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Miércoles", horaInicio, horaFin);
-                listaHorarios.add(horario);
-            }
-            if (!this.tpMiercoles4.getText().isEmpty()) {
-                LocalDateTime localDateTime = this.tpMiercoles4.getTime().atDate(currentDate);
-                Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(horaInicio);
-                calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
-                Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Miércoles", horaInicio, horaFin);
-                listaHorarios.add(horario);
-            } else if (!this.tpJueves1.getText().isEmpty()) {
-                LocalDateTime localDateTime = this.tpJueves1.getTime().atDate(currentDate);
-                Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(horaInicio);
-                calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
-                Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Jueves", horaInicio, horaFin);
-                listaHorarios.add(horario);
-            } else if (!this.tpJueves2.getText().isEmpty()) {
-                LocalDateTime localDateTime = this.tpJueves2.getTime().atDate(currentDate);
-                Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(horaInicio);
-                calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
-                Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Jueves", horaInicio, horaFin);
-                listaHorarios.add(horario);
-            }
-            if (!this.tpJueves3.getText().isEmpty()) {
-                LocalDateTime localDateTime = this.tpJueves3.getTime().atDate(currentDate);
-                Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(horaInicio);
-                calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
-                Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Jueves", horaInicio, horaFin);
-                listaHorarios.add(horario);
-            }
-            if (!this.tpJueves4.getText().isEmpty()) {
-                LocalDateTime localDateTime = this.tpJueves4.getTime().atDate(currentDate);
-                Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(horaInicio);
-                calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
-                Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Jueves", horaInicio, horaFin);
-                listaHorarios.add(horario);
-            }
-            if (!this.tpViernes1.getText().isEmpty()) {
-                LocalDateTime localDateTime = this.tpViernes1.getTime().atDate(currentDate);
-                Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(horaInicio);
-                calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
-                Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Viernes", horaInicio, horaFin);
-                listaHorarios.add(horario);
-            }
-            if (!this.tpViernes2.getText().isEmpty()) {
-                LocalDateTime localDateTime = this.tpViernes2.getTime().atDate(currentDate);
-                Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(horaInicio);
-                calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
-                Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Viernes", horaInicio, horaFin);
-                listaHorarios.add(horario);
-            }
-            if (!this.tpViernes3.getText().isEmpty()) {
-                LocalDateTime localDateTime = this.tpViernes3.getTime().atDate(currentDate);
-                Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(horaInicio);
-                calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
-                Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Viernes", horaInicio, horaFin);
-                listaHorarios.add(horario);
-            }
-            if (!this.tpViernes4.getText().isEmpty()) {
-                LocalDateTime localDateTime = this.tpViernes4.getTime().atDate(currentDate);
-                Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(horaInicio);
-                calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
-                Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Viernes", horaInicio, horaFin);
-                listaHorarios.add(horario);
-            }
-            if (!this.tpSabado1.getText().isEmpty()) {
-                LocalDateTime localDateTime = this.tpSabado1.getTime().atDate(currentDate);
-                Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(horaInicio);
-                calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
-                Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Sábado", horaInicio, horaFin);
-                listaHorarios.add(horario);
-            }
-            if (!this.tpSabado2.getText().isEmpty()) {
-                LocalDateTime localDateTime = this.tpSabado2.getTime().atDate(currentDate);
-                Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(horaInicio);
-                calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
-                Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Sábado", horaInicio, horaFin);
-                listaHorarios.add(horario);
-            }
-            if (!this.tpSabado3.getText().isEmpty()) {
-                LocalDateTime localDateTime = this.tpSabado3.getTime().atDate(currentDate);
-                Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(horaInicio);
-                calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
-                Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Sábado", horaInicio, horaFin);
-                listaHorarios.add(horario);
-            }
-            if (!this.tpSabado4.getText().isEmpty()) {
-                LocalDateTime localDateTime = this.tpSabado4.getTime().atDate(currentDate);
-                Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(horaInicio);
-                calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
-                Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Sábado", horaInicio, horaFin);
-                listaHorarios.add(horario);
-            }
-            if (!this.tpDomingo1.getText().isEmpty()) {
-                LocalDateTime localDateTime = this.tpDomingo1.getTime().atDate(currentDate);
-                Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(horaInicio);
-                calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
-                Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Domingo", horaInicio, horaFin);
-                listaHorarios.add(horario);
-            }
-            if (!this.tpDomingo2.getText().isEmpty()) {
-                LocalDateTime localDateTime = this.tpDomingo2.getTime().atDate(currentDate);
-                Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(horaInicio);
-                calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
-                Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Domingo", horaInicio, horaFin);
-                listaHorarios.add(horario);
-            }
-            if (!this.tpDomingo3.getText().isEmpty()) {
-                LocalDateTime localDateTime = this.tpDomingo3.getTime().atDate(currentDate);
-                Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(horaInicio);
-                calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
-                Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Domingo", horaInicio, horaFin);
-                listaHorarios.add(horario);
-            }
-            if (!this.tpDomingo4.getText().isEmpty()) {
-                LocalDateTime localDateTime = this.tpDomingo4.getTime().atDate(currentDate);
-                Date horaInicio = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(horaInicio);
-                calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
-                Date horaFin = calendar.getTime();
-                Horario horario = new Horario("Domingo", horaInicio, horaFin);
-                listaHorarios.add(horario);
-            }
-            List<Zona> listaZonas = new LinkedList<>();
-            ConexionMongoDB conexion = new ConexionMongoDB();
-            
-            
-            
-            Itinerario itinerario = new Itinerario(this.txtNombre.getText(), Integer.valueOf(this.txtNoVisitantes.getText()), Float.valueOf(this.txtLongitud.getText()), Integer.valueOf(this.txtDuracion.getText()), listaHorarios, listaZonas);
+            String[] dias = {"Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"};
 
-            ItinerariosDAO itinerariosDAO = new ItinerariosDAO(conexion);
-            itinerariosDAO.agregar(itinerario);
-            JOptionPane.showMessageDialog(null, "Se ha guardado el itinerario " + datos.get("nombre"), "Mensaje", JOptionPane.INFORMATION_MESSAGE);
-            regresarVentanaItinerarios();
+            for (String dia : dias) {
+                for (int i = 1; i <= 4; i++) {
+                    TimePicker timePicker = getTimePicker(dia, i);
+                    if (!timePicker.getText().isEmpty()) {
+                        LocalDateTime localDateTime = timePicker.getTime().atDate(currentDate);
+                        ZoneOffset zoneOffset = ZoneOffset.ofHours(0);
+                        OffsetDateTime offsetDateTime = OffsetDateTime.of(localDateTime, zoneOffset);
+                        Date horaInicio = Date.from(offsetDateTime.toInstant());
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.setTime(horaInicio);
+                        calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
+                        Date horaFin = calendar.getTime();
+                        Horario horario = new Horario(dia, horaInicio, horaFin);
+                        listaHorarios.add(horario);
+
+                        List<Zona> listaZonas = new LinkedList<>();
+                        ConexionMongoDB conexion = new ConexionMongoDB();
+
+                        Itinerario itinerario = new Itinerario(this.txtNombre.getText(), Integer.valueOf(this.txtNoVisitantes.getText()), Float.valueOf(this.txtLongitud.getText()), Integer.valueOf(this.txtDuracion.getText()), listaHorarios, listaZonas);
+
+                        ItinerariosDAO itinerariosDAO = new ItinerariosDAO(conexion);
+                        FachadaAdministrarItinerario fachadaItinerario = new FachadaAdministrarItinerario();
+                        String validacion = "nombre";
+                        if (!fachadaItinerario.validacion(itinerario, validacion, conexion)) {
+                            JOptionPane.showMessageDialog(null, "Nombre repetido", "ERROR", JOptionPane.ERROR_MESSAGE);
+                        }
+                        validacion = "visitantes";
+                        if (!fachadaItinerario.validacion(itinerario, validacion, conexion)) {
+                            JOptionPane.showMessageDialog(null, "Visitantes", "ERROR", JOptionPane.ERROR_MESSAGE);
+                        }
+                        validacion = "horarios";
+                        if (!fachadaItinerario.validacion(itinerario, validacion, conexion)) {
+                            JOptionPane.showMessageDialog(null, "Hora inico de horario repetido en el mismo día", "ERROR", JOptionPane.ERROR_MESSAGE);
+                        } else {
+                            itinerariosDAO.agregar(itinerario);
+                            JOptionPane.showMessageDialog(null, "Se ha guardado el itinerario " + datos.get("nombre"), "Mensaje", JOptionPane.INFORMATION_MESSAGE);
+                            regresarVentanaItinerarios();
+                        }
+                    }
+                }
+            }
         }
+    }
+
+    private TimePicker getTimePicker(String dia, int index) {
+        switch (dia) {
+            case "Lunes":
+                switch (index) {
+                    case 1:
+                        return this.tpLunes1;
+                    case 2:
+                        return this.tpLunes2;
+                    case 3:
+                        return this.tpLunes3;
+                    case 4:
+                        return this.tpLunes4;
+                }
+                break;
+            case "Martes":
+                switch (index) {
+                    case 1:
+                        return this.tpMartes1;
+                    case 2:
+                        return this.tpMartes2;
+                    case 3:
+                        return this.tpMartes3;
+                    case 4:
+                        return this.tpMartes4;
+                }
+                break;
+            case "Miércoles":
+                switch (index) {
+                    case 1:
+                        return this.tpMiercoles1;
+                    case 2:
+                        return this.tpMiercoles2;
+                    case 3:
+                        return this.tpMiercoles3;
+                    case 4:
+                        return this.tpMiercoles4;
+                }
+                break;
+            case "Jueves":
+                switch (index) {
+                    case 1:
+                        return this.tpJueves1;
+                    case 2:
+                        return this.tpJueves2;
+                    case 3:
+                        return this.tpJueves3;
+                    case 4:
+                        return this.tpJueves4;
+                }
+                break;
+            case "Viernes":
+                switch (index) {
+                    case 1:
+                        return this.tpViernes1;
+                    case 2:
+                        return this.tpViernes2;
+                    case 3:
+                        return this.tpViernes3;
+                    case 4:
+                        return this.tpViernes4;
+                }
+                break;
+            case "Sábado":
+                switch (index) {
+                    case 1:
+                        return this.tpSabado1;
+                    case 2:
+                        return this.tpSabado2;
+                    case 3:
+                        return this.tpSabado3;
+                    case 4:
+                        return this.tpSabado4;
+                }
+                break;
+            case "Domingo":
+                switch (index) {
+                    case 1:
+                        return this.tpDomingo1;
+                    case 2:
+                        return this.tpDomingo2;
+                    case 3:
+                        return this.tpDomingo3;
+                    case 4:
+                        return this.tpDomingo4;
+                }
+                break;
+        }
+        return null;
     }
 
     /**
@@ -812,12 +570,6 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
         dispose();
     }
 
-    public void validarVacio() {
-        if (vacio) {
-            pnlRegresar.setVisible(false);
-        }
-    }
-
     /**
      * Método que establece un ícono a un JLabel.
      *
@@ -847,7 +599,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
         lblSalir = new javax.swing.JLabel();
         pnlRegresar = new javax.swing.JPanel();
         lblRegresar = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+        lblTitulo = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblHabitats = new javax.swing.JTable();
         cbxHabitat = new org.itson.utils.Combobox<>();
@@ -874,7 +626,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         pnlGuardar = new javax.swing.JPanel();
         lblGuardar = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
+        lblGuardarIMG = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         pnlVaciarDatos = new javax.swing.JPanel();
@@ -1019,10 +771,11 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
 
         pnlFondo.add(pnlHeader, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1000, 40));
 
-        jLabel2.setFont(new java.awt.Font("Berlin Sans FB", 0, 50)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(102, 0, 0));
-        jLabel2.setText("Registro de Itinerario");
-        pnlFondo.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 40, -1, -1));
+        lblTitulo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblTitulo.setText("Registro de Itinerario");
+        lblTitulo.setFont(new java.awt.Font("Berlin Sans FB", 0, 50)); // NOI18N
+        lblTitulo.setForeground(new java.awt.Color(102, 0, 0));
+        pnlFondo.add(lblTitulo, new org.netbeans.lib.awtextra.AbsoluteConstraints(3, 40, 1000, -1));
 
         jScrollPane1.setBackground(new java.awt.Color(255, 255, 255));
         jScrollPane1.setBorder(null);
@@ -1100,53 +853,61 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
         lblNoVisitantes.setText("No. máximo de visitantes");
         pnlFondo.add(lblNoVisitantes, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 400, -1, -1));
 
+        txtNombre.setFont(new java.awt.Font("Berlin Sans FB", 0, 14)); // NOI18N
         txtNombre.setText("Ingrese el nombre del itinerario");
         txtNombre.setBackground(new java.awt.Color(255, 255, 153));
         txtNombre.setBorder(null);
-        txtNombre.setFont(new java.awt.Font("Berlin Sans FB", 0, 14)); // NOI18N
+        txtNombre.setDisabledTextColor(new java.awt.Color(0, 0, 0));
+        txtNombre.setDoubleBuffered(true);
         txtNombre.setForeground(new java.awt.Color(204, 204, 204));
         txtNombre.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 txtNombreMousePressed(evt);
             }
         });
-        pnlFondo.add(txtNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 180, 310, -1));
+        pnlFondo.add(txtNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 180, 310, 20));
 
+        txtDuracion.setFont(new java.awt.Font("Berlin Sans FB", 0, 14)); // NOI18N
         txtDuracion.setText("Ingrese la duración del itinerario");
         txtDuracion.setBackground(new java.awt.Color(255, 255, 153));
         txtDuracion.setBorder(null);
-        txtDuracion.setFont(new java.awt.Font("Berlin Sans FB", 0, 14)); // NOI18N
+        txtDuracion.setDisabledTextColor(new java.awt.Color(0, 0, 0));
+        txtDuracion.setDoubleBuffered(true);
         txtDuracion.setForeground(new java.awt.Color(204, 204, 204));
         txtDuracion.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 txtDuracionMousePressed(evt);
             }
         });
-        pnlFondo.add(txtDuracion, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 260, 310, -1));
+        pnlFondo.add(txtDuracion, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 260, 310, 20));
 
+        txtLongitud.setFont(new java.awt.Font("Berlin Sans FB", 0, 14)); // NOI18N
         txtLongitud.setText("Ingrese la longitud del itinerario");
         txtLongitud.setBackground(new java.awt.Color(255, 255, 153));
         txtLongitud.setBorder(null);
-        txtLongitud.setFont(new java.awt.Font("Berlin Sans FB", 0, 14)); // NOI18N
+        txtLongitud.setDisabledTextColor(new java.awt.Color(0, 0, 0));
+        txtLongitud.setDoubleBuffered(true);
         txtLongitud.setForeground(new java.awt.Color(204, 204, 204));
         txtLongitud.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 txtLongitudMousePressed(evt);
             }
         });
-        pnlFondo.add(txtLongitud, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 340, 310, -1));
+        pnlFondo.add(txtLongitud, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 340, 310, 20));
 
+        txtNoVisitantes.setFont(new java.awt.Font("Berlin Sans FB", 0, 14)); // NOI18N
         txtNoVisitantes.setText("Ingrese el número máximo de visitantes");
         txtNoVisitantes.setBackground(new java.awt.Color(255, 255, 153));
         txtNoVisitantes.setBorder(null);
-        txtNoVisitantes.setFont(new java.awt.Font("Berlin Sans FB", 0, 14)); // NOI18N
+        txtNoVisitantes.setDisabledTextColor(new java.awt.Color(0, 0, 0));
+        txtNoVisitantes.setDoubleBuffered(true);
         txtNoVisitantes.setForeground(new java.awt.Color(204, 204, 204));
         txtNoVisitantes.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 txtNoVisitantesMousePressed(evt);
             }
         });
-        pnlFondo.add(txtNoVisitantes, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 430, 310, -1));
+        pnlFondo.add(txtNoVisitantes, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 430, 310, 20));
 
         jSeparator1.setBackground(new java.awt.Color(255, 255, 153));
         jSeparator1.setForeground(new java.awt.Color(0, 0, 0));
@@ -1215,7 +976,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
         lblGuardar.setText("Guardar");
         lblGuardar.setFont(new java.awt.Font("Berlin Sans FB", 0, 18)); // NOI18N
 
-        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/salvar.png"))); // NOI18N
+        lblGuardarIMG.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/salvar.png"))); // NOI18N
 
         javax.swing.GroupLayout pnlGuardarLayout = new javax.swing.GroupLayout(pnlGuardar);
         pnlGuardar.setLayout(pnlGuardarLayout);
@@ -1223,7 +984,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
             pnlGuardarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlGuardarLayout.createSequentialGroup()
                 .addGap(9, 9, 9)
-                .addComponent(jLabel3)
+                .addComponent(lblGuardarIMG)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(lblGuardar)
                 .addContainerGap(19, Short.MAX_VALUE))
@@ -1233,7 +994,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlGuardarLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(pnlGuardarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3)
+                    .addComponent(lblGuardarIMG)
                     .addComponent(lblGuardar))
                 .addContainerGap())
         );
@@ -1539,7 +1300,9 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
      * @param evt El evento del mouse que activa el método.
      */
     private void txtDuracionMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtDuracionMousePressed
-        establecerTextField(txtDuracion, "", Color.BLACK);
+        if (modo == ModoVentana.REGISTRAR || modo == ModoVentana.REGISTRAR_VACIOS) {
+            establecerTextField(txtDuracion, "", Color.BLACK);
+        }
     }//GEN-LAST:event_txtDuracionMousePressed
     /**
      * Método que al presionar txtLongitud ejecuta el método
@@ -1548,7 +1311,9 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
      * @param evt El evento del mouse que activa el método.
      */
     private void txtLongitudMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtLongitudMousePressed
-        establecerTextField(txtLongitud, "", Color.BLACK);
+        if (modo == ModoVentana.REGISTRAR || modo == ModoVentana.REGISTRAR_VACIOS) {
+            establecerTextField(txtLongitud, "", Color.BLACK);
+        }
     }//GEN-LAST:event_txtLongitudMousePressed
     /**
      * Método que al presionar txtNoVisitantes ejecuta el método
@@ -1557,7 +1322,9 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
      * @param evt El evento del mouse que activa el método.
      */
     private void txtNoVisitantesMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtNoVisitantesMousePressed
-        establecerTextField(txtNoVisitantes, "", Color.BLACK);
+        if (modo == ModoVentana.REGISTRAR || modo == ModoVentana.REGISTRAR_VACIOS) {
+            establecerTextField(txtNoVisitantes, "", Color.BLACK);
+        }
     }//GEN-LAST:event_txtNoVisitantesMousePressed
     /**
      * Método que al presionar txtNombre ejecuta el método establecerTextField.
@@ -1565,7 +1332,9 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
      * @param evt El evento del mouse que activa el método.
      */
     private void txtNombreMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtNombreMousePressed
-        establecerTextField(txtNombre, "", Color.BLACK);
+        if (modo == ModoVentana.REGISTRAR || modo == ModoVentana.REGISTRAR_VACIOS) {
+            establecerTextField(txtNombre, "", Color.BLACK);
+        }
     }//GEN-LAST:event_txtNombreMousePressed
 
     private void pnlGuardarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlGuardarMouseClicked
@@ -1822,8 +1591,6 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
     private javax.swing.JButton btnSumViernes;
     private org.itson.utils.Combobox<Habitat> cbxHabitat;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JScrollPane jScrollPane1;
@@ -1835,6 +1602,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
     private javax.swing.JLabel lblDomingo;
     private javax.swing.JLabel lblDuracion;
     private javax.swing.JLabel lblGuardar;
+    private javax.swing.JLabel lblGuardarIMG;
     private javax.swing.JLabel lblJueves;
     private javax.swing.JLabel lblLongitud;
     private javax.swing.JLabel lblLunes;
@@ -1845,6 +1613,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
     private javax.swing.JLabel lblRegresar;
     private javax.swing.JLabel lblSabado;
     private javax.swing.JLabel lblSalir;
+    private javax.swing.JLabel lblTitulo;
     private javax.swing.JLabel lblUnderline;
     private javax.swing.JLabel lblVaciar;
     private javax.swing.JLabel lblVaciarDatos;

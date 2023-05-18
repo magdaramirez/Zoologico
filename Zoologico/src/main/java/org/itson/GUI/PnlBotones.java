@@ -4,10 +4,8 @@
  */
 package org.itson.GUI;
 
-import org.itson.interfaces.ITableActionEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Optional;
 import javax.swing.JFrame;
 import javax.swing.JTable;
 import javax.swing.table.TableModel;
@@ -15,6 +13,7 @@ import org.itson.dominio.Itinerario;
 import org.itson.interfaces.IHabitatsDAO;
 import org.itson.persistencia.ConexionMongoDB;
 import org.itson.persistencia.ItinerariosDAO;
+import org.itson.utils.ModoVentana;
 
 /**
  *
@@ -24,25 +23,22 @@ import org.itson.persistencia.ItinerariosDAO;
 public class PnlBotones extends javax.swing.JPanel {
 
     private final IHabitatsDAO persistencia = null;
+    private JTable tabla;
+    private JFrame frame;
 
     /**
      * Creates new form PanelAction
      */
-    public PnlBotones() {
+    public PnlBotones(JFrame frame, JTable tabla) {
         initComponents();
+        this.tabla = tabla;
+        this.frame = frame;
     }
 
     public void initEvent(final JFrame frame, final JTable tabla) {
         aBtnActualizar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int fila = tabla.convertRowIndexToModel(tabla.getEditingRow());
-                TableModel model = tabla.getModel();
-                String nombre = model.getValueAt(fila, 1).toString();
-                ConexionMongoDB conexion = new ConexionMongoDB();
-                ItinerariosDAO itinerarios = new ItinerariosDAO(conexion);
-                Itinerario itinerarioObtenido = itinerarios.getByName();
-                abrirVentanaActualizar(itinerarioObtenido);
             }
         });
         aBtnImprimir.addActionListener(new ActionListener() {
@@ -54,13 +50,7 @@ public class PnlBotones extends javax.swing.JPanel {
         aBtnVisualizar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int fila = tabla.convertRowIndexToModel(tabla.getEditingRow());
-                TableModel model = tabla.getModel();
-                String nombre = model.getValueAt(fila, 1).toString();
-                ConexionMongoDB conexion = new ConexionMongoDB();
-                ItinerariosDAO itinerarios = new ItinerariosDAO(conexion);
-                Itinerario itinerarioObtenido = itinerarios.obtener();
-                abrirVentanaPrevisualizar(itinerarioObtenido);
+
             }
         });
     }
@@ -68,16 +58,15 @@ public class PnlBotones extends javax.swing.JPanel {
     /**
      * Método que despliega FrmActualizarItinerario.
      */
-    public void abrirVentanaActualizar(Itinerario itinerario) {
-        new FrmActualizarItinerario(this.persistencia, itinerario).setVisible(true);
-    }
-
-    /**
-     * Método que despliega FrmPrevisualizarItinerario.
-     */
-    public void abrirVentanaPrevisualizar(Itinerario itinerario) {
-        FrmPrevisualizarItinerario previsualizarItinerario = new FrmPrevisualizarItinerario(itinerario);
-        previsualizarItinerario.setVisible(true);
+    public void abrirVentana(ModoVentana modo) {
+        int fila = tabla.convertRowIndexToModel(tabla.getEditingRow());
+        TableModel model = tabla.getModel();
+        String nombre = model.getValueAt(fila, 1).toString();
+        ConexionMongoDB conexion = new ConexionMongoDB();
+        ItinerariosDAO itinerarios = new ItinerariosDAO(conexion);
+        Itinerario itinerarioObtenido = itinerarios.obtener(nombre);
+        new FrmRegistrarItinerario(modo, itinerarioObtenido).setVisible(true);
+        frame.dispose();
     }
 
     @SuppressWarnings("unchecked")
@@ -88,7 +77,7 @@ public class PnlBotones extends javax.swing.JPanel {
         aBtnImprimir = new org.itson.utils.ActionButton();
         aBtnVisualizar = new org.itson.utils.ActionButton();
 
-        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         aBtnActualizar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/lapiz (1).png"))); // NOI18N
         aBtnActualizar.addActionListener(new java.awt.event.ActionListener() {
@@ -133,17 +122,17 @@ public class PnlBotones extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void aBtnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aBtnActualizarActionPerformed
-
-    }//GEN-LAST:event_aBtnActualizarActionPerformed
-
     private void aBtnImprimirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aBtnImprimirActionPerformed
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_aBtnImprimirActionPerformed
 
     private void aBtnVisualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aBtnVisualizarActionPerformed
-
+        abrirVentana(ModoVentana.PREVISUALIZAR);
     }//GEN-LAST:event_aBtnVisualizarActionPerformed
+
+    private void aBtnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aBtnActualizarActionPerformed
+        abrirVentana(ModoVentana.ACTUALIZAR);
+    }//GEN-LAST:event_aBtnActualizarActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

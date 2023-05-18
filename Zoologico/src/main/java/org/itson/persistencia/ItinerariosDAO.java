@@ -6,9 +6,12 @@ package org.itson.persistencia;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.itson.dominio.Itinerario;
 import org.itson.interfaces.IItinerariosDAO;
 
@@ -51,6 +54,20 @@ public class ItinerariosDAO implements IItinerariosDAO {
     }
 
     @Override
+    public Itinerario obtener(String nombre) {
+        // Obtención de acceso a la colección
+        MongoCollection<Itinerario> coleccion = BASE_DATOS.getCollection(NOMBRE_COLECCION, Itinerario.class);
+
+        // Crear el filtro de búsqueda por nombre
+        Bson filtro = Filters.eq("nombre", nombre);
+
+        // Realizar la consulta y obtener el primer documento que cumpla con el filtro
+        Itinerario itinerario = coleccion.find(filtro).first();
+
+        return itinerario;
+    }
+
+    @Override
     public boolean obtenerItinerarios() {
         // Obtener acceso a la colección
         MongoCollection<Document> coleccion = BASE_DATOS.getCollection(NOMBRE_COLECCION);
@@ -62,6 +79,24 @@ public class ItinerariosDAO implements IItinerariosDAO {
         }
 
         return false;
+    }
+    
+    @Override
+    public List<Itinerario> consultarPorHoraInicio(String dia, Date horaInicio) {
+        // OBTENCIÓN DE ACCESO A LA COLECCIÓN
+        MongoCollection<Itinerario> coleccion = BASE_DATOS.getCollection(NOMBRE_COLECCION, Itinerario.class);
+
+        List<Itinerario> itinerarios = new LinkedList<>();
+
+        // Construir el filtro para buscar por día y hora de inicio
+        Bson filtro = Filters.and(
+                Filters.eq("listaHorarios.dia", dia),
+                Filters.eq("listaHorarios.horaInicio", horaInicio)
+        );
+
+        coleccion.find(filtro).into(itinerarios);
+
+        return itinerarios;
     }
 
 }

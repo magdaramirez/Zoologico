@@ -7,6 +7,7 @@ package org.itson.utils;
 import java.awt.Component;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JCheckBox;
+import javax.swing.JFrame;
 import javax.swing.JTable;
 import org.itson.GUI.PnlBotones;
 
@@ -17,15 +18,18 @@ import org.itson.GUI.PnlBotones;
  */
 public class TableActionCellEditor extends DefaultCellEditor {
 
-    public TableActionCellEditor() {
+    JFrame frame;
+    
+    public TableActionCellEditor(JFrame frame) {
         super(new JCheckBox());
+        this.frame = frame;
     }
 
     
     
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-        PnlBotones action = new PnlBotones();
+        PnlBotones action = new PnlBotones(frame, table);
         action.setBackground(table.getSelectionBackground());
         return action;
     }
