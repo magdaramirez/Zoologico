@@ -16,8 +16,9 @@ import org.itson.utils.Validadores;
  *
  * @author march
  */
-public class FachadaAdministrarItinerario {
+public class FachadaAdministrarItinerario implements IAdministrarItinerario {
 
+    @Override
     public boolean registrarItinerario(Itinerario itinerario, ConexionMongoDB conexion) {
         ItinerariosDAO itinerariosDAO = new ItinerariosDAO(conexion);
         this.generarRecorrido();
@@ -25,6 +26,7 @@ public class FachadaAdministrarItinerario {
         return itinerarioRegistrado != null;
     }
 
+    @Override
     public boolean validacion(Itinerario itinerario, String campo, ConexionMongoDB conexion) {
         ItinerariosDAO itinerariosDAO = new ItinerariosDAO(conexion);
         switch (campo) {
@@ -56,6 +58,7 @@ public class FachadaAdministrarItinerario {
         }
     }
 
+    @Override
     public void generarRecorrido() {
 
     }

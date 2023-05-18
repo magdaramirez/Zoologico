@@ -4,15 +4,21 @@
  */
 package org.itson.GUI;
 
+import fachadaSistemaImpresion.FachadaSistemaImpresion;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JTable;
 import javax.swing.table.TableModel;
+import net.sf.jasperreports.engine.JRException;
 import org.itson.dominio.Itinerario;
 import org.itson.interfaces.IHabitatsDAO;
 import org.itson.persistencia.ConexionMongoDB;
 import org.itson.persistencia.ItinerariosDAO;
+import org.itson.utils.JasperByCollectionBeanData;
 import org.itson.utils.ModoVentana;
 
 /**
@@ -39,6 +45,7 @@ public class PnlBotones extends javax.swing.JPanel {
         aBtnActualizar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
             }
         });
         aBtnImprimir.addActionListener(new ActionListener() {
@@ -123,7 +130,8 @@ public class PnlBotones extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void aBtnImprimirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aBtnImprimirActionPerformed
-
+        FachadaSistemaImpresion sistemaImpresion = new FachadaSistemaImpresion();
+        sistemaImpresion.imprimir();
     }//GEN-LAST:event_aBtnImprimirActionPerformed
 
     private void aBtnVisualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aBtnVisualizarActionPerformed
