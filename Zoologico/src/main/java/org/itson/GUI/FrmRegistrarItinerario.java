@@ -529,8 +529,11 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
 
         List<Zona> listaZonas = new LinkedList<>();
         ConexionMongoDB conexion = new ConexionMongoDB();
+        Zona zonaAux = new Zona();
 
-        Itinerario itinerario = new Itinerario(this.txtNombre.getText(), Integer.valueOf(this.txtNoVisitantes.getText()), Float.valueOf(this.txtLongitud.getText()), Integer.valueOf(this.txtDuracion.getText()), listaHorarios, listaZonas, this.obtenerHabitatsDeTabla());
+        Itinerario itinerario = new Itinerario(this.txtNombre.getText(), Integer.valueOf(this.txtNoVisitantes.getText()), listaHorarios, this.obtenerHabitatsDeTabla());
+        itinerario.setDuracion(itinerario.getListaHabitats().size() * zonaAux.getDuracion());
+        itinerario.setLongitud(itinerario.getListaHabitats().size() * 100f);
 
         ItinerariosDAO itinerariosDAO = new ItinerariosDAO(conexion);
         Itinerario itinerarioExistente = itinerariosDAO.obtener(itinerario.getNombre());
@@ -549,9 +552,9 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
 
         // Actualizar el itinerario existente con los nuevos datos
         itinerarioExistente.setNoVisitantes(itinerario.getNoVisitantes());
-        itinerarioExistente.setLongitud(itinerario.getLongitud());
-        itinerarioExistente.setDuracion(itinerario.getDuracion());
         itinerarioExistente.setListaHorarios(itinerario.getListaHorarios());
+        itinerarioExistente.setDuracion(itinerario.getDuracion());
+        itinerarioExistente.setLongitud(itinerario.getLongitud());
         itinerarioExistente.setListaZonas(itinerario.getListaZonas());
         itinerarioExistente.setListaHabitats(itinerario.getListaHabitats());
 
@@ -712,6 +715,27 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
         contador = 1;
     }
 
+    public void quitarUltimoElemento() {
+        DefaultTableModel modeloTabla = (DefaultTableModel) tblHabitats.getModel();
+        int ultimoIndice = modeloTabla.getRowCount() - 1;
+
+        if (ultimoIndice >= 0) {
+            // Obtener el hábitat del último elemento en la tabla
+            Habitat habitat = persistenciaHabitats.obtenerHabitat((String) modeloTabla.getValueAt(ultimoIndice, 1));
+
+            // Obtener el modelo del JComboBox
+            DefaultComboBoxModel<Habitat> modeloComboBox = (DefaultComboBoxModel<Habitat>) cbxHabitat.getModel();
+
+            // Agregar el hábitat al modelo del JComboBox
+            modeloComboBox.addElement(habitat);
+
+            // Eliminar la última fila de la tabla
+            modeloTabla.removeRow(ultimoIndice);
+            contador--;
+            lblGuardar.setVisible(true);
+        }
+    }
+
     /**
      * Método que regresa a FrmItinerarios.
      */
@@ -826,6 +850,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
         btnRestaJueves = new javax.swing.JButton();
         btnRestaViernes = new javax.swing.JButton();
         btnRestaSabado = new javax.swing.JButton();
+        lblQuitar = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
@@ -986,7 +1011,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
                 lblAgregarMouseExited(evt);
             }
         });
-        pnlFondo.add(lblAgregar, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 140, -1, -1));
+        pnlFondo.add(lblAgregar, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 140, -1, -1));
 
         lblNombre.setFont(new java.awt.Font("Berlin Sans FB", 0, 20)); // NOI18N
         lblNombre.setText("Nombre");
@@ -996,8 +1021,8 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
         lblDuracion.setFont(new java.awt.Font("Berlin Sans FB", 0, 20)); // NOI18N
         pnlFondo.add(lblDuracion, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 230, -1, -1));
 
-        lblLongitud.setFont(new java.awt.Font("Berlin Sans FB", 0, 20)); // NOI18N
         lblLongitud.setText("Longitud");
+        lblLongitud.setFont(new java.awt.Font("Berlin Sans FB", 0, 20)); // NOI18N
         pnlFondo.add(lblLongitud, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 310, -1, -1));
 
         lblNoVisitantes.setFont(new java.awt.Font("Berlin Sans FB", 0, 20)); // NOI18N
@@ -1325,6 +1350,21 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
             }
         });
         pnlFondo.add(btnRestaSabado, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 830, -1, -1));
+
+        lblQuitar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/boton-quitar.png"))); // NOI18N
+        lblQuitar.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        lblQuitar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblQuitarMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                lblQuitarMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                lblQuitarMouseExited(evt);
+            }
+        });
+        pnlFondo.add(lblQuitar, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 140, -1, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -1729,6 +1769,18 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnRestaDomingoActionPerformed
 
+    private void lblQuitarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblQuitarMouseClicked
+        this.quitarUltimoElemento();
+    }//GEN-LAST:event_lblQuitarMouseClicked
+
+    private void lblQuitarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblQuitarMouseEntered
+        // TODO add your handling code here:
+    }//GEN-LAST:event_lblQuitarMouseEntered
+
+    private void lblQuitarMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblQuitarMouseExited
+        // TODO add your handling code here:
+    }//GEN-LAST:event_lblQuitarMouseExited
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnRestaDomingo;
     private javax.swing.JButton btnRestaJueves;
@@ -1765,6 +1817,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
     private javax.swing.JLabel lblMiercoles;
     private javax.swing.JLabel lblNoVisitantes;
     private javax.swing.JLabel lblNombre;
+    private javax.swing.JLabel lblQuitar;
     private javax.swing.JLabel lblRegresar;
     private javax.swing.JLabel lblSabado;
     private javax.swing.JLabel lblSalir;

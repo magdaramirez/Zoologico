@@ -24,20 +24,30 @@ public class FachadaAdministrarItinerario implements IAdministrarItinerario {
 
     @Override
     public boolean registrarItinerario(Itinerario itinerario, ConexionMongoDB conexion) {
+        int rechazado = 0;
         ItinerariosDAO itinerariosDAO = new ItinerariosDAO(conexion);
         this.generarRecorrido(itinerario);
-        String validacion = "nombre";
+        String validacion = "duracion";
+        if (!validacion(itinerario, validacion, conexion)) {
+            JOptionPane.showMessageDialog(null, "Duración de recorrido excedida", "ERROR", JOptionPane.ERROR_MESSAGE);
+            rechazado++;
+        }
+        validacion = "nombre";
         if (!validacion(itinerario, validacion, conexion)) {
             JOptionPane.showMessageDialog(null, "Nombre repetido", "ERROR", JOptionPane.ERROR_MESSAGE);
+            rechazado++;
         }
         validacion = "visitantes";
         if (!validacion(itinerario, validacion, conexion)) {
-            JOptionPane.showMessageDialog(null, "Visitantes", "ERROR", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Número máximo de visitantes excedido (30)", "ERROR", JOptionPane.ERROR_MESSAGE);
+            rechazado++;
         }
         validacion = "horarios";
         if (!validacion(itinerario, validacion, conexion)) {
             JOptionPane.showMessageDialog(null, "Hora inicio de horario repetido en el mismo día", "ERROR", JOptionPane.ERROR_MESSAGE);
-        } else {
+            rechazado++;
+        }
+        if (rechazado == 0) {
             itinerariosDAO.agregar(itinerario);
             JOptionPane.showMessageDialog(null, "Se ha guardado el itinerario " + itinerario.getNombre(), "Mensaje", JOptionPane.INFORMATION_MESSAGE);
             return true;
@@ -59,6 +69,8 @@ public class FachadaAdministrarItinerario implements IAdministrarItinerario {
                 return true;
             case "visitantes":
                 return Validadores.excedeNumVisitantes(itinerario.getNoVisitantes());
+            case "duracion":
+                return itinerario.getDuracion() <= 90;
             case "horarios":
                 List<Horario> listaHorarios = itinerario.getListaHorarios();
                 for (Horario horario : listaHorarios) {
@@ -83,5 +95,8 @@ public class FachadaAdministrarItinerario implements IAdministrarItinerario {
         IZonasDAO persistenciaZona = new ZonasDAO(conexion);
         List<Zona> zonasConHabitats = persistenciaZona.consultarZonasConHabitats(itinerario.getListaHabitats());
         itinerario.setListaZonas(zonasConHabitats);
+        Zona zonaAux = new Zona();
+        itinerario.setDuracion(itinerario.getListaHabitats().size() * zonaAux.getDuracion());
+        itinerario.setLongitud(itinerario.getListaHabitats().size() * 100f);
     }
 }
