@@ -12,6 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 import org.itson.dominio.Habitat;
+import org.itson.dominio.Itinerario;
 import org.itson.interfaces.IHabitatsDAO;
 import org.itson.persistencia.ConexionMongoDB;
 import org.itson.persistencia.HabitatsDAO;
@@ -32,11 +33,15 @@ public class FrmPrevisualizarItinerario extends javax.swing.JFrame {
     /**
      * Método que crea FrmPrevisualizarItinerario.
      */
-    public FrmPrevisualizarItinerario() {
+    public FrmPrevisualizarItinerario(Itinerario itinerario) {
         initComponents();
         setTitle("Previsualización de Itinerario");
         ImageIcon icon = new ImageIcon("src\\main\\resources\\img\\paw.png");
         this.setIconImage(icon.getImage());
+        this.txtNombre.setText(itinerario.getNombre());
+        this.txtDuracion.setText(String.valueOf(itinerario.getDuracion()));
+        this.txtLongitud.setText(String.valueOf(itinerario.getLongitud()));
+        this.txtNoVisitantes.setText(String.valueOf(itinerario.getNoVisitantes()));
     }
 
     /**

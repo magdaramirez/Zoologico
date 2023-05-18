@@ -235,8 +235,6 @@ public class FrmItinerarios extends javax.swing.JFrame {
         tblitinerarios.setGridColor(new java.awt.Color(153, 153, 153));
         tblitinerarios.setSelectionBackground(new java.awt.Color(221, 192, 192));
         tblitinerarios.setSelectionForeground(new java.awt.Color(102, 0, 0));
-        tblitinerarios.setShowHorizontalLines(true);
-        tblitinerarios.setShowVerticalLines(true);
         tblitinerarios.getTableHeader().setResizingAllowed(false);
         tblitinerarios.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(tblitinerarios);
@@ -295,7 +293,7 @@ public class FrmItinerarios extends javax.swing.JFrame {
         pnlSalirLayout.setVerticalGroup(
             pnlSalirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlSalirLayout.createSequentialGroup()
-                .addContainerGap(7, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(lblSalir)
                 .addContainerGap())
         );
@@ -330,7 +328,7 @@ public class FrmItinerarios extends javax.swing.JFrame {
         pnlRegresarLayout.setVerticalGroup(
             pnlRegresarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlRegresarLayout.createSequentialGroup()
-                .addContainerGap(10, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(lblRegresar)
                 .addContainerGap())
         );
@@ -377,7 +375,7 @@ public class FrmItinerarios extends javax.swing.JFrame {
         pnlRegistrarItinerarioLayout.setVerticalGroup(
             pnlRegistrarItinerarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlRegistrarItinerarioLayout.createSequentialGroup()
-                .addContainerGap(8, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(pnlRegistrarItinerarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3)
                     .addComponent(lblRegistrarItinerario))

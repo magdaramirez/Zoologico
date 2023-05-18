@@ -7,7 +7,14 @@ package org.itson.GUI;
 import org.itson.interfaces.ITableActionEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Optional;
+import javax.swing.JFrame;
+import javax.swing.JTable;
+import javax.swing.table.TableModel;
+import org.itson.dominio.Itinerario;
 import org.itson.interfaces.IHabitatsDAO;
+import org.itson.persistencia.ConexionMongoDB;
+import org.itson.persistencia.ItinerariosDAO;
 
 /**
  *
@@ -17,7 +24,7 @@ import org.itson.interfaces.IHabitatsDAO;
 public class PnlBotones extends javax.swing.JPanel {
 
     private final IHabitatsDAO persistencia = null;
-    
+
     /**
      * Creates new form PanelAction
      */
@@ -25,23 +32,35 @@ public class PnlBotones extends javax.swing.JPanel {
         initComponents();
     }
 
-    public void initEvent(ITableActionEvent event, int row) {
+    public void initEvent(final JFrame frame, final JTable tabla) {
         aBtnActualizar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+                int fila = tabla.convertRowIndexToModel(tabla.getEditingRow());
+                TableModel model = tabla.getModel();
+                String nombre = model.getValueAt(fila, 1).toString();
+                ConexionMongoDB conexion = new ConexionMongoDB();
+                ItinerariosDAO itinerarios = new ItinerariosDAO(conexion);
+                Itinerario itinerarioObtenido = itinerarios.getByName();
+                abrirVentanaActualizar(itinerarioObtenido);
             }
         });
         aBtnImprimir.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+
             }
         });
         aBtnVisualizar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+                int fila = tabla.convertRowIndexToModel(tabla.getEditingRow());
+                TableModel model = tabla.getModel();
+                String nombre = model.getValueAt(fila, 1).toString();
+                ConexionMongoDB conexion = new ConexionMongoDB();
+                ItinerariosDAO itinerarios = new ItinerariosDAO(conexion);
+                Itinerario itinerarioObtenido = itinerarios.obtener();
+                abrirVentanaPrevisualizar(itinerarioObtenido);
             }
         });
     }
@@ -49,15 +68,15 @@ public class PnlBotones extends javax.swing.JPanel {
     /**
      * Método que despliega FrmActualizarItinerario.
      */
-    public void abrirVentanaActualizar() {
-        new FrmActualizarItinerario(this.persistencia).setVisible(true);
+    public void abrirVentanaActualizar(Itinerario itinerario) {
+        new FrmActualizarItinerario(this.persistencia, itinerario).setVisible(true);
     }
 
     /**
      * Método que despliega FrmPrevisualizarItinerario.
      */
-    public void abrirVentanaPrevisualizar() {
-        FrmPrevisualizarItinerario previsualizarItinerario = new FrmPrevisualizarItinerario();
+    public void abrirVentanaPrevisualizar(Itinerario itinerario) {
+        FrmPrevisualizarItinerario previsualizarItinerario = new FrmPrevisualizarItinerario(itinerario);
         previsualizarItinerario.setVisible(true);
     }
 
@@ -115,7 +134,7 @@ public class PnlBotones extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void aBtnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aBtnActualizarActionPerformed
-        abrirVentanaActualizar();
+
     }//GEN-LAST:event_aBtnActualizarActionPerformed
 
     private void aBtnImprimirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aBtnImprimirActionPerformed
@@ -123,7 +142,7 @@ public class PnlBotones extends javax.swing.JPanel {
     }//GEN-LAST:event_aBtnImprimirActionPerformed
 
     private void aBtnVisualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aBtnVisualizarActionPerformed
-        abrirVentanaPrevisualizar();
+
     }//GEN-LAST:event_aBtnVisualizarActionPerformed
 
 

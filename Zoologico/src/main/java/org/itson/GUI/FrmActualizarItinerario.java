@@ -16,6 +16,7 @@ import javax.swing.JTextField;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableModel;
 import org.itson.dominio.Habitat;
+import org.itson.dominio.Itinerario;
 import org.itson.interfaces.IHabitatsDAO;
 import org.itson.persistencia.ConexionMongoDB;
 import org.itson.persistencia.HabitatsDAO;
@@ -50,7 +51,7 @@ public class FrmActualizarItinerario extends javax.swing.JFrame {
      *
      * @param persistencia El objeto que maneja la persistencia de los datos.
      */
-    public FrmActualizarItinerario(IHabitatsDAO persistencia) {
+    public FrmActualizarItinerario(IHabitatsDAO persistencia, Itinerario itinerario) {
         initComponents();
         setTitle("Actualizar Itinerario");
         ImageIcon icon = new ImageIcon("src\\main\\resources\\img\\paw.png");
@@ -76,6 +77,7 @@ public class FrmActualizarItinerario extends javax.swing.JFrame {
         tblHabitats.getTableHeader().setOpaque(false);
         tblHabitats.getTableHeader().setForeground(new Color(102, 0, 0));
         tblHabitats.setRowHeight(40);
+        
     }
 
     /**
