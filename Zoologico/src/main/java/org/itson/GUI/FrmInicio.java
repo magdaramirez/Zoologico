@@ -7,14 +7,9 @@ package org.itson.GUI;
 import java.awt.Color;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.border.Border;
-import org.itson.interfaces.IGuiaDAO;
 import org.itson.interfaces.IItinerariosDAO;
 import org.itson.persistencia.ConexionMongoDB;
-import org.itson.persistencia.GuiaDAO;
 import org.itson.persistencia.ItinerariosDAO;
 import org.itson.utils.ModoVentana;
 
@@ -37,70 +32,19 @@ public class FrmInicio extends javax.swing.JFrame {
     private final int BORDE_GRUESO = 3;
     private final int BORDE_ESTRECHO = 1;
 
-    private final IGuiaDAO persistenciaGuia;
     private final IItinerariosDAO persistenciaItinerario;
+    private final LogicaInicio ejecutar;
 
     /**
      * Método que crea FrmInicio.
      */
     public FrmInicio() {
-        persistenciaGuia = new GuiaDAO(conexion);
         persistenciaItinerario = new ItinerariosDAO(conexion);
+        ejecutar = new LogicaInicio(this);
         initComponents();
         setTitle("Inicio");
         ImageIcon icon = new ImageIcon("src\\main\\resources\\img\\paw.png");
         this.setIconImage(icon.getImage());
-    }
-
-    /**
-     * Método que despliega FrmItinerarios.
-     */
-    public void abrirVentanaItinerarios() {
-        FrmItinerarios frmItinerarios = new FrmItinerarios();
-        frmItinerarios.setVisible(true);
-        dispose();
-    }
-
-    /**
-     * Método que termina el programa.
-     */
-    public void salirDelPrograma() {
-        System.exit(0);
-    }
-
-    /**
-     * Método que establece el color del fondo de un JPanel.
-     *
-     * @param panel JPanel cuyo color de fondo va a cambiar.
-     * @param color Color a poner de fondo.
-     */
-    public void cambiarColorPanel(JPanel panel, Color color) {
-        panel.setBackground(color);
-    }
-
-    /**
-     * Método que establece el color de letra de un JLabel.
-     *
-     * @param label JLabel cuyo color de letra va a cambiar.
-     * @param color Color a poner en la letra.
-     */
-    public void cambiarColorLetra(JLabel label, Color color) {
-        label.setForeground(color);
-    }
-
-    /**
-     * Método que esteblece el borde de un JPanel.
-     *
-     * @param panel JPanel cuyo borde va a cambiar.
-     * @param border Borde a poner en el panel.
-     */
-    public void cambiarBordePanel(JPanel panel, Border border) {
-        panel.setBorder(border);
-    }
-
-    public void abrirVentanaRegistro(ModoVentana modo) {
-        new FrmRegistrarItinerario(modo, null).setVisible(true);
-        dispose();
     }
 
     @SuppressWarnings("unchecked")
@@ -289,7 +233,7 @@ public class FrmInicio extends javax.swing.JFrame {
      * @param evt El evento del mouse que activa el método.
      */
     private void pnlSalirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlSalirMouseClicked
-        salirDelPrograma();
+        ejecutar.salirDelPrograma();
     }//GEN-LAST:event_pnlSalirMouseClicked
     /**
      * Método que permite cambiar el color de fondo del pnlSalir y el color de
@@ -298,8 +242,8 @@ public class FrmInicio extends javax.swing.JFrame {
      * @param evt El evento del mouse que activa el método.
      */
     private void pnlSalirMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlSalirMouseEntered
-        cambiarColorPanel(pnlSalir, Color.RED);
-        cambiarColorLetra(lblSalir, Color.WHITE);
+        ejecutar.cambiarColorPanel(pnlSalir, Color.RED);
+        ejecutar.cambiarColorLetra(lblSalir, Color.WHITE);
     }//GEN-LAST:event_pnlSalirMouseEntered
     /**
      * Método que permite que al quitar el mouse de pnlSalir, regrese al color
@@ -308,8 +252,8 @@ public class FrmInicio extends javax.swing.JFrame {
      * @param evt El evento del mouse que activa el método.
      */
     private void pnlSalirMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlSalirMouseExited
-        cambiarColorPanel(pnlSalir, AMARILLO);
-        cambiarColorLetra(lblSalir, CAFE);
+        ejecutar.cambiarColorPanel(pnlSalir, AMARILLO);
+        ejecutar.cambiarColorLetra(lblSalir, CAFE);
     }//GEN-LAST:event_pnlSalirMouseExited
 
     /**
@@ -319,8 +263,8 @@ public class FrmInicio extends javax.swing.JFrame {
      * @param evt El evento del mouse que activa el método.
      */
     private void pnlAdministraritinerarioMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlAdministraritinerarioMouseEntered
-        cambiarColorPanel(pnlAdministraritinerario, GRIS);
-        cambiarBordePanel(pnlAdministraritinerario, BorderFactory.createLineBorder(CAFE, BORDE_GRUESO));
+        ejecutar.cambiarColorPanel(pnlAdministraritinerario, GRIS);
+        ejecutar.cambiarBordePanel(pnlAdministraritinerario, BorderFactory.createLineBorder(CAFE, BORDE_GRUESO));
     }//GEN-LAST:event_pnlAdministraritinerarioMouseEntered
     /**
      * Método que permite que al quitar el mouse de pnlAdministrarItinerario,
@@ -329,8 +273,8 @@ public class FrmInicio extends javax.swing.JFrame {
      * @param evt El evento del mouse que activa el método.
      */
     private void pnlAdministraritinerarioMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlAdministraritinerarioMouseExited
-        cambiarColorPanel(pnlAdministraritinerario, Color.WHITE);
-        cambiarBordePanel(pnlAdministraritinerario, BorderFactory.createLineBorder(CAFE, BORDE_ESTRECHO));
+        ejecutar.cambiarColorPanel(pnlAdministraritinerario, Color.WHITE);
+        ejecutar.cambiarBordePanel(pnlAdministraritinerario, BorderFactory.createLineBorder(CAFE, BORDE_ESTRECHO));
     }//GEN-LAST:event_pnlAdministraritinerarioMouseExited
 
     /**
@@ -346,10 +290,9 @@ public class FrmInicio extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "No existen itinerarios disponibles.", "Error", JOptionPane.ERROR_MESSAGE);
 
             // Redirigir al usuario a la ventana FrmRegistrarItinerario
-            abrirVentanaRegistro(ModoVentana.REGISTRAR_VACIOS);
-            this.dispose();
+            ejecutar.abrirVentanaRegistro(ModoVentana.REGISTRAR_VACIOS);
         } else {
-            abrirVentanaItinerarios();
+            ejecutar.abrirVentanaItinerarios();
         }
 
 

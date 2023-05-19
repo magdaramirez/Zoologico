@@ -4,28 +4,10 @@
  */
 package org.itson.GUI;
 
-import org.itson.utils.TableActionCellRender;
-import org.itson.utils.TableActionCellEditor;
 import java.awt.Color;
-import java.awt.Font;
-import java.util.List;
-import java.util.stream.Collectors;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.border.Border;
-import javax.swing.table.DefaultTableModel;
-import org.itson.dominio.Horario;
-import org.itson.dominio.Itinerario;
-import org.itson.interfaces.IGuiaDAO;
-import org.itson.interfaces.IHabitatsDAO;
-import org.itson.interfaces.IItinerariosDAO;
-import org.itson.persistencia.ConexionMongoDB;
-import org.itson.persistencia.GuiaDAO;
-import org.itson.persistencia.ItinerariosDAO;
-import org.itson.utils.ModoVentana;
 
 /**
  * Clase encargada de la ventana Itinerarios.
@@ -36,9 +18,6 @@ import org.itson.utils.ModoVentana;
 public class FrmItinerarios extends javax.swing.JFrame {
 
     int xMouse, yMouse;
-    private int contador = 1;
-
-    private final ConexionMongoDB conexion = new ConexionMongoDB();
 
     private final Color AMARILLO = new Color(255, 255, 153);
     private final Color GRIS = new Color(245, 245, 245);
@@ -50,142 +29,29 @@ public class FrmItinerarios extends javax.swing.JFrame {
     private final String FLECHA_BLANCA = "src\\main\\resources\\img\\flecha (1).png";
     private final String FLECHA_CAFE = "src\\main\\resources\\img\\flecha.png";
 
-    private IHabitatsDAO persistenciaHabitats;
-    private final IGuiaDAO persistenciaGuia;
-    private final IItinerariosDAO persistenciaItinerario;
+    private final LogicaItinerarios ejecutar;
 
     /**
      * Método que crea FrmItinerarios y establece las configuraciones de diseño
      * de tblitinerarios.
      */
     public FrmItinerarios() {
-        persistenciaGuia = new GuiaDAO(conexion);
-        persistenciaItinerario = new ItinerariosDAO(conexion);
-        obtenerItinerarios();
+        ejecutar = new LogicaItinerarios(this);
+
+        if (!ejecutar.obtenerItinerarios()) {
+            JOptionPane.showMessageDialog(this, "No existen colecciones disponibles.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
         initComponents();
-        insertarDatosFormularioGuia();
+
+        ejecutar.insertarDatosFormularioGuia(lblNombre);
+
         setTitle("Itinerarios");
         ImageIcon icon = new ImageIcon("src\\main\\resources\\img\\paw.png");
         this.setIconImage(icon.getImage());
 
-        tblitinerarios.getColumnModel().getColumn(5).setCellRenderer(new TableActionCellRender());
-        tblitinerarios.getColumnModel().getColumn(5).setCellEditor(new TableActionCellEditor(this));
-
-        tblitinerarios.getTableHeader().setFont(new Font("Berlin Sans FB", Font.PLAIN, 16));
-        tblitinerarios.getTableHeader().setOpaque(false);
-        tblitinerarios.getTableHeader().setForeground(new Color(102, 0, 0));
-        tblitinerarios.setRowHeight(40);
-
-        llenarTablaItinerarios();
-    }
-
-    private void insertarDatosFormularioGuia() {
-        lblNombre.setText(persistenciaGuia.obtenerGuia().getNombre());
-    }
-
-    private void obtenerItinerarios() {
-        if (!persistenciaItinerario.obtenerItinerarios()) {
-            // La colección no existe
-            JOptionPane.showMessageDialog(this, "No existen colecciones disponibles.", "Error", JOptionPane.ERROR_MESSAGE);
-
-            // Redirigir al usuario a la ventana FrmRegistrarItinerario
-            abrirVentanaRegistro();
-            this.dispose();
-        }
-    }
-
-    private void llenarTablaItinerarios() {
-        // CONEXIÓN A LA BASE DE DATOS
-        ConexionMongoDB conexion = new ConexionMongoDB();
-        IItinerariosDAO itinerariosDAO = new ItinerariosDAO(conexion);
-        // Consultar itinerarios
-        List<Itinerario> itinerarios = itinerariosDAO.consultarTodos();
-
-        DefaultTableModel modelo = (DefaultTableModel) this.tblitinerarios.getModel();
-        modelo.setRowCount(0);
-        for (Itinerario itinerario : itinerarios) {
-            // Obtener la lista de días únicos del itinerario
-            List<String> diasUnicos = itinerario.getListaHorarios().stream()
-                    .map(Horario::getDia)
-                    .distinct()
-                    .collect(Collectors.toList());
-
-            // Convertir la lista de días en una cadena separada por comas
-            String dias = String.join(", ", diasUnicos);
-
-            Object[] fila = {
-                contador++,
-                itinerario.getNombre(),
-                itinerario.getDuracion(),
-                itinerario.getNoVisitantes(),
-                dias
-            };
-            modelo.addRow(fila);
-        }
-    }
-
-    /**
-     * Método que termina el programa.
-     */
-    public void salirDelPrograma() {
-        System.exit(0);
-    }
-
-    /**
-     * Método que regresa a FrmInicio.
-     */
-    private void regresarVentanaInicio() {
-        FrmInicio inicio = new FrmInicio();
-        inicio.setVisible(true);
-        dispose();
-    }
-
-    /**
-     * Método que establece el color del fondo de un JPanel.
-     *
-     * @param panel JPanel cuyo color de fondo va a cambiar.
-     * @param color Color a poner de fondo.
-     */
-    public void cambiarColorPanel(JPanel panel, Color color) {
-        panel.setBackground(color);
-    }
-
-    /**
-     * Método que establece el color de letra de un JLabel.
-     *
-     * @param label JLabel cuyo color de letra va a cambiar.
-     * @param color Color a poner en la letra.
-     */
-    public void cambiarColorLetra(JLabel label, Color color) {
-        label.setForeground(color);
-    }
-
-    /**
-     * Método que establece un ícono a un JLabel.
-     *
-     * @param label JLabel cuyo ícono será establecido.
-     * @param icono Ícono a establecer.
-     */
-    public void cambiarIcono(JLabel label, String icono) {
-        label.setIcon(new ImageIcon(icono));
-    }
-
-    /**
-     * Método que despliega FrmRegistrarItinerario.
-     */
-    public void abrirVentanaRegistro() {
-        new FrmRegistrarItinerario(ModoVentana.REGISTRAR, null).setVisible(true);
-        dispose();
-    }
-
-    /**
-     * Método que esteblece el borde de un JPanel.
-     *
-     * @param panel JPanel cuyo borde va a cambiar.
-     * @param border Borde a poner en el panel.
-     */
-    public void cambiarBordePanel(JPanel panel, Border border) {
-        panel.setBorder(border);
+        ejecutar.configurarTabla(tblitinerarios);
+        ejecutar.llenarTablaItinerarios(tblitinerarios);
     }
 
     @SuppressWarnings("unchecked")
@@ -452,7 +318,7 @@ public class FrmItinerarios extends javax.swing.JFrame {
      * @param evt El evento del mouse que activa el método.
      */
     private void pnlSalirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlSalirMouseClicked
-        salirDelPrograma();
+        ejecutar.salirDelPrograma();
     }//GEN-LAST:event_pnlSalirMouseClicked
     /**
      * Método que permite cambiar el color de fondo del pnlSalir y el color de
@@ -461,8 +327,8 @@ public class FrmItinerarios extends javax.swing.JFrame {
      * @param evt El evento del mouse que activa el método.
      */
     private void pnlSalirMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlSalirMouseEntered
-        cambiarColorPanel(pnlSalir, Color.RED);
-        cambiarColorLetra(lblSalir, Color.WHITE);
+        ejecutar.cambiarColorPanel(pnlSalir, Color.RED);
+        ejecutar.cambiarColorLetra(lblSalir, Color.WHITE);
     }//GEN-LAST:event_pnlSalirMouseEntered
     /**
      * Método que permite que al quitar el mouse de pnlSalir, regrese al color
@@ -471,8 +337,8 @@ public class FrmItinerarios extends javax.swing.JFrame {
      * @param evt El evento del mouse que activa el método.
      */
     private void pnlSalirMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlSalirMouseExited
-        cambiarColorPanel(pnlSalir, AMARILLO);
-        cambiarColorLetra(lblSalir, CAFE);
+        ejecutar.cambiarColorPanel(pnlSalir, AMARILLO);
+        ejecutar.cambiarColorLetra(lblSalir, CAFE);
     }//GEN-LAST:event_pnlSalirMouseExited
     /**
      * Método que al darle click a pnlRegresar ejecuta el método
@@ -481,7 +347,7 @@ public class FrmItinerarios extends javax.swing.JFrame {
      * @param evt El evento del mouse que activa el método.
      */
     private void pnlRegresarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlRegresarMouseClicked
-        regresarVentanaInicio();
+        ejecutar.regresarVentanaInicio();
     }//GEN-LAST:event_pnlRegresarMouseClicked
     /**
      * Método que al entrar a pnlRegresar ejecuta los métodos cambiarColorPanel
@@ -490,8 +356,8 @@ public class FrmItinerarios extends javax.swing.JFrame {
      * @param evt El evento del mouse que activa el método.
      */
     private void pnlRegresarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlRegresarMouseEntered
-        cambiarColorPanel(pnlRegresar, Color.RED);
-        cambiarIcono(lblRegresar, FLECHA_BLANCA);
+        ejecutar.cambiarColorPanel(pnlRegresar, Color.RED);
+        ejecutar.cambiarIcono(lblRegresar, FLECHA_BLANCA);
     }//GEN-LAST:event_pnlRegresarMouseEntered
     /**
      * Método que al salir de pnlRegresar ejecuta los métodos cambiarColorPanel
@@ -500,12 +366,12 @@ public class FrmItinerarios extends javax.swing.JFrame {
      * @param evt El evento del mouse que activa el método.
      */
     private void pnlRegresarMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlRegresarMouseExited
-        cambiarColorPanel(pnlRegresar, AMARILLO);
-        cambiarIcono(lblRegresar, FLECHA_CAFE);
+        ejecutar.cambiarColorPanel(pnlRegresar, AMARILLO);
+        ejecutar.cambiarIcono(lblRegresar, FLECHA_CAFE);
     }//GEN-LAST:event_pnlRegresarMouseExited
 
     private void pnlRegistrarItinerarioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlRegistrarItinerarioMouseClicked
-        abrirVentanaRegistro();
+        ejecutar.abrirVentanaRegistro();
     }//GEN-LAST:event_pnlRegistrarItinerarioMouseClicked
     /**
      * Método que permite cambiar el grosor del borde de pnlRegistrarItinerario
@@ -514,8 +380,8 @@ public class FrmItinerarios extends javax.swing.JFrame {
      * @param evt objeto de evento de acción.
      */
     private void pnlRegistrarItinerarioMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlRegistrarItinerarioMouseEntered
-        cambiarColorPanel(pnlRegistrarItinerario, GRIS);
-        cambiarBordePanel(pnlRegistrarItinerario, BorderFactory.createLineBorder(CAFE, BORDE_GRUESO));
+        ejecutar.cambiarColorPanel(pnlRegistrarItinerario, GRIS);
+        ejecutar.cambiarBordePanel(pnlRegistrarItinerario, BorderFactory.createLineBorder(CAFE, BORDE_GRUESO));
     }//GEN-LAST:event_pnlRegistrarItinerarioMouseEntered
     /**
      * Método que permite que al quitar el mouse pnlRegistrarItinerario, regrese
@@ -524,8 +390,8 @@ public class FrmItinerarios extends javax.swing.JFrame {
      * @param evt objeto de evento de acción.
      */
     private void pnlRegistrarItinerarioMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlRegistrarItinerarioMouseExited
-        cambiarColorPanel(pnlRegistrarItinerario, Color.WHITE);
-        cambiarBordePanel(pnlRegistrarItinerario, BorderFactory.createLineBorder(CAFE, BORDE_ESTRECHO));
+        ejecutar.cambiarColorPanel(pnlRegistrarItinerario, Color.WHITE);
+        ejecutar.cambiarBordePanel(pnlRegistrarItinerario, BorderFactory.createLineBorder(CAFE, BORDE_ESTRECHO));
     }//GEN-LAST:event_pnlRegistrarItinerarioMouseExited
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

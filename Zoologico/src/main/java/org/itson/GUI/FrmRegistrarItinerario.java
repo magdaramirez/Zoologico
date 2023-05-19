@@ -5,7 +5,6 @@
 package org.itson.GUI;
 
 import com.github.lgooddatepicker.components.TimePicker;
-import com.github.lgooddatepicker.components.TimePickerSettings;
 import java.awt.Component;
 import java.awt.Color;
 import java.awt.Font;
@@ -58,8 +57,8 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
     private final IHabitatsDAO persistenciaHabitats;
     private final ConexionMongoDB conexion = new ConexionMongoDB();
 
-    private final ModoVentana modo;
-    private final Itinerario itinerario;
+    private ModoVentana modo;
+    private final LogicaRegistrarItinerarios ejecutar;
 
     private final Color AMARILLO = new Color(255, 255, 153);
     private final Color GRIS = new Color(245, 245, 245);
@@ -84,31 +83,19 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
      * @param itinerario El objeto Itinerario asociado a la ventana.
      */
     public FrmRegistrarItinerario(ModoVentana modo, Itinerario itinerario) {
+        ejecutar = new LogicaRegistrarItinerarios(this, itinerario, this);
         persistenciaHabitats = new HabitatsDAO(conexion);
         initComponents();
         setTitle("Registro de Itinerario");
         ImageIcon icon = new ImageIcon("src\\main\\resources\\img\\paw.png");
         this.setIconImage(icon.getImage());
         this.modo = modo;
-        this.itinerario = itinerario;
         this.configurarVentana(this.modo);
 
     }
 
-    public static List<LocalTime> generarHorasConIntervalo(LocalTime inicio, LocalTime fin, int hours, int minutes) {
-        List<LocalTime> horas = new ArrayList<>();
-        LocalTime tiempo = inicio;
-
-        while (tiempo.isBefore(fin)) {
-            horas.add(tiempo);
-            tiempo = tiempo.plusHours(hours).plusMinutes(minutes);
-        }
-
-        return horas;
-    }
-
-    public void configurarVentana(ModoVentana modo) {
-        this.configurarTimePicker();
+    public final void configurarVentana(ModoVentana modo) {
+        ejecutar.configurarTimePicker(pnlFondo);
 
         this.btnRestaLunes.setEnabled(false);
         this.btnRestaMartes.setEnabled(false);
@@ -136,7 +123,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
                 break;
 
             case ACTUALIZAR:
-                cargarItinerario();
+                ejecutar.cargarItinerario(txtNombre, txtNoVisitantes,tblHabitats);
                 txtNombre.setEditable(false);
                 this.lblTitulo.setText("Actualización de Itinerario");
                 this.pnlVaciarDatos.setVisible(false);
@@ -144,7 +131,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
                 break;
 
             case PREVISUALIZAR:
-                cargarItinerario();
+                ejecutar.cargarItinerario(txtNombre, txtNoVisitantes,tblHabitats);
                 for (Component componente : this.pnlFondo.getComponents()) {
                     if (componente instanceof JButton) {
                         JButton boton = (JButton) componente;
@@ -156,11 +143,10 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
                 this.pnlVaciarDatos.setVisible(false);
                 this.cbxHabitat.setVisible(false);
                 this.lblAgregar.setVisible(false);
+                this.lblQuitar.setVisible(false);
                 this.pnlGuardar.setVisible(false);
                 this.lblGuardarIMG.setVisible(false);
                 this.txtNombre.setEnabled(false);
-                this.txtDuracion.setEnabled(false);
-                this.txtLongitud.setEnabled(false);
                 this.txtNoVisitantes.setEnabled(false);
                 break;
 
@@ -168,165 +154,80 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
                 // Acción por defecto en caso de un modo no reconocido
                 break;
         }
-        this.visualizarTimePicker();
-        this.configurarTabla();
+        ejecutar.visualizarTimePicker();
+        ejecutar.configurarTabla(tblHabitats,cbxHabitat);
     }
 
-    public void configurarTabla() {
-        this.llenarTablaHabitats();
-        tblHabitats.getTableHeader().setFont(new Font("Berlin Sans FB", Font.PLAIN, 16));
-        tblHabitats.getTableHeader().setOpaque(false);
-        tblHabitats.getTableHeader().setForeground(new Color(102, 0, 0));
-        tblHabitats.setRowHeight(40);
+    public int getCantLunes() {
+        return cantLunes;
     }
 
-    public void cargarItinerario() {
-        this.txtNombre.setText(itinerario.getNombre());
-        this.txtDuracion.setText(itinerario.getDuracion().toString());
-        this.txtLongitud.setText(itinerario.getLongitud().toString());
-        this.txtNoVisitantes.setText(itinerario.getNoVisitantes().toString());
-        this.insertarHabitatsEnTablaActualizar(itinerario);
-
-        // Inicializar los contadores de días iguales
-        int maxCantidad = 0;
-        HashMap<String, Integer> diasIguales = new HashMap<>();
-        List<Horario> listaHorarios = itinerario.getListaHorarios();
-        for (Horario horario : listaHorarios) {
-            String dia = horario.getDia();
-            int contador = diasIguales.getOrDefault(dia, 0) + 1;
-            diasIguales.put(dia, contador);
-            maxCantidad = Math.max(maxCantidad, contador);
-        }
-
-        // Asignar las horas a los TimePicker correspondientes
-        for (String dia : diasIguales.keySet()) {
-            int contador = diasIguales.get(dia);
-            List<Horario> horariosDia = listaHorarios.stream().filter(h -> h.getDia().equals(dia)).collect(Collectors.toList());
-            for (int i = 1; i <= contador; i++) {
-                TimePicker timePicker = getTimePicker(dia, i);
-                if (timePicker != null && i <= horariosDia.size()) {
-                    Horario horario = horariosDia.get(i - 1);
-                    Date horaInicio = horario.getHoraInicio();
-                    LocalDateTime localDateTime = LocalDateTime.ofInstant(horaInicio.toInstant(), ZoneOffset.UTC);
-                    LocalTime horaInicioLocal = localDateTime.toLocalTime();
-                    timePicker.setTime(horaInicioLocal);
-                }
-            }
-        }
-
-        // Asignar los días iguales a las variables correspondientes
-        this.cantLunes = diasIguales.getOrDefault("Lunes", 0);
-        this.cantMartes = diasIguales.getOrDefault("Martes", 0);
-        this.cantMiercoles = diasIguales.getOrDefault("Miércoles", 0);
-        this.cantJueves = diasIguales.getOrDefault("Jueves", 0);
-        this.cantViernes = diasIguales.getOrDefault("Viernes", 0);
-        this.cantSabado = diasIguales.getOrDefault("Sábado", 0);
-        this.cantDomingo = diasIguales.getOrDefault("Domingo", 0);
+    public void setCantLunes(int cantLunes) {
+        this.cantLunes = cantLunes;
     }
 
-    public void configurarTimePicker() {
-        LocalTime inicio = LocalTime.of(9, 0);
-        LocalTime fin = LocalTime.of(21, 0);
-        int hours = 1;
-        int minutes = 30;
-
-        List<LocalTime> horas = generarHorasConIntervalo(inicio, fin, hours, minutes);
-        for (Component componente : this.pnlFondo.getComponents()) {
-            if (componente instanceof TimePicker) {
-                TimePicker datePicker = (TimePicker) componente;
-                if (modo == ModoVentana.PREVISUALIZAR) {
-                    datePicker.setEnabled(false);
-                } else {
-                    datePicker.getComponentTimeTextField().setEditable(false);
-                    datePicker.getSettings().generatePotentialMenuTimes((ArrayList<LocalTime>) horas);
-                }
-            }
-        }
+    public int getCantMartes() {
+        return cantMartes;
     }
 
-    /**
-     * Método para visualizar los time pickers para ingresar las horas.
-     */
-    private void visualizarTimePicker() {
-        String[] dias = {"Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"};
-
-        for (String dia : dias) {
-            int cantidad = obtenerCantidad(dia);
-            for (int i = 1; i <= 4; i++) {
-                TimePicker timePicker = getTimePicker(dia, i);
-                timePicker.setVisible(i <= cantidad);
-            }
-        }
+    public void setCantMartes(int cantMartes) {
+        this.cantMartes = cantMartes;
     }
 
-    private int obtenerCantidad(String dia) {
-        switch (dia) {
-            case "Lunes":
-                return this.cantLunes;
-            case "Martes":
-                return this.cantMartes;
-            case "Miércoles":
-                return this.cantMiercoles;
-            case "Jueves":
-                return this.cantJueves;
-            case "Viernes":
-                return this.cantViernes;
-            case "Sábado":
-                return this.cantSabado;
-            case "Domingo":
-                return this.cantDomingo;
-            default:
-                return 0;
-        }
+    public int getCantMiercoles() {
+        return cantMiercoles;
     }
 
-    /**
-     * Método que extrae los datos del JFrame.
-     *
-     * @return datos.
-     */
-    private HashMap<String, String> extraerDatos() {
-        String nombre = this.txtNombre.getText();
-        String duracion = this.txtDuracion.getText();
-        String longitud = this.txtLongitud.getText();
-        String noVisitantes = this.txtNoVisitantes.getText();
-
-        HashMap<String, String> datos = new HashMap<>();
-        datos.put("nombre", nombre);
-        datos.put("duracion", duracion);
-        datos.put("longitud", longitud);
-        datos.put("noVisitantes", noVisitantes);
-
-        return datos;
+    public void setCantMiercoles(int cantMiercoles) {
+        this.cantMiercoles = cantMiercoles;
     }
 
-    /**
-     * Método que valida los datos del JFrame.
-     *
-     * @param datos Datos a validar.
-     * @return errores encontrados al momento de validar.
-     */
-    private List<String> validarDatos(HashMap<String, String> datos) {
-        List<String> erroresValidacion = new LinkedList<>();
-        String nombre = datos.get("nombre");
-        String duracion = datos.get("duracion");
-        String longitud = datos.get("longitud");
-        String noVisitantes = datos.get("noVisitantes");
+    public int getCantJueves() {
+        return cantJueves;
+    }
 
-        if (Validadores.esTextoVacio(nombre) || Validadores.esTextoVacio(duracion) || Validadores.esTextoVacio(longitud) || Validadores.esTablaVacia(tblHabitats)) {
-            erroresValidacion.add("Datos vacíos");
-        }
-        if (!Validadores.esEntero(noVisitantes)) {
-            erroresValidacion.add("El número de visitantes NO es número entero");
-        }
-        if (!Validadores.esDecimal(longitud)) {
-            erroresValidacion.add("La longitud NO es número decimal");
-        }
-        if (!Validadores.esEntero(duracion)) {
-            erroresValidacion.add("La duración NO es número entero");
-        }
+    public void setCantJueves(int cantJueves) {
+        this.cantJueves = cantJueves;
+    }
 
-        return erroresValidacion;
+    public int getCantViernes() {
+        return cantViernes;
+    }
+
+    public void setCantViernes(int cantViernes) {
+        this.cantViernes = cantViernes;
+    }
+
+    public int getCantSabado() {
+        return cantSabado;
+    }
+
+    public void setCantSabado(int cantSabado) {
+        this.cantSabado = cantSabado;
+    }
+
+    public int getCantDomingo() {
+        return cantDomingo;
+    }
+
+    public void setCantDomingo(int cantDomingo) {
+        this.cantDomingo = cantDomingo;
+    }
+
+    public ModoVentana getModo() {
+        return modo;
+    }
+
+    public void setModo(ModoVentana modo) {
+        this.modo = modo;
+    }
+
+    public int getContador() {
+        return contador;
+    }
+
+    public void setContador(int contador) {
+        this.contador = contador;
     }
 
     /**
@@ -334,7 +235,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
      *
      * @param erroresValidacion Lista con los errores de validación.
      */
-    private void mostrarErroresValidacion(List<String> erroresValidacion) {
+    public void mostrarErroresValidacion(List<String> erroresValidacion) {
         String mensaje = String.join("\n", erroresValidacion);
 
         JOptionPane.showMessageDialog(
@@ -344,51 +245,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
                 JOptionPane.ERROR_MESSAGE);
     }
 
-    /**
-     * Método que lleva a cabo el registro del itinerario.
-     */
-    private void registrarItinerario() {
-        HashMap<String, String> datos = this.extraerDatos();
-        List<String> errores = this.validarDatos(datos);
-
-        if (!errores.isEmpty()) {
-            mostrarErroresValidacion(errores);
-        } else {
-            List<Horario> listaHorarios = new LinkedList<>();
-            LocalDate currentDate = LocalDate.now();
-
-            String[] dias = {"Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"};
-
-            for (String dia : dias) {
-                for (int i = 1; i <= 4; i++) {
-                    TimePicker timePicker = getTimePicker(dia, i);
-                    if (!timePicker.getText().isEmpty()) {
-                        LocalDateTime localDateTime = timePicker.getTime().atDate(currentDate);
-                        ZoneOffset zoneOffset = ZoneOffset.ofHours(0);
-                        OffsetDateTime offsetDateTime = OffsetDateTime.of(localDateTime, zoneOffset);
-                        Date horaInicio = Date.from(offsetDateTime.toInstant());
-                        Calendar calendar = Calendar.getInstance();
-                        calendar.setTime(horaInicio);
-                        calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
-                        Date horaFin = calendar.getTime();
-                        Horario horario = new Horario(dia, horaInicio, horaFin);
-                        listaHorarios.add(horario);
-                    }
-                }
-            }
-
-            if (!listaHorarios.isEmpty()) {
-                ConexionMongoDB conexion = new ConexionMongoDB();
-                FachadaAdministrarItinerario fachadaItinerario = new FachadaAdministrarItinerario();
-                Itinerario itinerario = new Itinerario(this.txtNombre.getText(), Integer.valueOf(this.txtNoVisitantes.getText()), listaHorarios, this.obtenerHabitatsDeTabla());
-                if (fachadaItinerario.registrarItinerario(itinerario, conexion)) {
-                    regresarVentanaItinerarios();
-                }
-            }
-        }
-    }
-
-    private TimePicker getTimePicker(String dia, int index) {
+    public TimePicker getTimePicker(String dia, int index) {
         switch (dia) {
             case "Lunes":
                 switch (index) {
@@ -478,202 +335,12 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
         return null;
     }
 
-    private List<Habitat> obtenerHabitatsDeTabla() {
-        List<Habitat> habitatsT = new ArrayList<>();
-
-        DefaultTableModel modelo = (DefaultTableModel) tblHabitats.getModel();
-        int rowCount = modelo.getRowCount();
-        for (int i = 0; i < rowCount; i++) {
-            String nombreHabitat = modelo.getValueAt(i, 1).toString();
-            habitatsT.add(persistenciaHabitats.obtenerHabitat(nombreHabitat));
-        }
-
-        return habitatsT;
-    }
-
-    private void actualizarItinerario() {
-        HashMap<String, String> datos = this.extraerDatos();
-        List<String> errores = this.validarDatos(datos);
-
-        if (!errores.isEmpty()) {
-            mostrarErroresValidacion(errores);
-            return; // Se detiene la ejecución si hay errores de validación
-        }
-
-        List<Horario> listaHorarios = new LinkedList<>();
-        LocalDate currentDate = LocalDate.now();
-
-        String[] dias = {"Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"};
-
-        for (String dia : dias) {
-            for (int i = 1; i <= 4; i++) {
-                TimePicker timePicker = getTimePicker(dia, i);
-                if (!timePicker.getText().isEmpty()) {
-                    LocalDateTime localDateTime = timePicker.getTime().atDate(currentDate);
-                    ZoneOffset zoneOffset = ZoneOffset.ofHours(0);
-                    OffsetDateTime offsetDateTime = OffsetDateTime.of(localDateTime, zoneOffset);
-                    Date horaInicio = Date.from(offsetDateTime.toInstant());
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.setTime(horaInicio);
-                    calendar.add(Calendar.MINUTE, Integer.parseInt(this.txtDuracion.getText()));
-                    Date horaFin = calendar.getTime();
-                    Horario horario = new Horario(dia, horaInicio, horaFin);
-                    listaHorarios.add(horario);
-                }
-            }
-        }
-
-        if (listaHorarios.isEmpty()) {
-            return; // No se realizan más acciones si no hay horarios seleccionados
-        }
-
-        List<Zona> listaZonas = new LinkedList<>();
-        ConexionMongoDB conexion = new ConexionMongoDB();
-        Zona zonaAux = new Zona();
-
-        Itinerario itinerario = new Itinerario(this.txtNombre.getText(), Integer.valueOf(this.txtNoVisitantes.getText()), listaHorarios, this.obtenerHabitatsDeTabla());
-        itinerario.setDuracion(itinerario.getListaHabitats().size() * zonaAux.getDuracion());
-        itinerario.setLongitud(itinerario.getListaHabitats().size() * 100f);
-
-        ItinerariosDAO itinerariosDAO = new ItinerariosDAO(conexion);
-        Itinerario itinerarioExistente = itinerariosDAO.obtener(itinerario.getNombre());
-
-        if (itinerarioExistente == null) {
-            JOptionPane.showMessageDialog(null, "El itinerario no existe en la base de datos", "ERROR", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        // Verificar si el itinerario existente tiene exactamente los mismos datos
-        if (itinerarioExistente.equals(itinerario)) {
-            JOptionPane.showMessageDialog(null, "No se realizaron cambios en el itinerario", "Advertencia", JOptionPane.WARNING_MESSAGE);
-            regresarVentanaItinerarios();
-            return;
-        }
-
-        // Actualizar el itinerario existente con los nuevos datos
-        itinerarioExistente.setNoVisitantes(itinerario.getNoVisitantes());
-        itinerarioExistente.setListaHorarios(itinerario.getListaHorarios());
-        itinerarioExistente.setDuracion(itinerario.getDuracion());
-        itinerarioExistente.setLongitud(itinerario.getLongitud());
-        itinerarioExistente.setListaZonas(itinerario.getListaZonas());
-        itinerarioExistente.setListaHabitats(itinerario.getListaHabitats());
-
-        // Actualizar el itinerario en la base de datos
-        itinerariosDAO.actualizar(itinerarioExistente);
-
-        JOptionPane.showMessageDialog(null, "Se ha actualizado el itinerario " + datos.get("nombre"), "Mensaje", JOptionPane.INFORMATION_MESSAGE);
-        regresarVentanaItinerarios();
-    }
-
-    /**
-     * Método que llena la tabla de hábitats.
-     */
-    private void llenarTablaHabitats() {
-        //CONEXIÓN A LA BASE DE DATOS
-        ConexionMongoDB conexion = new ConexionMongoDB();
-        IHabitatsDAO habitatsDAO = new HabitatsDAO(conexion);
-        //Consultar habitats
-        List<Habitat> habitats = habitatsDAO.consultarTodos();
-
-        //llenar combobox
-        DefaultComboBoxModel<Habitat> modelo = new DefaultComboBoxModel<>();
-        habitats.forEach(habitat -> {
-            modelo.addElement(habitat);
-        });
-        cbxHabitat.setModel(modelo);
-    }
-
-    /**
-     * Método que agrega hábitats seleccionados del comboBox a la tabla de
-     * hábitats.
-     */
-    private void agregarHabitat() {
-        // Obtener habitat seleccionado del combobox
-        Habitat habitat = (Habitat) cbxHabitat.getSelectedItem();
-
-        // Agregar el número y el nombre del hábitat
-        Object[] fila = {
-            contador++,
-            habitat.getNombre()
-        };
-
-        // Agregar la fila con el hábitat en la tabla
-        DefaultTableModel modelo = (DefaultTableModel) this.tblHabitats.getModel();
-        modelo.addRow(fila);
-
-        // Eliminar la selección del ComboBox
-        cbxHabitat.removeItemAt(cbxHabitat.getSelectedIndex());
-
-        if (cbxHabitat.getSelectedItem() == null) {
-            lblAgregar.setVisible(false);
-        }
-    }
-
-    private void insertarHabitatsEnTablaActualizar(Itinerario itinerario) {
-        DefaultTableModel modelo = (DefaultTableModel) tblHabitats.getModel();
-        List<Habitat> habitats = itinerario.getListaHabitats();
-
-        for (Habitat habitat : habitats) {
-            Object[] fila = {
-                contador++,
-                habitat.getNombre()
-            };
-            modelo.addRow(fila);
-        }
-
-        tblHabitats.setModel(modelo);
-    }
-
-    /**
-     * Método que establece el color del fondo de un JPanel.
-     *
-     * @param panel JPanel cuyo color de fondo va a cambiar.
-     * @param color Color a poner de fondo.
-     */
-    public void cambiarColorPanel(JPanel panel, Color color) {
-        panel.setBackground(color);
-    }
-
-    /**
-     * Método que establece el color de letra de un JLabel.
-     *
-     * @param label JLabel cuyo color de letra va a cambiar.
-     * @param color Color a poner en la letra.
-     */
-    public void cambiarColorLetra(JLabel label, Color color) {
-        label.setForeground(color);
-    }
-
-    /**
-     * Método que establece el texto y el color de letra de un JTextField.
-     *
-     * @param textField JTextfield a establecer.
-     * @param texto Texto a colocar en JTextField.
-     * @param color Color del texto a colocar en JTextField.
-     */
-    public void establecerTextField(JTextField textField, String texto, Color color) {
-        textField.setText(texto);
-        textField.setForeground(color);
-    }
-
-    /**
-     * Método que esteblece el borde de un JPanel.
-     *
-     * @param panel JPanel cuyo borde va a cambiar.
-     * @param borde Borde a poner en el panel.
-     */
-    public void cambiarBordePanel(JPanel panel, Border borde) {
-        panel.setBorder(borde);
-    }
-
     /**
      * Método que vacía todos los datos ingresados al FrmRegistrarItinerario.
      */
     public void vaciarDatos() {
-        establecerTextField(txtNombre, "Ingrese el nombre del itinerario", GRIS_CLARO);
-        establecerTextField(txtDuracion, "Ingrese la duración del itinerario", GRIS_CLARO);
-        establecerTextField(txtLongitud, "Ingrese la longitud del itinerario", GRIS_CLARO);
-        establecerTextField(txtNoVisitantes, "Ingrese el número máximo de visitantes", GRIS_CLARO);
+        ejecutar.establecerTextField(txtNombre, "Ingrese el nombre del itinerario", GRIS_CLARO);
+        ejecutar.establecerTextField(txtNoVisitantes, "Ingrese el número máximo de visitantes", GRIS_CLARO);
 
         tpLunes1.setText("");
         tpLunes2.setText("");
@@ -732,36 +399,8 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
             // Eliminar la última fila de la tabla
             modeloTabla.removeRow(ultimoIndice);
             contador--;
-            lblGuardar.setVisible(true);
+            lblAgregar.setVisible(true);
         }
-    }
-
-    /**
-     * Método que regresa a FrmItinerarios.
-     */
-    public void regresarVentanaItinerarios() {
-        FrmItinerarios itinerarios = new FrmItinerarios();
-        itinerarios.setVisible(true);
-        dispose();
-    }
-
-    /**
-     * Método que establece un ícono a un JLabel.
-     *
-     * @param label JLabel cuyo ícono será establecido.
-     * @param icono Ícono a establecer.
-     */
-    public void cambiarIcono(JLabel label, String icono) {
-        label.setIcon(new ImageIcon(icono));
-    }
-
-    private void salirDelPrograma() {
-        System.exit(0);
-    }
-
-    private void restaurarHabitats() {
-        llenarTablaHabitats();
-        lblAgregar.setVisible(true);
     }
 
     @SuppressWarnings("unchecked")
@@ -780,17 +419,11 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
         cbxHabitat = new org.itson.utils.Combobox<>();
         lblAgregar = new javax.swing.JLabel();
         lblNombre = new javax.swing.JLabel();
-        lblDuracion = new javax.swing.JLabel();
-        lblLongitud = new javax.swing.JLabel();
         lblNoVisitantes = new javax.swing.JLabel();
         txtNombre = new javax.swing.JTextField();
-        txtDuracion = new javax.swing.JTextField();
-        txtLongitud = new javax.swing.JTextField();
         txtNoVisitantes = new javax.swing.JTextField();
         jSeparator1 = new javax.swing.JSeparator();
         jSeparator2 = new javax.swing.JSeparator();
-        jSeparator3 = new javax.swing.JSeparator();
-        jSeparator4 = new javax.swing.JSeparator();
         lblLunes = new javax.swing.JLabel();
         lblMartes = new javax.swing.JLabel();
         lblMiercoles = new javax.swing.JLabel();
@@ -1017,17 +650,9 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
         lblNombre.setText("Nombre");
         pnlFondo.add(lblNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 150, -1, -1));
 
-        lblDuracion.setText("Duración");
-        lblDuracion.setFont(new java.awt.Font("Berlin Sans FB", 0, 20)); // NOI18N
-        pnlFondo.add(lblDuracion, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 230, -1, -1));
-
-        lblLongitud.setText("Longitud");
-        lblLongitud.setFont(new java.awt.Font("Berlin Sans FB", 0, 20)); // NOI18N
-        pnlFondo.add(lblLongitud, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 310, -1, -1));
-
-        lblNoVisitantes.setFont(new java.awt.Font("Berlin Sans FB", 0, 20)); // NOI18N
         lblNoVisitantes.setText("No. máximo de visitantes");
-        pnlFondo.add(lblNoVisitantes, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 400, -1, -1));
+        lblNoVisitantes.setFont(new java.awt.Font("Berlin Sans FB", 0, 20)); // NOI18N
+        pnlFondo.add(lblNoVisitantes, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 240, -1, -1));
 
         txtNombre.setFont(new java.awt.Font("Berlin Sans FB", 0, 14)); // NOI18N
         txtNombre.setText("Ingrese el nombre del itinerario");
@@ -1043,34 +668,6 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
         });
         pnlFondo.add(txtNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 180, 310, 20));
 
-        txtDuracion.setFont(new java.awt.Font("Berlin Sans FB", 0, 14)); // NOI18N
-        txtDuracion.setText("Ingrese la duración del itinerario");
-        txtDuracion.setBackground(new java.awt.Color(255, 255, 153));
-        txtDuracion.setBorder(null);
-        txtDuracion.setDisabledTextColor(new java.awt.Color(0, 0, 0));
-        txtDuracion.setDoubleBuffered(true);
-        txtDuracion.setForeground(new java.awt.Color(204, 204, 204));
-        txtDuracion.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                txtDuracionMousePressed(evt);
-            }
-        });
-        pnlFondo.add(txtDuracion, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 260, 310, 20));
-
-        txtLongitud.setFont(new java.awt.Font("Berlin Sans FB", 0, 14)); // NOI18N
-        txtLongitud.setText("Ingrese la longitud del itinerario");
-        txtLongitud.setBackground(new java.awt.Color(255, 255, 153));
-        txtLongitud.setBorder(null);
-        txtLongitud.setDisabledTextColor(new java.awt.Color(0, 0, 0));
-        txtLongitud.setDoubleBuffered(true);
-        txtLongitud.setForeground(new java.awt.Color(204, 204, 204));
-        txtLongitud.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                txtLongitudMousePressed(evt);
-            }
-        });
-        pnlFondo.add(txtLongitud, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 340, 310, 20));
-
         txtNoVisitantes.setFont(new java.awt.Font("Berlin Sans FB", 0, 14)); // NOI18N
         txtNoVisitantes.setText("Ingrese el número máximo de visitantes");
         txtNoVisitantes.setBackground(new java.awt.Color(255, 255, 153));
@@ -1083,23 +680,15 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
                 txtNoVisitantesMousePressed(evt);
             }
         });
-        pnlFondo.add(txtNoVisitantes, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 430, 310, 20));
+        pnlFondo.add(txtNoVisitantes, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 270, 310, 20));
 
         jSeparator1.setBackground(new java.awt.Color(255, 255, 153));
         jSeparator1.setForeground(new java.awt.Color(0, 0, 0));
-        pnlFondo.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 450, 310, 20));
+        pnlFondo.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 290, 310, 20));
 
         jSeparator2.setBackground(new java.awt.Color(255, 255, 153));
         jSeparator2.setForeground(new java.awt.Color(0, 0, 0));
         pnlFondo.add(jSeparator2, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 200, 310, 20));
-
-        jSeparator3.setBackground(new java.awt.Color(255, 255, 153));
-        jSeparator3.setForeground(new java.awt.Color(0, 0, 0));
-        pnlFondo.add(jSeparator3, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 280, 310, 20));
-
-        jSeparator4.setBackground(new java.awt.Color(255, 255, 153));
-        jSeparator4.setForeground(new java.awt.Color(0, 0, 0));
-        pnlFondo.add(jSeparator4, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 360, 310, 20));
 
         lblLunes.setText("Lunes");
         lblLunes.setFont(new java.awt.Font("Berlin Sans FB", 0, 20)); // NOI18N
@@ -1219,6 +808,8 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
             }
         });
         pnlFondo.add(btnSumDomingo, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 880, -1, -1));
+        btnSumDomingo.getAccessibleContext().setAccessibleName("");
+        btnSumDomingo.getAccessibleContext().setAccessibleDescription("");
 
         btnRestaDomingo.setText("-");
         btnRestaDomingo.addActionListener(new java.awt.event.ActionListener() {
@@ -1227,6 +818,8 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
             }
         });
         pnlFondo.add(btnRestaDomingo, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 880, -1, -1));
+        btnRestaDomingo.getAccessibleContext().setAccessibleName("");
+        btnRestaDomingo.getAccessibleContext().setAccessibleDescription("");
 
         btnSumMartes.setText("+");
         btnSumMartes.addActionListener(new java.awt.event.ActionListener() {
@@ -1235,6 +828,8 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
             }
         });
         pnlFondo.add(btnSumMartes, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 630, -1, -1));
+        btnSumMartes.getAccessibleContext().setAccessibleName("");
+        btnSumMartes.getAccessibleContext().setAccessibleDescription("");
 
         btnSumMiercoles.setText("+");
         btnSumMiercoles.addActionListener(new java.awt.event.ActionListener() {
@@ -1243,6 +838,8 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
             }
         });
         pnlFondo.add(btnSumMiercoles, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 680, -1, -1));
+        btnSumMiercoles.getAccessibleContext().setAccessibleName("");
+        btnSumMiercoles.getAccessibleContext().setAccessibleDescription("");
 
         btnSumJueves.setText("+");
         btnSumJueves.addActionListener(new java.awt.event.ActionListener() {
@@ -1251,6 +848,8 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
             }
         });
         pnlFondo.add(btnSumJueves, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 730, -1, -1));
+        btnSumJueves.getAccessibleContext().setAccessibleName("");
+        btnSumJueves.getAccessibleContext().setAccessibleDescription("");
 
         btnSumViernes.setText("+");
         btnSumViernes.addActionListener(new java.awt.event.ActionListener() {
@@ -1259,6 +858,8 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
             }
         });
         pnlFondo.add(btnSumViernes, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 780, -1, -1));
+        btnSumViernes.getAccessibleContext().setAccessibleName("");
+        btnSumViernes.getAccessibleContext().setAccessibleDescription("");
 
         btnSumSabado.setText("+");
         btnSumSabado.addActionListener(new java.awt.event.ActionListener() {
@@ -1267,6 +868,9 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
             }
         });
         pnlFondo.add(btnSumSabado, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 830, -1, -1));
+        btnSumSabado.getAccessibleContext().setAccessibleName("");
+        btnSumSabado.getAccessibleContext().setAccessibleDescription("");
+
         pnlFondo.add(tpLunes1, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 580, -1, -1));
         pnlFondo.add(tpLunes2, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 580, -1, -1));
         pnlFondo.add(tpLunes3, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 580, -1, -1));
@@ -1302,6 +906,8 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
             }
         });
         pnlFondo.add(btnSumLunes, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 580, -1, -1));
+        btnSumLunes.getAccessibleContext().setAccessibleName("");
+        btnSumLunes.getAccessibleContext().setAccessibleDescription("");
 
         btnRestaLunes.setText("-");
         btnRestaLunes.addActionListener(new java.awt.event.ActionListener() {
@@ -1310,6 +916,8 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
             }
         });
         pnlFondo.add(btnRestaLunes, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 580, -1, -1));
+        btnRestaLunes.getAccessibleContext().setAccessibleName("");
+        btnRestaLunes.getAccessibleContext().setAccessibleDescription("");
 
         btnRestaMartes.setText("-");
         btnRestaMartes.addActionListener(new java.awt.event.ActionListener() {
@@ -1318,6 +926,8 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
             }
         });
         pnlFondo.add(btnRestaMartes, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 630, -1, -1));
+        btnRestaMartes.getAccessibleContext().setAccessibleName("");
+        btnRestaMartes.getAccessibleContext().setAccessibleDescription("");
 
         btnRestaMiercoles.setText("-");
         btnRestaMiercoles.addActionListener(new java.awt.event.ActionListener() {
@@ -1326,6 +936,8 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
             }
         });
         pnlFondo.add(btnRestaMiercoles, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 680, -1, -1));
+        btnRestaMiercoles.getAccessibleContext().setAccessibleName("");
+        btnRestaMiercoles.getAccessibleContext().setAccessibleDescription("");
 
         btnRestaJueves.setText("-");
         btnRestaJueves.addActionListener(new java.awt.event.ActionListener() {
@@ -1334,6 +946,8 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
             }
         });
         pnlFondo.add(btnRestaJueves, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 730, -1, -1));
+        btnRestaJueves.getAccessibleContext().setAccessibleName("");
+        btnRestaJueves.getAccessibleContext().setAccessibleDescription("");
 
         btnRestaViernes.setText("-");
         btnRestaViernes.addActionListener(new java.awt.event.ActionListener() {
@@ -1342,6 +956,8 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
             }
         });
         pnlFondo.add(btnRestaViernes, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 780, -1, -1));
+        btnRestaViernes.getAccessibleContext().setAccessibleName("");
+        btnRestaViernes.getAccessibleContext().setAccessibleDescription("");
 
         btnRestaSabado.setText("-");
         btnRestaSabado.addActionListener(new java.awt.event.ActionListener() {
@@ -1350,6 +966,8 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
             }
         });
         pnlFondo.add(btnRestaSabado, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 830, -1, -1));
+        btnRestaSabado.getAccessibleContext().setAccessibleName("");
+        btnRestaSabado.getAccessibleContext().setAccessibleDescription("");
 
         lblQuitar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/boton-quitar.png"))); // NOI18N
         lblQuitar.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -1377,6 +995,8 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
             .addComponent(pnlFondo, javax.swing.GroupLayout.DEFAULT_SIZE, 1004, Short.MAX_VALUE)
         );
 
+        getAccessibleContext().setAccessibleDescription("");
+
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
@@ -1387,7 +1007,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
      * @param evt El evento del mouse que activa el método.
      */
     private void pnlSalirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlSalirMouseClicked
-        salirDelPrograma();
+        ejecutar.salirDelPrograma();
     }//GEN-LAST:event_pnlSalirMouseClicked
     /**
      * Método que permite cambiar el color de fondo del pnlSalir y el color de
@@ -1396,8 +1016,8 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
      * @param evt El evento del mouse que activa el método.
      */
     private void pnlSalirMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlSalirMouseEntered
-        cambiarColorPanel(pnlSalir, Color.RED);
-        cambiarColorLetra(lblSalir, Color.WHITE);
+        ejecutar.cambiarColorPanel(pnlSalir, Color.RED);
+        ejecutar.cambiarColorLetra(lblSalir, Color.WHITE);
     }//GEN-LAST:event_pnlSalirMouseEntered
     /**
      * Método que permite que al quitar el mouse de pnlSalir, regrese al color
@@ -1406,8 +1026,8 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
      * @param evt El evento del mouse que activa el método.
      */
     private void pnlSalirMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlSalirMouseExited
-        cambiarColorPanel(pnlSalir, AMARILLO);
-        cambiarColorLetra(lblSalir, CAFE);
+        ejecutar.cambiarColorPanel(pnlSalir, AMARILLO);
+        ejecutar.cambiarColorLetra(lblSalir, CAFE);
     }//GEN-LAST:event_pnlSalirMouseExited
     /**
      * Método que al darle click a pnlRegresar ejecuta el método
@@ -1416,7 +1036,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
      * @param evt El evento del mouse que activa el método.
      */
     private void pnlRegresarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlRegresarMouseClicked
-        regresarVentanaItinerarios();
+        ejecutar.regresarVentanaItinerarios();
     }//GEN-LAST:event_pnlRegresarMouseClicked
 
     /**
@@ -1426,8 +1046,8 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
      * @param evt El evento del mouse que activa el método.
      */
     private void pnlRegresarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlRegresarMouseEntered
-        cambiarColorPanel(pnlRegresar, Color.RED);
-        cambiarIcono(lblRegresar, FLECHA_BLANCA);
+        ejecutar.cambiarColorPanel(pnlRegresar, Color.RED);
+        ejecutar.cambiarIcono(lblRegresar, FLECHA_BLANCA);
     }//GEN-LAST:event_pnlRegresarMouseEntered
     /**
      * Método que al salir de pnlRegresar ejecuta los métodos cambiarColorPanel
@@ -1436,8 +1056,8 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
      * @param evt El evento del mouse que activa el método.
      */
     private void pnlRegresarMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlRegresarMouseExited
-        cambiarColorPanel(pnlRegresar, AMARILLO);
-        cambiarIcono(lblRegresar, FLECHA_CAFE);
+        ejecutar.cambiarColorPanel(pnlRegresar, AMARILLO);
+        ejecutar.cambiarIcono(lblRegresar, FLECHA_CAFE);
     }//GEN-LAST:event_pnlRegresarMouseExited
     /**
      * Método que al arrastrar el mouse permita mover la pantalla.
@@ -1466,7 +1086,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
      * @param evt El evento del mouse que activa el método.
      */
     private void lblAgregarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblAgregarMouseClicked
-        agregarHabitat();
+        ejecutar.agregarHabitat(cbxHabitat,tblHabitats,lblAgregar);
     }//GEN-LAST:event_lblAgregarMouseClicked
     /**
      * Método que al entrar al lblAgregar ejecuta el método cambiarIcono.
@@ -1474,7 +1094,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
      * @param evt El evento del mouse que activa el método.
      */
     private void lblAgregarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblAgregarMouseEntered
-        cambiarIcono(lblAgregar, AGREGAR_CLARO);
+        ejecutar.cambiarIcono(lblAgregar, AGREGAR_CLARO);
     }//GEN-LAST:event_lblAgregarMouseEntered
     /**
      * Método que al salir al lblAgregar ejecuta el método cambiarIcono.
@@ -1482,30 +1102,9 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
      * @param evt El evento del mouse que activa el método.
      */
     private void lblAgregarMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblAgregarMouseExited
-        cambiarIcono(lblAgregar, AGREGAR_OSCURO);
+        ejecutar.cambiarIcono(lblAgregar, AGREGAR_OSCURO);
     }//GEN-LAST:event_lblAgregarMouseExited
-    /**
-     * Método que al presionar txtDuracion ejecuta el método
-     * establecerTextField.
-     *
-     * @param evt El evento del mouse que activa el método.
-     */
-    private void txtDuracionMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtDuracionMousePressed
-        if (modo == ModoVentana.REGISTRAR || modo == ModoVentana.REGISTRAR_VACIOS) {
-            establecerTextField(txtDuracion, "", Color.BLACK);
-        }
-    }//GEN-LAST:event_txtDuracionMousePressed
-    /**
-     * Método que al presionar txtLongitud ejecuta el método
-     * establecerTextField.
-     *
-     * @param evt El evento del mouse que activa el método.
-     */
-    private void txtLongitudMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtLongitudMousePressed
-        if (modo == ModoVentana.REGISTRAR || modo == ModoVentana.REGISTRAR_VACIOS) {
-            establecerTextField(txtLongitud, "", Color.BLACK);
-        }
-    }//GEN-LAST:event_txtLongitudMousePressed
+
     /**
      * Método que al presionar txtNoVisitantes ejecuta el método
      * establecerTextField.
@@ -1514,7 +1113,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
      */
     private void txtNoVisitantesMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtNoVisitantesMousePressed
         if (modo == ModoVentana.REGISTRAR || modo == ModoVentana.REGISTRAR_VACIOS) {
-            establecerTextField(txtNoVisitantes, "", Color.BLACK);
+            ejecutar.establecerTextField(txtNoVisitantes, "", Color.BLACK);
         }
     }//GEN-LAST:event_txtNoVisitantesMousePressed
     /**
@@ -1524,15 +1123,15 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
      */
     private void txtNombreMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtNombreMousePressed
         if (modo == ModoVentana.REGISTRAR || modo == ModoVentana.REGISTRAR_VACIOS) {
-            establecerTextField(txtNombre, "", Color.BLACK);
+            ejecutar.establecerTextField(txtNombre, "", Color.BLACK);
         }
     }//GEN-LAST:event_txtNombreMousePressed
 
     private void pnlGuardarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlGuardarMouseClicked
         if (modo.equals(ModoVentana.ACTUALIZAR)) {
-            this.actualizarItinerario();
+            ejecutar.actualizarItinerario(txtNombre,txtNoVisitantes,tblHabitats);
         } else {
-            registrarItinerario();
+            ejecutar.registrarItinerario(txtNombre,txtNoVisitantes,tblHabitats);
         }
     }//GEN-LAST:event_pnlGuardarMouseClicked
     /**
@@ -1542,8 +1141,8 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
      * @param evt El evento del mouse que activa el método.
      */
     private void pnlGuardarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlGuardarMouseEntered
-        cambiarColorPanel(pnlGuardar, GRIS);
-        cambiarBordePanel(pnlGuardar, BorderFactory.createLineBorder(CAFE, BORDE_GRUESO));
+        ejecutar.cambiarColorPanel(pnlGuardar, GRIS);
+        ejecutar.cambiarBordePanel(pnlGuardar, BorderFactory.createLineBorder(CAFE, BORDE_GRUESO));
     }//GEN-LAST:event_pnlGuardarMouseEntered
     /**
      * Método que al salir el mouse a pnlGuardar, ejecuta los métodos
@@ -1552,8 +1151,8 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
      * @param evt El evento del mouse que activa el método.
      */
     private void pnlGuardarMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlGuardarMouseExited
-        cambiarColorPanel(pnlGuardar, Color.WHITE);
-        cambiarBordePanel(pnlGuardar, BorderFactory.createLineBorder(CAFE, BORDE_ESTRECHO));
+        ejecutar.cambiarColorPanel(pnlGuardar, Color.WHITE);
+        ejecutar.cambiarBordePanel(pnlGuardar, BorderFactory.createLineBorder(CAFE, BORDE_ESTRECHO));
     }//GEN-LAST:event_pnlGuardarMouseExited
     /**
      * Método que al darle click a pnlVaciarDatos ejecuta el método vaciarDatos.
@@ -1562,7 +1161,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
      */
     private void pnlVaciarDatosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlVaciarDatosMouseClicked
         vaciarDatos();
-        restaurarHabitats();
+        ejecutar.restaurarHabitats(cbxHabitat,lblAgregar);
     }//GEN-LAST:event_pnlVaciarDatosMouseClicked
     /**
      * Método que al entrar el mouse a pnlVaciarDatos ejecuta los métodos
@@ -1571,9 +1170,9 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
      * @param evt El evento del mouse que activa el método.
      */
     private void pnlVaciarDatosMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlVaciarDatosMouseEntered
-        cambiarColorLetra(lblVaciarDatos, Color.GRAY);
-        cambiarColorLetra(lblUnderline, Color.GRAY);
-        cambiarIcono(lblVaciar, VACIAR_CLARO);
+        ejecutar.cambiarColorLetra(lblVaciarDatos, Color.GRAY);
+        ejecutar.cambiarColorLetra(lblUnderline, Color.GRAY);
+        ejecutar.cambiarIcono(lblVaciar, VACIAR_CLARO);
     }//GEN-LAST:event_pnlVaciarDatosMouseEntered
     /**
      * Método que al salir el mouse de pnlVaciarDatos ejecuta los métodos
@@ -1582,9 +1181,9 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
      * @param evt El evento del mouse que activa el método.
      */
     private void pnlVaciarDatosMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlVaciarDatosMouseExited
-        cambiarColorLetra(lblVaciarDatos, Color.BLACK);
-        cambiarColorLetra(lblUnderline, Color.BLACK);
-        cambiarIcono(lblVaciar, VACIAR_OSCURO);
+        ejecutar.cambiarColorLetra(lblVaciarDatos, Color.BLACK);
+        ejecutar.cambiarColorLetra(lblUnderline, Color.BLACK);
+        ejecutar.cambiarIcono(lblVaciar, VACIAR_OSCURO);
     }//GEN-LAST:event_pnlVaciarDatosMouseExited
     /**
      * Método para agregar horas.
@@ -1594,7 +1193,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
     private void btnSumLunesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSumLunesActionPerformed
         this.btnRestaLunes.setEnabled(true);
         this.cantLunes += 1;
-        this.visualizarTimePicker();
+        ejecutar.visualizarTimePicker();
         if (this.cantLunes == 4) {
             this.btnSumLunes.setEnabled(false);
         }
@@ -1607,7 +1206,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
     private void btnRestaLunesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRestaLunesActionPerformed
         this.btnSumLunes.setEnabled(true);
         this.cantLunes -= 1;
-        this.visualizarTimePicker();
+        ejecutar.visualizarTimePicker();
         if (this.cantLunes == 1) {
             this.btnRestaLunes.setEnabled(false);
         }
@@ -1620,7 +1219,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
     private void btnSumMartesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSumMartesActionPerformed
         this.btnRestaMartes.setEnabled(true);
         this.cantMartes += 1;
-        this.visualizarTimePicker();
+        ejecutar.visualizarTimePicker();
         if (this.cantMartes == 4) {
             this.btnSumMartes.setEnabled(false);
         }
@@ -1633,7 +1232,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
     private void btnRestaMartesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRestaMartesActionPerformed
         this.btnSumMartes.setEnabled(true);
         this.cantMartes -= 1;
-        this.visualizarTimePicker();
+        ejecutar.visualizarTimePicker();
         if (this.cantMartes == 1) {
             this.btnRestaMartes.setEnabled(false);
         }
@@ -1646,7 +1245,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
     private void btnSumMiercolesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSumMiercolesActionPerformed
         this.btnRestaMiercoles.setEnabled(true);
         this.cantMiercoles += 1;
-        this.visualizarTimePicker();
+        ejecutar.visualizarTimePicker();
         if (this.cantMiercoles == 4) {
             this.btnSumMiercoles.setEnabled(false);
         }
@@ -1659,7 +1258,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
     private void btnRestaMiercolesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRestaMiercolesActionPerformed
         this.btnSumMiercoles.setEnabled(true);
         this.cantMiercoles -= 1;
-        this.visualizarTimePicker();
+        ejecutar.visualizarTimePicker();
         if (this.cantMiercoles == 1) {
             this.btnRestaMiercoles.setEnabled(false);
         }
@@ -1672,7 +1271,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
     private void btnSumJuevesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSumJuevesActionPerformed
         this.btnRestaJueves.setEnabled(true);
         this.cantJueves += 1;
-        this.visualizarTimePicker();
+        ejecutar.visualizarTimePicker();
         if (this.cantJueves == 4) {
             this.btnSumJueves.setEnabled(false);
         }
@@ -1685,7 +1284,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
     private void btnRestaJuevesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRestaJuevesActionPerformed
         this.btnSumJueves.setEnabled(true);
         this.cantJueves -= 1;
-        this.visualizarTimePicker();
+        ejecutar.visualizarTimePicker();
         if (this.cantJueves == 1) {
             this.btnRestaJueves.setEnabled(false);
         }
@@ -1698,7 +1297,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
     private void btnSumViernesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSumViernesActionPerformed
         this.btnRestaViernes.setEnabled(true);
         this.cantViernes += 1;
-        this.visualizarTimePicker();
+        ejecutar.visualizarTimePicker();
         if (this.cantViernes == 4) {
             this.btnSumViernes.setEnabled(false);
         }
@@ -1711,7 +1310,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
     private void btnRestaViernesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRestaViernesActionPerformed
         this.btnSumViernes.setEnabled(true);
         this.cantViernes -= 1;
-        this.visualizarTimePicker();
+        ejecutar.visualizarTimePicker();
         if (this.cantViernes == 1) {
             this.btnRestaViernes.setEnabled(false);
         }
@@ -1724,7 +1323,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
     private void btnSumSabadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSumSabadoActionPerformed
         this.btnRestaSabado.setEnabled(true);
         this.cantSabado += 1;
-        this.visualizarTimePicker();
+        ejecutar.visualizarTimePicker();
         if (this.cantSabado == 4) {
             this.btnSumSabado.setEnabled(false);
         }
@@ -1737,7 +1336,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
     private void btnRestaSabadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRestaSabadoActionPerformed
         this.btnSumSabado.setEnabled(true);
         this.cantSabado -= 1;
-        this.visualizarTimePicker();
+        ejecutar.visualizarTimePicker();
         if (this.cantSabado == 1) {
             this.btnRestaSabado.setEnabled(false);
         }
@@ -1750,7 +1349,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
     private void btnSumDomingoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSumDomingoActionPerformed
         this.btnRestaDomingo.setEnabled(true);
         this.cantDomingo += 1;
-        this.visualizarTimePicker();
+        ejecutar.visualizarTimePicker();
         if (this.cantDomingo == 4) {
             this.btnSumDomingo.setEnabled(false);
         }
@@ -1763,7 +1362,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
     private void btnRestaDomingoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRestaDomingoActionPerformed
         this.btnSumDomingo.setEnabled(true);
         this.cantDomingo -= 1;
-        this.visualizarTimePicker();
+        ejecutar.visualizarTimePicker();
         if (this.cantDomingo == 1) {
             this.btnRestaDomingo.setEnabled(false);
         }
@@ -1803,15 +1402,11 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
-    private javax.swing.JSeparator jSeparator3;
-    private javax.swing.JSeparator jSeparator4;
     private javax.swing.JLabel lblAgregar;
     private javax.swing.JLabel lblDomingo;
-    private javax.swing.JLabel lblDuracion;
     private javax.swing.JLabel lblGuardar;
     private javax.swing.JLabel lblGuardarIMG;
     private javax.swing.JLabel lblJueves;
-    private javax.swing.JLabel lblLongitud;
     private javax.swing.JLabel lblLunes;
     private javax.swing.JLabel lblMartes;
     private javax.swing.JLabel lblMiercoles;
@@ -1861,8 +1456,6 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
     private com.github.lgooddatepicker.components.TimePicker tpViernes2;
     private com.github.lgooddatepicker.components.TimePicker tpViernes3;
     private com.github.lgooddatepicker.components.TimePicker tpViernes4;
-    private javax.swing.JTextField txtDuracion;
-    private javax.swing.JTextField txtLongitud;
     private javax.swing.JTextField txtNoVisitantes;
     private javax.swing.JTextField txtNombre;
     // End of variables declaration//GEN-END:variables

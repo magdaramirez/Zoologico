@@ -23,7 +23,7 @@ public class Validadores {
      * @return Verdadero en caso de estar vacío, falso en caso contrario.
      */
     public static boolean esTextoVacio(String texto) {
-        if (texto.equalsIgnoreCase("Ingrese el nombre del itinerario") || texto.equalsIgnoreCase("Ingrese la duración del itinerario") || texto.equalsIgnoreCase("Ingrese la longitud del itinerario") || texto.equalsIgnoreCase("Ingrese el número máximo de visitantes")) {
+        if (texto.equalsIgnoreCase("Ingrese el nombre del itinerario") || texto.equalsIgnoreCase("Ingrese el número máximo de visitantes")) {
             return true;
         }
         if (texto.trim().isEmpty()) { //Misma función que el isBlank
