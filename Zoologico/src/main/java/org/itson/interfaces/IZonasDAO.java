@@ -10,6 +10,8 @@ import org.itson.dominio.Habitat;
 import org.itson.dominio.Zona;
 
 /**
+ * Clase interfaz que define las operaciones para acceder y manipular los datos
+ * de una zona.
  *
  * @author Magda Ramírez - 233523, Misael Marchena - 233418, Ildefonso Lares -
  * 233381, Esteban Duran - 233267
@@ -46,6 +48,7 @@ public interface IZonasDAO {
      * @return Lista de zonas con los habitats ingresados.
      */
     List<Zona> consultarZonasConHabitats(List<Habitat> habitats);
+
     /**
      * Método que otiene los ObjectId de los habitats en una lista ingresada.
      *

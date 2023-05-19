@@ -5,6 +5,8 @@
 package org.itson.interfaces;
 
 /**
+ * Clase interfaz que define los métodos para manipular los eventos de acción en
+ * una tabla.
  *
  * @author Magda Ramírez - 233523, Misael Marchena - 233418, Ildefonso Lares -
  * 233381, Esteban Duran - 233267

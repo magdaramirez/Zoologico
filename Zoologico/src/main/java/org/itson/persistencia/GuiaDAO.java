@@ -17,6 +17,8 @@ import org.itson.dominio.TelefonoGuia;
 import org.itson.interfaces.IGuiaDAO;
 
 /**
+ * Clase que implementa la interfaz IGuiaDAO y proporciona métodos para insertar
+ * y obtener guías en la base de datos.
  *
  * @author Magda Ramírez - 233523, Misael Marchena - 233418, Ildefonso Lares -
  * 233381, Esteban Duran - 233267

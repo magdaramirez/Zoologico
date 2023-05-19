@@ -12,13 +12,20 @@ import javax.swing.border.Border;
 import org.itson.utils.ModoVentana;
 
 /**
+ * Clase que contiene la lógica de la ventana de inicio.
  *
- * @author wikit
+ * @author Magda Ramírez - 233523, Misael Marchena - 233418, Ildefonso Lares -
+ * 233381, Esteban Duran - 233267
  */
 public class LogicaInicio {
 
     private JFrame frame;
 
+    /**
+     * Constructor de la clase LogicaInicio.
+     *
+     * @param frame El JFrame principal de la ventana de inicio.
+     */
     public LogicaInicio(JFrame frame) {
         this.frame = frame;
     }
@@ -69,6 +76,15 @@ public class LogicaInicio {
         panel.setBorder(border);
     }
 
+    /**
+     * Abre la ventana de registro de itinerarios con el modo especificado. Crea
+     * una instancia de la clase FrmRegistrarItinerario con el modo y null como
+     * argumentos y la hace visible. Luego, cierra la ventana actual de la
+     * aplicación.
+     *
+     * @param modo El modo de ventana para la ventana de registro de
+     * itinerarios.
+     */
     public void abrirVentanaRegistro(ModoVentana modo) {
         new FrmRegistrarItinerario(modo, null).setVisible(true);
         frame.dispose();

@@ -138,7 +138,14 @@ public class PnlBotones extends javax.swing.JPanel {
             .addComponent(aBtnActualizar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
     }// </editor-fold>//GEN-END:initComponents
-
+/**
+     * Maneja el evento de acción del botón "Imprimir". Obtiene el nombre del
+     * itinerario seleccionado en la tabla y realiza la impresión del
+     * itinerario.
+     *
+     * @param evt el evento de acción generado al hacer clic en el botón
+     * "Imprimir".
+     */
     private void aBtnImprimirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aBtnImprimirActionPerformed
         int fila = tabla.convertRowIndexToModel(tabla.getEditingRow());
         TableModel model = tabla.getModel();
@@ -149,11 +156,23 @@ public class PnlBotones extends javax.swing.JPanel {
         FachadaSistemaImpresion sistemaImpresion = new FachadaSistemaImpresion();
         sistemaImpresion.imprimir(itinerarioObtenido);
     }//GEN-LAST:event_aBtnImprimirActionPerformed
-
+    /**
+     * Maneja el evento de acción del botón "Visualizar". Abre la ventana en
+     * modo de previsualización.
+     *
+     * @param evt el evento de acción generado al hacer clic en el botón
+     * "Visualizar".
+     */
     private void aBtnVisualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aBtnVisualizarActionPerformed
         abrirVentana(ModoVentana.PREVISUALIZAR);
     }//GEN-LAST:event_aBtnVisualizarActionPerformed
-
+    /**
+     * Maneja el evento de acción del botón "Actualizar". Abre la ventana en
+     * modo de actualización.
+     *
+     * @param evt el evento de acción generado al hacer clic en el botón
+     * "Actualizar".
+     */
     private void aBtnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aBtnActualizarActionPerformed
         abrirVentana(ModoVentana.ACTUALIZAR);
     }//GEN-LAST:event_aBtnActualizarActionPerformed

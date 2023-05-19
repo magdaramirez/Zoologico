@@ -44,8 +44,10 @@ import org.itson.utils.ModoVentana;
 import org.itson.utils.Validadores;
 
 /**
+ * Clase que contiene la lógica de la ventana de registrar itinerarios.
  *
- * @author wikit
+ * @author Magda Ramírez - 233523, Misael Marchena - 233418, Ildefonso Lares -
+ * 233381, Esteban Duran - 233267
  */
 public class LogicaRegistrarItinerarios {
 
@@ -56,6 +58,13 @@ public class LogicaRegistrarItinerarios {
     private final IHabitatsDAO persistenciaHabitats;
     private final ConexionMongoDB conexion = new ConexionMongoDB();
 
+    /**
+     * Constructor de la clase LogicaRegistrarItinerarios.
+     *
+     * @param frame el JFrame asociado a la ventana.
+     * @param itinerario el itinerario a gestionar.
+     * @param registro la ventana de registro de itinerarios.
+     */
     public LogicaRegistrarItinerarios(JFrame frame, Itinerario itinerario, FrmRegistrarItinerario registro) {
         persistenciaHabitats = new HabitatsDAO(conexion);
         this.itinerario = itinerario;
@@ -63,6 +72,15 @@ public class LogicaRegistrarItinerarios {
         this.registro = registro;
     }
 
+    /**
+     * Genera una lista de horas con un intervalo específico entre ellas.
+     *
+     * @param inicio la hora de inicio.
+     * @param fin la hora de fin.
+     * @param hours las horas de intervalo.
+     * @param minutes los minutos de intervalo.
+     * @return una lista de LocalTime con las horas generadas.
+     */
     public static List<LocalTime> generarHorasConIntervalo(LocalTime inicio, LocalTime fin, int hours, int minutes) {
         List<LocalTime> horas = new ArrayList<>();
         LocalTime tiempo = inicio;
@@ -75,6 +93,12 @@ public class LogicaRegistrarItinerarios {
         return horas;
     }
 
+    /**
+     * Configura la tabla de itinerarios y el JComboBox de hábitats.
+     *
+     * @param table la tabla de itinerarios.
+     * @param cbx el JComboBox de hábitats.
+     */
     public void configurarTabla(JTable table, JComboBox cbx) {
         this.llenarTablaHabitats(cbx);
         table.getTableHeader().setFont(new Font("Berlin Sans FB", Font.PLAIN, 16));
@@ -83,6 +107,15 @@ public class LogicaRegistrarItinerarios {
         table.setRowHeight(40);
     }
 
+    /**
+     * Carga los datos del itinerario en los campos correspondientes del
+     * formulario.
+     *
+     * @param nombre el campo de texto para el nombre del itinerario.
+     * @param noVisitantes el campo de texto para el número de visitantes del
+     * itinerario.
+     * @param table la tabla de hábitats del itinerario.
+     */
     public void cargarItinerario(JTextField nombre, JTextField noVisitantes, JTable table) {
         nombre.setText(itinerario.getNombre());
         noVisitantes.setText(itinerario.getNoVisitantes().toString());
@@ -125,6 +158,11 @@ public class LogicaRegistrarItinerarios {
         registro.setCantDomingo(diasIguales.getOrDefault("Domingo", 0));
     }
 
+    /**
+     * Configura los componentes TimePicker dentro de un panel.
+     *
+     * @param panel el panel que contiene los componentes TimePicker.
+     */
     public void configurarTimePicker(JPanel panel) {
         LocalTime inicio = LocalTime.of(9, 0);
         LocalTime fin = LocalTime.of(21, 0);
@@ -160,6 +198,13 @@ public class LogicaRegistrarItinerarios {
         }
     }
 
+    /**
+     * Obtiene la cantidad de días iguales para un día específico.
+     *
+     * @param dia el día para el cual se desea obtener la cantidad de días
+     * iguales.
+     * @return la cantidad de días iguales para el día especificado.
+     */
     private int obtenerCantidad(String dia) {
         switch (dia) {
             case "Lunes":
@@ -182,11 +227,13 @@ public class LogicaRegistrarItinerarios {
     }
 
     /**
-     * Método que extrae los datos del JFrame.
+     * Extrae los datos de los campos de texto proporcionados y los devuelve
+     * como un HashMap.
      *
-     * @param txtNombre
-     * @param txtNoVisitantes
-     * @return datos.
+     * @param txtNombre el campo de texto para el nombre.
+     * @param txtNoVisitantes el campo de texto para el número de visitantes.
+     * @return un HashMap que contiene los datos extraídos, donde la clave es el
+     * nombre del campo y el valor es el texto ingresado.
      */
     public HashMap<String, String> extraerDatos(JTextField txtNombre, JTextField txtNoVisitantes) {
         String nombre = txtNombre.getText();
@@ -200,11 +247,13 @@ public class LogicaRegistrarItinerarios {
     }
 
     /**
-     * Método que valida los datos del JFrame.
+     * Valida los datos proporcionados y devuelve una lista de errores de
+     * validación.
      *
-     * @param datos Datos a validar.
-     * @param table
-     * @return errores encontrados al momento de validar.
+     * @param datos el HashMap que contiene los datos a validar.
+     * @param table la tabla que se debe validar.
+     * @return una lista de errores de validación. La lista estará vacía si no
+     * hay errores.
      */
     public List<String> validarDatos(HashMap<String, String> datos, JTable table) {
         List<String> erroresValidacion = new LinkedList<>();
@@ -222,11 +271,12 @@ public class LogicaRegistrarItinerarios {
     }
 
     /**
-     * Método que lleva a cabo el registro del itinerario.
+     * Registra un nuevo itinerario utilizando los datos proporcionados.
      *
-     * @param txtNombre
-     * @param txtNoVisitantes
-     * @param table
+     * @param txtNombre el campo de texto para el nombre del itinerario.
+     * @param txtNoVisitantes el campo de texto para el número de visitantes del
+     * itinerario.
+     * @param table la tabla de hábitats del itinerario.
      */
     public void registrarItinerario(JTextField txtNombre, JTextField txtNoVisitantes, JTable table) {
         HashMap<String, String> datos = extraerDatos(txtNombre, txtNoVisitantes);
@@ -270,6 +320,12 @@ public class LogicaRegistrarItinerarios {
         }
     }
 
+    /**
+     * Obtiene una lista de hábitats a partir de los datos de una tabla.
+     *
+     * @param table la tabla que contiene los datos de los hábitats.
+     * @return una lista de hábitats obtenidos de la tabla.
+     */
     public List<Habitat> obtenerHabitatsDeTabla(JTable table) {
         List<Habitat> habitatsT = new ArrayList<>();
 
@@ -283,6 +339,14 @@ public class LogicaRegistrarItinerarios {
         return habitatsT;
     }
 
+    /**
+     * Actualiza un itinerario existente con los datos proporcionados.
+     *
+     * @param txtNombre el campo de texto para el nombre del itinerario.
+     * @param txtNoVisitantes el campo de texto para el número de visitantes del
+     * itinerario.
+     * @param table la tabla de hábitats del itinerario.
+     */
     public void actualizarItinerario(JTextField txtNombre, JTextField txtNoVisitantes, JTable table) {
         HashMap<String, String> datos = extraerDatos(txtNombre, txtNoVisitantes);
         List<String> errores = this.validarDatos(datos, table);
@@ -358,9 +422,9 @@ public class LogicaRegistrarItinerarios {
     }
 
     /**
-     * Método que llena la tabla de hábitats.
+     * Llena un JComboBox con los hábitats obtenidos de la base de datos.
      *
-     * @param cbx
+     * @param cbx el JComboBox que se debe llenar con los hábitats.
      */
     public void llenarTablaHabitats(JComboBox cbx) {
         //CONEXIÓN A LA BASE DE DATOS
@@ -378,10 +442,12 @@ public class LogicaRegistrarItinerarios {
     }
 
     /**
-     * Método que agrega hábitats seleccionados del comboBox a la tabla de
-     * hábitats.
+     * Agrega un hábitat seleccionado del JComboBox a la tabla.
      *
-     * @param cbx
+     * @param cbx el JComboBox que contiene los hábitats.
+     * @param table la tabla donde se agregará el hábitat.
+     * @param label el JLabel que se ocultará si no hay más hábitats disponibles
+     * en el JComboBox.
      */
     public void agregarHabitat(JComboBox cbx, JTable table, JLabel label) {
         // Obtener habitat seleccionado del combobox
@@ -406,6 +472,12 @@ public class LogicaRegistrarItinerarios {
         }
     }
 
+    /**
+     * Inserta los hábitats de un itinerario en una tabla.
+     *
+     * @param itinerario el itinerario del cual se obtienen los hábitats.
+     * @param table la tabla donde se insertarán los hábitats.
+     */
     public void insertarHabitatsEnTablaActualizar(Itinerario itinerario, JTable table) {
         DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         List<Habitat> habitats = itinerario.getListaHabitats();
@@ -483,10 +555,19 @@ public class LogicaRegistrarItinerarios {
         label.setIcon(new ImageIcon(icono));
     }
 
+    /**
+     * Método que termina el programa.
+     */
     public void salirDelPrograma() {
         System.exit(0);
     }
 
+    /**
+     * Restaura los hábitats en el ComboBox y muestra el label correspondiente.
+     *
+     * @param cbx el ComboBox donde se restaurarán los hábitats.
+     * @param label el label que se mostrará después de restaurar los hábitats.
+     */
     public void restaurarHabitats(JComboBox cbx, JLabel label) {
         llenarTablaHabitats(cbx);
         label.setVisible(true);

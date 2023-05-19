@@ -27,6 +27,8 @@ import org.itson.dominio.Zona;
 import org.itson.interfaces.IZonasDAO;
 
 /**
+ * Clase que implementa la interfaz IZonasDAO y proporciona métodos para
+ * insertar y obtener zonas en la base de datos.
  *
  * @author Magda Ramírez - 233523, Misael Marchena - 233418, Ildefonso Lares -
  * 233381, Esteban Duran - 233267

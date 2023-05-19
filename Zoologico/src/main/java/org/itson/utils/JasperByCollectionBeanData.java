@@ -30,8 +30,11 @@ import org.itson.dominio.Horario;
 import org.itson.dominio.Itinerario;
 
 /**
+ * Clase que proporciona métodos para crear un archivo PDF que muestra una tabla
+ * con datos de itinerarios.
  *
- * @author march
+ * @author Magda Ramírez - 233523, Misael Marchena - 233418, Ildefonso Lares -
+ * 233381, Esteban Duran - 233267
  */
 public class JasperByCollectionBeanData {
 

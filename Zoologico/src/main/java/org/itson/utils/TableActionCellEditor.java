@@ -12,6 +12,8 @@ import javax.swing.JTable;
 import org.itson.GUI.PnlBotones;
 
 /**
+ * Clase que permite utilizar botones dentro de una tabla y editar las celdas de
+ * la tabla con botones y obtener la acción del botón seleccionado.
  *
  * @author Magda Ramírez - 233523, Misael Marchena - 233418, Ildefonso Lares -
  * 233381, Esteban Duran - 233267
@@ -19,9 +21,11 @@ import org.itson.GUI.PnlBotones;
 public class TableActionCellEditor extends DefaultCellEditor {
 
     JFrame frame;
-    
+
     /**
-     * Método constructor que inicializa el frame donde se utilizarán los botones dentro de una tabla.
+     * Método constructor que inicializa el frame donde se utilizarán los
+     * botones dentro de una tabla.
+     *
      * @param frame Frame donde estarán los botones dentro de una tabla.
      */
     public TableActionCellEditor(JFrame frame) {
@@ -29,9 +33,9 @@ public class TableActionCellEditor extends DefaultCellEditor {
         this.frame = frame;
     }
 
-    
     /**
      * Método que obtiene la acción del botón.
+     *
      * @param table Tabla donde están los botones.
      * @param value Valor de objeto.
      * @param isSelected Booleano que indica si fue seleccionando.
@@ -45,5 +49,5 @@ public class TableActionCellEditor extends DefaultCellEditor {
         action.setBackground(table.getSelectionBackground());
         return action;
     }
-    
+
 }

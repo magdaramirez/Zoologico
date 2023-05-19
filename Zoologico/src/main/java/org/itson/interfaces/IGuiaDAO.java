@@ -7,6 +7,8 @@ package org.itson.interfaces;
 import org.itson.dominio.Guia;
 
 /**
+ * Clase interfaz que define las operaciones para acceder y manipular los datos
+ * de un guía.
  *
  * @author Magda Ramírez - 233523, Misael Marchena - 233418, Ildefonso Lares -
  * 233381, Esteban Duran - 233267

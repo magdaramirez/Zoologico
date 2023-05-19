@@ -14,21 +14,47 @@ public class TelefonoGuia {
 
     private String telefono;
 
+    /**
+     * Constructor por defecto.
+     */
     public TelefonoGuia() {
     }
 
+    /**
+     * Crea una instancia de la clase TelefonoGuia con el número de teléfono
+     * especificado.
+     *
+     * @param telefono El número de teléfono del guía.
+     */
     public TelefonoGuia(String telefono) {
         this.telefono = telefono;
     }
 
+    /**
+     * Devuelve el número de teléfono del guía.
+     *
+     * @return El número de teléfono del guía.
+     */
     public String getTelefono() {
         return telefono;
     }
 
+    /**
+     * Establece el número de teléfono del guía.
+     *
+     * @param telefono El número de teléfono del guía a establecer.
+     */
     public void setTelefono(String telefono) {
         this.telefono = telefono;
     }
 
+    /**
+     * Devuelve una representación en forma de cadena del número de teléfono del
+     * guía.
+     *
+     * @return La representación en forma de cadena del número de teléfono del
+     * guía.
+     */
     @Override
     public String toString() {
         return "TelefonoGuia{" + "telefono=" + telefono + '}';

@@ -23,6 +23,9 @@ public class Zona {
     private List<ObjectId> direcciones;
     private ArrayList habitat;
 
+    /**
+     * Constructor por omisión.
+     */
     public Zona() {
     }
 

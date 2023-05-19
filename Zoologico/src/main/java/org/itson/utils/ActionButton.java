@@ -15,6 +15,8 @@ import javax.swing.JButton;
 import javax.swing.border.EmptyBorder;
 
 /**
+ * Clase que representa un botón con un efecto visual cuando se realiza una
+ * acción sobre él.
  *
  * @author Magda Ramírez - 233523, Misael Marchena - 233418, Ildefonso Lares -
  * 233381, Esteban Duran - 233267
@@ -22,8 +24,10 @@ import javax.swing.border.EmptyBorder;
 public class ActionButton extends JButton {
 
     private boolean mousePress;
+
     /**
-     * Método que expresa el momento en el que se hace una acción hacía un botón.
+     * Método que expresa el momento en el que se hace una acción hacía un
+     * botón.
      */
     public ActionButton() {
         setContentAreaFilled(false);
@@ -41,8 +45,10 @@ public class ActionButton extends JButton {
 
         });
     }
+
     /**
      * Método que muestra lo visual del botón.
+     *
      * @param g Graphics.
      */
     @Override

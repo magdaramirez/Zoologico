@@ -14,6 +14,7 @@ import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 
 /**
+ * Clase que proporciona una conexión a la base de datos MongoDB.
  *
  * @author Magda Ramírez - 233523, Misael Marchena - 233418, Ildefonso Lares -
  * 233381, Esteban Duran - 233267
@@ -21,8 +22,10 @@ import org.bson.codecs.pojo.PojoCodecProvider;
 public class ConexionMongoDB {
 
     private final String BASE_DATOS = "zoologico";
+
     /**
      * Método que obtiene la base de datos.
+     *
      * @return La base de datos.
      */
     public MongoDatabase getBaseDatos() {

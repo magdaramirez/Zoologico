@@ -17,6 +17,8 @@ import org.itson.dominio.Habitat;
 import org.itson.interfaces.IHabitatsDAO;
 
 /**
+ * Clase que implementa la interfaz IHabitatsDAO y proporciona métodos para
+ * insertar y obtener hábitats en la base de datos.
  *
  * @author Magda Ramírez - 233523, Misael Marchena - 233418, Ildefonso Lares -
  * 233381, Esteban Duran - 233267

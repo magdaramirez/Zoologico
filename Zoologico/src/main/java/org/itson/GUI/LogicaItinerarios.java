@@ -27,8 +27,10 @@ import org.itson.utils.TableActionCellEditor;
 import org.itson.utils.TableActionCellRender;
 
 /**
+ * Clase que contiene la lógica de la ventana de itinerarios.
  *
- * @author wikit
+ * @author Magda Ramírez - 233523, Misael Marchena - 233418, Ildefonso Lares -
+ * 233381, Esteban Duran - 233267
  */
 public class LogicaItinerarios {
 
@@ -36,15 +38,28 @@ public class LogicaItinerarios {
     private final ConexionMongoDB conexion = new ConexionMongoDB();
     private final IGuiaDAO persistenciaGuia;
     private final IItinerariosDAO persistenciaItinerario;
-    
+
     private int contador = 1;
-    
+
+    /**
+     * Constructor de la clase LogicaItinerarios.
+     *
+     * @param frame El JFrame principal de la ventana de itinerarios.
+     */
     public LogicaItinerarios(JFrame frame) {
         this.frame = frame;
         persistenciaGuia = new GuiaDAO(conexion);
         persistenciaItinerario = new ItinerariosDAO(conexion);
     }
-    
+
+    /**
+     * Configura la apariencia y el comportamiento de la tabla especificada.
+     * Establece el renderizador y el editor de celdas para la columna 5 de la
+     * tabla como TableActionCellRender y TableActionCellEditor respectivamente.
+     * Cambia la fuente, el color de fondo y el alto de las filas de la tabla.
+     *
+     * @param table La tabla a configurar.
+     */
     public void configurarTabla(JTable table) {
         table.getColumnModel().getColumn(5).setCellRenderer(new TableActionCellRender());
         table.getColumnModel().getColumn(5).setCellEditor(new TableActionCellEditor(frame));
@@ -54,11 +69,25 @@ public class LogicaItinerarios {
         table.getTableHeader().setForeground(new Color(102, 0, 0));
         table.setRowHeight(40);
     }
-    
+
+    /**
+     * Inserta los datos del formulario de guía en la etiqueta especificada.
+     * Obtiene el nombre de la guía a través de la persistenciaGuia y lo
+     * establece como el texto de la etiqueta.
+     *
+     * @param label La etiqueta donde se mostrará el nombre de la guía.
+     */
     public void insertarDatosFormularioGuia(JLabel label) {
         label.setText(persistenciaGuia.obtenerGuia().getNombre());
     }
 
+    /**
+     * Obtiene los itinerarios desde la persistencia. Si no se encuentran
+     * itinerarios, redirige al usuario a la ventana de registro de itinerarios.
+     *
+     * @return true si se obtienen los itinerarios exitosamente, false si no
+     * existen itinerarios y se redirige al usuario.
+     */
     public boolean obtenerItinerarios() {
         if (!persistenciaItinerario.obtenerItinerarios()) {
             // La colección no existe
@@ -79,6 +108,12 @@ public class LogicaItinerarios {
         frame.dispose();
     }
 
+    /**
+     * Llena la tabla de itinerarios con los datos obtenidos desde la base de
+     * datos.
+     *
+     * @param table la tabla de itinerarios a llenar.
+     */
     public void llenarTablaItinerarios(JTable table) {
         // CONEXIÓN A LA BASE DE DATOS
         ConexionMongoDB conexion = new ConexionMongoDB();

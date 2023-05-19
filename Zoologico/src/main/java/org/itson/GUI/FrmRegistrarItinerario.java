@@ -7,40 +7,19 @@ package org.itson.GUI;
 import com.github.lgooddatepicker.components.TimePicker;
 import java.awt.Component;
 import java.awt.Color;
-import java.awt.Font;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.border.Border;
 import javax.swing.table.DefaultTableModel;
 import org.itson.dominio.Habitat;
-import org.itson.dominio.Horario;
 import org.itson.dominio.Itinerario;
-import org.itson.dominio.Zona;
-import org.itson.fachadaAdministrarItinerario.FachadaAdministrarItinerario;
 import org.itson.interfaces.IHabitatsDAO;
 import org.itson.persistencia.ConexionMongoDB;
 import org.itson.persistencia.HabitatsDAO;
-import org.itson.persistencia.ItinerariosDAO;
 import org.itson.utils.ModoVentana;
-import org.itson.utils.Validadores;
 
 /**
  * Clase encargada de la ventana Registro Itinerario.
@@ -94,6 +73,11 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
 
     }
 
+    /**
+     * Configura la ventana según el modo especificado.
+     *
+     * @param modo El modo de la ventana.
+     */
     public final void configurarVentana(ModoVentana modo) {
         ejecutar.configurarTimePicker(pnlFondo);
 
@@ -123,7 +107,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
                 break;
 
             case ACTUALIZAR:
-                ejecutar.cargarItinerario(txtNombre, txtNoVisitantes,tblHabitats);
+                ejecutar.cargarItinerario(txtNombre, txtNoVisitantes, tblHabitats);
                 txtNombre.setEditable(false);
                 this.lblTitulo.setText("Actualización de Itinerario");
                 this.pnlVaciarDatos.setVisible(false);
@@ -131,7 +115,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
                 break;
 
             case PREVISUALIZAR:
-                ejecutar.cargarItinerario(txtNombre, txtNoVisitantes,tblHabitats);
+                ejecutar.cargarItinerario(txtNombre, txtNoVisitantes, tblHabitats);
                 for (Component componente : this.pnlFondo.getComponents()) {
                     if (componente instanceof JButton) {
                         JButton boton = (JButton) componente;
@@ -155,77 +139,167 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
                 break;
         }
         ejecutar.visualizarTimePicker();
-        ejecutar.configurarTabla(tblHabitats,cbxHabitat);
+        ejecutar.configurarTabla(tblHabitats, cbxHabitat);
     }
 
+    /**
+     * Obtiene la cantidad de lunes.
+     *
+     * @return La cantidad de lunes.
+     */
     public int getCantLunes() {
         return cantLunes;
     }
 
+    /**
+     * Establece la cantidad de lunes.
+     *
+     * @param cantLunes La cantidad de lunes a establecer.
+     */
     public void setCantLunes(int cantLunes) {
         this.cantLunes = cantLunes;
     }
 
+    /**
+     * Obtiene la cantidad de martes.
+     *
+     * @return La cantidad de martes.
+     */
     public int getCantMartes() {
         return cantMartes;
     }
 
+    /**
+     * Establece la cantidad de martes.
+     *
+     * @param cantMartes La cantidad de martes a establecer.
+     */
     public void setCantMartes(int cantMartes) {
         this.cantMartes = cantMartes;
     }
 
+    /**
+     * Obtiene la cantidad de miércoles.
+     *
+     * @return La cantidad de miércoles.
+     */
     public int getCantMiercoles() {
         return cantMiercoles;
     }
 
+    /**
+     * Establece la cantidad de miércoles.
+     *
+     * @param cantMiercoles La cantidad de miércoles a establecer.
+     */
     public void setCantMiercoles(int cantMiercoles) {
         this.cantMiercoles = cantMiercoles;
     }
 
+    /**
+     * Obtiene la cantidad de jueves.
+     *
+     * @return La cantidad de jueves.
+     */
     public int getCantJueves() {
         return cantJueves;
     }
 
+    /**
+     * Establece la cantidad de jueves.
+     *
+     * @param cantJueves La cantidad de jueves a establecer.
+     */
     public void setCantJueves(int cantJueves) {
         this.cantJueves = cantJueves;
     }
 
+    /**
+     * Obtiene la cantidad de viernes.
+     *
+     * @return La cantidad de viernes.
+     */
     public int getCantViernes() {
         return cantViernes;
     }
 
+    /**
+     * Establece la cantidad de viernes.
+     *
+     * @param cantViernes La cantidad de viernes a establecer.
+     */
     public void setCantViernes(int cantViernes) {
         this.cantViernes = cantViernes;
     }
 
+    /**
+     * Obtiene la cantidad de sábado.
+     *
+     * @return La cantidad de sábado.
+     */
     public int getCantSabado() {
         return cantSabado;
     }
 
+    /**
+     * Establece la cantidad de sábado.
+     *
+     * @param cantSabado La cantidad de sábado a establecer.
+     */
     public void setCantSabado(int cantSabado) {
         this.cantSabado = cantSabado;
     }
 
+    /**
+     * Obtiene la cantidad de domingo.
+     *
+     * @return La cantidad de domingo.
+     */
     public int getCantDomingo() {
         return cantDomingo;
     }
 
+    /**
+     * Establece la cantidad de domingo.
+     *
+     * @param cantDomingo La cantidad de domingo a establecer.
+     */
     public void setCantDomingo(int cantDomingo) {
         this.cantDomingo = cantDomingo;
     }
 
+    /**
+     * Obtiene el modo de la ventana.
+     *
+     * @return El modo de la ventana.
+     */
     public ModoVentana getModo() {
         return modo;
     }
 
+    /**
+     * Establece el modo de la ventana.
+     *
+     * @param modo El modo de la ventana a establecer.
+     */
     public void setModo(ModoVentana modo) {
         this.modo = modo;
     }
 
+    /**
+     * Obtiene el contador.
+     *
+     * @return El contador.
+     */
     public int getContador() {
         return contador;
     }
 
+    /**
+     * Establece el contador.
+     *
+     * @param contador El contador a establecer.
+     */
     public void setContador(int contador) {
         this.contador = contador;
     }
@@ -245,6 +319,15 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
                 JOptionPane.ERROR_MESSAGE);
     }
 
+    /**
+     * Obtiene el objeto TimePicker correspondiente al día y al índice
+     * especificados.
+     *
+     * @param dia El día para el que se desea obtener el TimePicker.
+     * @param index El índice del TimePicker dentro del día especificado.
+     * @return El objeto TimePicker correspondiente al día y al índice
+     * especificados, o null si no se encuentra.
+     */
     public TimePicker getTimePicker(String dia, int index) {
         switch (dia) {
             case "Lunes":
@@ -382,6 +465,11 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
         contador = 1;
     }
 
+    /**
+     * Elimina el último elemento de la tabla de hábitats y lo agrega de nuevo
+     * al JComboBox de hábitats. Actualiza el contador y hace visible el botón
+     * "Agregar".
+     */
     public void quitarUltimoElemento() {
         DefaultTableModel modeloTabla = (DefaultTableModel) tblHabitats.getModel();
         int ultimoIndice = modeloTabla.getRowCount() - 1;
@@ -975,12 +1063,6 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 lblQuitarMouseClicked(evt);
             }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                lblQuitarMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                lblQuitarMouseExited(evt);
-            }
         });
         pnlFondo.add(lblQuitar, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 140, -1, -1));
 
@@ -1086,7 +1168,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
      * @param evt El evento del mouse que activa el método.
      */
     private void lblAgregarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblAgregarMouseClicked
-        ejecutar.agregarHabitat(cbxHabitat,tblHabitats,lblAgregar);
+        ejecutar.agregarHabitat(cbxHabitat, tblHabitats, lblAgregar);
     }//GEN-LAST:event_lblAgregarMouseClicked
     /**
      * Método que al entrar al lblAgregar ejecuta el método cambiarIcono.
@@ -1126,12 +1208,20 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
             ejecutar.establecerTextField(txtNombre, "", Color.BLACK);
         }
     }//GEN-LAST:event_txtNombreMousePressed
-
+    /**
+     * Maneja el evento de clic del mouse en el panel "Guardar". Si el modo de
+     * ventana es "ACTUALIZAR", llama al método "actualizarItinerario" del
+     * objeto "ejecutar" pasando los parámetros correspondientes. Si el modo de
+     * ventana no es "ACTUALIZAR", llama al método "registrarItinerario" del
+     * objeto "ejecutar" pasando los parámetros correspondientes.
+     *
+     * @param evt El evento de clic del mouse.
+     */
     private void pnlGuardarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlGuardarMouseClicked
         if (modo.equals(ModoVentana.ACTUALIZAR)) {
-            ejecutar.actualizarItinerario(txtNombre,txtNoVisitantes,tblHabitats);
+            ejecutar.actualizarItinerario(txtNombre, txtNoVisitantes, tblHabitats);
         } else {
-            ejecutar.registrarItinerario(txtNombre,txtNoVisitantes,tblHabitats);
+            ejecutar.registrarItinerario(txtNombre, txtNoVisitantes, tblHabitats);
         }
     }//GEN-LAST:event_pnlGuardarMouseClicked
     /**
@@ -1161,7 +1251,7 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
      */
     private void pnlVaciarDatosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlVaciarDatosMouseClicked
         vaciarDatos();
-        ejecutar.restaurarHabitats(cbxHabitat,lblAgregar);
+        ejecutar.restaurarHabitats(cbxHabitat, lblAgregar);
     }//GEN-LAST:event_pnlVaciarDatosMouseClicked
     /**
      * Método que al entrar el mouse a pnlVaciarDatos ejecuta los métodos
@@ -1367,18 +1457,16 @@ public class FrmRegistrarItinerario extends javax.swing.JFrame {
             this.btnRestaDomingo.setEnabled(false);
         }
     }//GEN-LAST:event_btnRestaDomingoActionPerformed
-
+    /**
+     * Maneja el evento de clic del mouse en el etiqueta "Quitar". Llama al
+     * método "quitarUltimoElemento" para eliminar el último elemento de la
+     * tabla de hábitats.
+     *
+     * @param evt El evento de clic del mouse.
+     */
     private void lblQuitarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblQuitarMouseClicked
         this.quitarUltimoElemento();
     }//GEN-LAST:event_lblQuitarMouseClicked
-
-    private void lblQuitarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblQuitarMouseEntered
-        // TODO add your handling code here:
-    }//GEN-LAST:event_lblQuitarMouseEntered
-
-    private void lblQuitarMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblQuitarMouseExited
-        // TODO add your handling code here:
-    }//GEN-LAST:event_lblQuitarMouseExited
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnRestaDomingo;
